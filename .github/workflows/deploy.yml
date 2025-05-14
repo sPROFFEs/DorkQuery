@@ -2,7 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main  # Asegúrate de que esta es tu rama principal
   workflow_dispatch:
 
 permissions:
@@ -18,8 +19,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4  # Asegúrate de estar usando la versión más reciente
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,19 +29,24 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --no-cache  # --no-cache puede ayudar a evitar problemas con dependencias cacheadas
 
-      - name: Build
-        run: npm run build
+      - name: Build the project
+        run: npm run build  # Asegúrate de que el build se está ejecutando correctamente
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+      - name: List files in dist folder
+        run: ls -alh ./dist  # Verifica que los archivos están en dist/
 
-      - name: Upload artifact
+      - name: Configure Pages
+        uses: actions/configure-pages@v4  # Configura GitHub Pages para usar el contenido de dist
+
+      - name: Upload artifact for Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './dist'  # Ruta de los archivos a desplegar
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4  # Acción de deploy
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Utiliza el token correcto para autenticación
