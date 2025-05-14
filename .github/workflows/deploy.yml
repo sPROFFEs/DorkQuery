@@ -28,8 +28,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          # Disable cache since we don't have a lock file yet
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
+      # Generate package-lock.json if it doesn't exist
+      - name: Generate package lock file
+        run: |
+          if [ ! -f "package-lock.json" ]; then
+            echo "Generating package-lock.json..."
+            npm install --package-lock-only
+          else
+            echo "package-lock.json already exists"
+          fi
+
+      # Now that we have a lock file, we can install dependencies
       - name: Install dependencies
         run: npm ci
 

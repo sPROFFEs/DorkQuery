@@ -56,10 +56,11 @@ The deployment to GitHub Pages is configured in the `.github/workflows/deploy.ym
 
 1. Checks out the repository
 2. Sets up Node.js
-3. Installs dependencies
-4. Builds the project with the correct base path
-5. Uploads the build artifacts
-6. Deploys to GitHub Pages
+3. Generates a package-lock.json file if it doesn't exist
+4. Installs dependencies
+5. Builds the project with the correct base path
+6. Uploads the build artifacts
+7. Deploys to GitHub Pages
 
 ### Environment Variables
 
@@ -71,10 +72,10 @@ The following environment variables are used in the deployment process:
 
 If you encounter issues with the GitHub Pages deployment, check the following:
 
-1. Make sure the GitHub Actions workflow is using the correct versions of all actions
-2. Verify that the `NEXT_PUBLIC_BASE_PATH` environment variable is set correctly
-3. Check the GitHub Actions logs for any errors
-4. Ensure that the `next.config.mjs` file is configured correctly for static export
+1. **Missing lock file**: The workflow now automatically generates a package-lock.json file if it doesn't exist
+2. **Node.js version**: Make sure you're using Node.js 18 or later
+3. **Environment variables**: Verify that the `NEXT_PUBLIC_BASE_PATH` environment variable is set correctly
+4. **Build errors**: Check the GitHub Actions logs for any build errors
 
 ### Manual Deployment
 
@@ -134,4 +135,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Lucide Icons](https://lucide.dev/)
 \`\`\`
 
-Let's also create a simple script to test the deployment:
+Let's create a simple .npmrc file to ensure consistent package management:
+
+```text file=".npmrc"
+# Use npm as the package manager
+package-lock=true
+save-exact=true
+engine-strict=true
