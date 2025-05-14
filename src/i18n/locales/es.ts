@@ -9,7 +9,7 @@ export const esTranslation = {
   
   // Home page
   "home": {
-    "title": "Centro de Aprendizaje de Hacking Ético",
+    "title": "Hacking Ético directamente en tu navegador",
     "subtitle": "Aprende ciberseguridad a través de desafíos y cursos interactivos",
     "ctf_card": {
       "title": "Desafíos CTF",
@@ -23,10 +23,10 @@ export const esTranslation = {
     },
     "features": {
       "title": "Características Principales",
-      "offline": "Funciona 100% sin conexión",
+      "offline": "Funciona 100% en tu navegador",
       "interactive": "Ejercicios de programación interactivos",
-      "progress": "Guarda tu progreso",
-      "multilingual": "Traducción automática"
+      "progress": "Guarda tu progreso en tu navegador",
+      "multilingual": "Traducción de contenidos semi-automática"
     }
   },
   
