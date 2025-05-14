@@ -11,12 +11,12 @@ const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center mb-4 md:mb-0">
             <Shield size={20} className="text-green-500 mr-2" />
-            <span className="text-gray-300">HackEd © {new Date().getFullYear()}</span>
+            <span className="text-gray-300">Hacklabs © {new Date().getFullYear()}</span>
           </div>
           
           <div className="flex space-x-6">
             <a 
-              href="#" 
+              href="https://github.com/sPROFFEs" 
               className="text-gray-400 hover:text-white transition-colors flex items-center"
               aria-label="GitHub"
             >
@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
             </a>
             
             <a 
-              href="#" 
+              href="https://sproffes.github.io/resources/" 
               className="text-gray-400 hover:text-white transition-colors flex items-center"
               aria-label="Website"
             >

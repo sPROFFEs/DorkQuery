@@ -24,7 +24,7 @@ const Navigation: React.FC<NavigationProps> = ({ sidebarOpen, setSidebarOpen }) 
       {/* Logo */}
       <NavLink to="/" className="flex items-center text-green-500 font-bold text-xl mr-8">
         <Terminal className="mr-2" />
-        <span>HackEd</span>
+        <span>Hacklabs</span>
       </NavLink>
       
       {/* Desktop navigation */}
@@ -68,7 +68,7 @@ const Navigation: React.FC<NavigationProps> = ({ sidebarOpen, setSidebarOpen }) 
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center text-green-500 font-bold text-xl">
                 <Terminal className="mr-2" />
-                <span>HackEd</span>
+                <span>Hacklabs</span>
               </div>
               <button 
                 className="text-gray-300 hover:text-white"

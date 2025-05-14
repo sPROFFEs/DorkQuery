@@ -10,13 +10,13 @@ import NotFound from './pages/NotFound';
 function App() {
   return (
     <Routes>
-      <Route path="hacklabs/" element={<Layout />}>
+      <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="hacklabs/ctf" element={<CTFHub />} />
-        <Route path="hacklabs/ctf/:id" element={<Challenge />} />
-        <Route path="hacklabs/courses" element={<CoursesHub />} />
-        <Route path="hacklabs/courses/:id" element={<Course />} />
-        <Route path="hacklabs/*" element={<NotFound />} />
+        <Route path="ctf" element={<CTFHub />} />
+        <Route path="ctf/:id" element={<Challenge />} />
+        <Route path="courses" element={<CoursesHub />} />
+        <Route path="courses/:id" element={<Course />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

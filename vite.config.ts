@@ -1,13 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// Get the repo name from environment if available (like in GitHub Actions)
-// Or use a default value when developing locally
+// Solo si quieres mantenerlo dinámico con GitHub Actions
 const repoName = process.env.GITHUB_REPOSITORY 
   ? process.env.GITHUB_REPOSITORY.split('/')[1] 
-  : 'ethical-hacking-platform';
+  : 'hacklabs';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
