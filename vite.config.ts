@@ -13,9 +13,14 @@ export default defineConfig({
   },
   base: process.env.NODE_ENV === 'production' ? `/${repoName}/` : '/',
   build: {
-    outDir: 'dist',
+    outDir: 'dist',  // La carpeta donde se generarán los archivos estáticos
     rollupOptions: {
       output: {
+        // Los archivos JS generados tendrán un nombre con hash
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash][extname]', // También aplicamos el hash a los archivos de tipo imagen, fuentes, etc.
+        
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'i18n-vendor': ['i18next', 'react-i18next', 'i18next-browser-languagedetector', 'i18next-http-backend'],
