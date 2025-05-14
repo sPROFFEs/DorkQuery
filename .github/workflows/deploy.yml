@@ -2,17 +2,14 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -22,42 +19,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v3
+      
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
-          # Disable cache since we don't have a lock file yet
+          node-version: '18'
           cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
-
-      # Generate package-lock.json if it doesn't exist
-      - name: Generate package lock file
-        run: |
-          if [ ! -f "package-lock.json" ]; then
-            echo "Generating package-lock.json..."
-            npm install --package-lock-only
-          else
-            echo "package-lock.json already exists"
-          fi
-
-      # Now that we have a lock file, we can install dependencies
+      
       - name: Install dependencies
         run: npm ci
-
-      - name: Build project
+      
+      - name: Build
         run: npm run build
-        env:
-          NEXT_PUBLIC_BASE_PATH: /hacklabs
-
+      
       - name: Setup Pages
-        uses: actions/configure-pages@v4
-
+        uses: actions/configure-pages@v3
+      
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v1
         with:
-          path: ./out
+          path: './dist'
 
   deploy:
     environment:
@@ -68,4 +50,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3
+        uses: actions/deploy-pages@v1
