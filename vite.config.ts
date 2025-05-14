@@ -11,7 +11,7 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-  base: '/hacklabs/',
+  base: process.env.NODE_ENV === 'production' ? `/${repoName}/` : '/',
   build: {
     outDir: 'dist',
     rollupOptions: {
