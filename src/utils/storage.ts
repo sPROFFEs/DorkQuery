@@ -1,7 +1,8 @@
 import { UserProgress } from '../types';
 
-// Versión de la aplicación. Cambia esto cuando haya actualizaciones significativas que afecten al progreso
-const APP_VERSION = '1.0.1';  // Asegúrate de actualizar esto con cada nueva versión importante
+// Clave para la versión de la app en localStorage
+const APP_VERSION_KEY = 'appVersion';
+const APP_VERSION = '1.0.2';  // Cambia esto cada vez que actualices la app
 
 // Estado inicial vacío de progreso
 const initialUserProgress: UserProgress = {
@@ -13,51 +14,64 @@ const initialUserProgress: UserProgress = {
 // Clave para el `localStorage`
 const STORAGE_KEY = 'ethical-hacking-progress';
 
+// Función para encriptar datos usando base64
+const encodeData = (data: any): string => {
+  const jsonData = JSON.stringify(data);
+  return btoa(jsonData);  // Convierte a base64
+};
+
+// Función para desencriptar los datos codificados en base64
+const decodeData = (encodedData: string): any => {
+  const jsonData = atob(encodedData);  // Convierte de base64 a string
+  return JSON.parse(jsonData);  // Convierte el string de nuevo a un objeto
+};
+
 // Obtener la versión actual de la app desde el `localStorage`
 const getAppVersion = (): string => {
-  const storedVersion = localStorage.getItem('appVersion');
+  const storedVersion = localStorage.getItem(APP_VERSION_KEY);
   return storedVersion || '';  // Si no existe, devolver cadena vacía
 };
 
 // Establecer la versión actual de la app en el `localStorage`
 const setAppVersion = (version: string): void => {
-  localStorage.setItem('appVersion', version);
+  localStorage.setItem(APP_VERSION_KEY, version);
 };
+
+// Chequear si la versión ha cambiado y limpiar el cache si es necesario
+const checkAndClearCache = (): void => {
+  const storedVersion = getAppVersion();
+
+  // Si la versión ha cambiado, limpiamos el cache y el localStorage
+  if (storedVersion !== APP_VERSION) {
+    console.log('La versión de la app ha cambiado, limpiando cache y localStorage...');
+    localStorage.clear();  // Elimina todo el localStorage
+    sessionStorage.clear();  // Si usas sessionStorage también puedes limpiarlo
+    window.location.reload(); // Recargar la página para aplicar los cambios
+    setAppVersion(APP_VERSION);  // Establecer la nueva versión
+  }
+};
+
+// Llamar a la función de chequeo al inicio de la aplicación
+checkAndClearCache();
 
 // Cargar el progreso del usuario desde el `localStorage`
 export const loadUserProgress = (): UserProgress => {
   try {
-    const storedVersion = getAppVersion();
-    
-    // Si la versión no coincide, puede que necesites limpiar los datos de `localStorage`
-    if (storedVersion !== APP_VERSION) {
-      console.log('La versión de la app ha cambiado. Actualizando los datos si es necesario.');
-      setAppVersion(APP_VERSION); // Establecer la nueva versión
+    const encodedData = localStorage.getItem(STORAGE_KEY);
+    if (!encodedData) return { ...initialUserProgress };  // Si no hay datos, devolver el estado inicial
 
-      // Aquí puedes añadir lógica adicional si es necesario limpiar o transformar el progreso
-      // por ejemplo, si hay cambios en la estructura de los datos. Si no es necesario, puedes omitir esta parte.
-    }
-
-    const storedData = localStorage.getItem(STORAGE_KEY);
-    if (!storedData) return { ...initialUserProgress };  // Si no hay datos, devolver el estado inicial
-
-    return JSON.parse(storedData) as UserProgress;
+    return decodeData(encodedData) as UserProgress;
   } catch (error) {
     console.error('Error al cargar el progreso:', error);
     return { ...initialUserProgress };  // Si hay un error, devolver el estado inicial
   }
 };
 
-// Guardar el progreso del usuario en el `localStorage`
+// Guardar el progreso del usuario en el `localStorage` (codificado)
 export const saveUserProgress = (progress: UserProgress): void => {
   try {
-    // Si la versión ha cambiado, puedes gestionar la actualización de los datos
-    const storedVersion = getAppVersion();
-    if (storedVersion !== APP_VERSION) {
-      setAppVersion(APP_VERSION);  // Asegurarse de establecer la nueva versión
-    }
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));  // Guardar los datos
+    const encodedProgress = encodeData(progress);  // Codificar el progreso
+    localStorage.setItem(STORAGE_KEY, encodedProgress);  // Guardar en localStorage
   } catch (error) {
     console.error('Error al guardar el progreso:', error);
   }
