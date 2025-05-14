@@ -7,7 +7,7 @@ import './i18n/i18n';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/hacklabs">
       <App />
     </BrowserRouter>
   </StrictMode>
