@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yourusername.github.io/Interactive-Hacking-Website/sitemap.xml

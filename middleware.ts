@@ -1,5 +1,8 @@
 import createMiddleware from "next-intl/middleware"
 
+// Get the base path from environment variable
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ""
+
 export default createMiddleware({
   // A list of all locales that are supported
   locales: ["es", "en", "de"],
@@ -7,21 +10,14 @@ export default createMiddleware({
   // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
   defaultLocale: "es",
 
-  // Domains can be used to match specific locales to specific domains
-  // domains: [
-  //   {
-  //     domain: 'example.com',
-  //     defaultLocale: 'es'
-  //   },
-  //   {
-  //     domain: 'example.com/en',
-  //     defaultLocale: 'en'
-  //   },
-  //   {
-  //     domain: 'example.com/de',
-  //     defaultLocale: 'de'
-  //   }
-  // ]
+  // Configure the base path for GitHub Pages
+  pathnames: {
+    // Add the base path to all pathnames
+    "/": "/",
+    "/ctf": "/ctf",
+    "/curso": "/curso",
+    "/about": "/about",
+  },
 })
 
 export const config = {

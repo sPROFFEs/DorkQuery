@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacking Ético Interactivo - GitHub Pages Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #333;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+            font-size: 1.25rem;
+            color: #fff;
+            text-decoration: none;
+        }
+        .logo-icon {
+            color: #10b981;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 0 0;
+            gap: 1.5rem;
+        }
+        nav a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        nav a:hover {
+            color: #10b981;
+        }
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            color: #9ca3af;
+            max-width: 36rem;
+            margin: 0 auto 2rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: #10b981;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: #059669;
+        }
+        .btn-outline {
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+        .btn-outline:hover {
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+        .language-switcher {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .language-btn {
+            background: none;
+            border: 1px solid #333;
+            color: #d1d5db;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .language-btn:hover {
+            border-color: #10b981;
+            color: #10b981;
+        }
+        .language-btn.active {
+            background-color: #10b981;
+            border-color: #10b981;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">
+                <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                <span>HackingLab</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/ctf/">Desafíos CTF</a></li>
+                    <li><a href="/curso/">Minicursos</a></li>
+                    <li><a href="/about/">Sobre el proyecto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h1>Hacking Ético Interactivo</h1>
+                <p>Aprende ciberseguridad a través de desafíos prácticos y minijuegos interactivos</p>
+                <div>
+                    <a href="/ctf/" class="btn btn-primary">Desafíos CTF</a>
+                    <a href="/curso/" class="btn btn-outline" style="margin-left: 1rem;">Minicursos</a>
+                </div>
+                <div class="language-switcher">
+                    <button class="language-btn active">Español</button>
+                    <button class="language-btn">English</button>
+                    <button class="language-btn">Deutsch</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Simple language switcher for demo purposes
+        document.querySelectorAll('.language-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.language-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // In a real implementation, this would change the language
+                const language = this.textContent;
+                console.log(`Language changed to: ${language}`);
+                
+                // Update content based on selected language
+                const title = document.querySelector('h1');
+                const description = document.querySelector('.hero p');
+                const ctfButton = document.querySelector('.btn-primary');
+                const coursesButton = document.querySelector('.btn-outline');
+                
+                if (language === 'English') {
+                    title.textContent = 'Interactive Ethical Hacking';
+                    description.textContent = 'Learn cybersecurity through practical challenges and interactive mini-games';
+                    ctfButton.textContent = 'CTF Challenges';
+                    coursesButton.textContent = 'Mini-courses';
+                } else if (language === 'Deutsch') {
+                    title.textContent = 'Interaktives Ethisches Hacking';
+                    description.textContent = 'Lerne Cybersicherheit durch praktische Herausforderungen und interaktive Minispiele';
+                    ctfButton.textContent = 'CTF-Herausforderungen';
+                    coursesButton.textContent = 'Minikurse';
+                } else {
+                    title.textContent = 'Hacking Ético Interactivo';
+                    description.textContent = 'Aprende ciberseguridad a través de desafíos prácticos y minijuegos interactivos';
+                    ctfButton.textContent = 'Desafíos CTF';
+                    coursesButton.textContent = 'Minicursos';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
