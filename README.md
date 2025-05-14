@@ -50,6 +50,32 @@ The platform includes an automated translation system that can dynamically trans
 
 The website is automatically deployed to GitHub Pages when changes are pushed to the `main` branch. The deployment process is handled by GitHub Actions.
 
+### GitHub Pages Deployment
+
+The deployment to GitHub Pages is configured in the `.github/workflows/deploy.yml` file. This workflow:
+
+1. Checks out the repository
+2. Sets up Node.js
+3. Installs dependencies
+4. Builds the project with the correct base path
+5. Uploads the build artifacts
+6. Deploys to GitHub Pages
+
+### Environment Variables
+
+The following environment variables are used in the deployment process:
+
+- `NEXT_PUBLIC_BASE_PATH`: The base path for the GitHub Pages deployment (e.g., `/Interactive-Hacking-Website`)
+
+### Troubleshooting Deployment
+
+If you encounter issues with the GitHub Pages deployment, check the following:
+
+1. Make sure the GitHub Actions workflow is using the correct versions of all actions
+2. Verify that the `NEXT_PUBLIC_BASE_PATH` environment variable is set correctly
+3. Check the GitHub Actions logs for any errors
+4. Ensure that the `next.config.mjs` file is configured correctly for static export
+
 ### Manual Deployment
 
 To deploy the website manually:
@@ -108,4 +134,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Lucide Icons](https://lucide.dev/)
 \`\`\`
 
-Let's create a simple configuration file for the automated translation feature:
+Let's also create a simple script to test the deployment:

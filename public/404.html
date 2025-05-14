@@ -56,11 +56,16 @@
             position: absolute;
             z-index: -1;
         }
+        .loading {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
     </style>
     <script>
         // This script handles redirects for SPA on GitHub Pages
         (function() {
-            // Get the base path from the meta tag
+            // Get the base path
             const basePath = '/Interactive-Hacking-Website';
             
             // Get the current path
@@ -72,11 +77,14 @@
             if (!localeMatch) {
                 // If no locale in the path, redirect to the default locale (es)
                 const newPath = `${basePath}/es${path.replace(basePath, '')}`;
+                document.getElementById('redirect-message').textContent = `Redirecting to ${newPath}...`;
                 window.location.replace(newPath);
             } else {
                 // If it's a locale route but the page doesn't exist, redirect to the 404 page in that locale
                 const locale = localeMatch[1];
-                window.location.replace(`${basePath}/${locale}/404`);
+                const newPath = `${basePath}/${locale}/404`;
+                document.getElementById('redirect-message').textContent = `Redirecting to ${newPath}...`;
+                window.location.replace(newPath);
             }
         })();
     </script>
@@ -86,7 +94,8 @@
         <p class="error-code">404</p>
         <h1>Page Not Found</h1>
         <p>The page you are looking for doesn't exist or has been moved.</p>
-        <a href="/" class="btn">Go to Homepage</a>
+        <a href="/Interactive-Hacking-Website/es/" class="btn">Go to Homepage</a>
+        <p id="redirect-message" class="loading">Redirecting...</p>
     </div>
 </body>
 </html>

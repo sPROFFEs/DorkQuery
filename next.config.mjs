@@ -16,9 +16,11 @@ const nextConfig = {
     locales: ['es', 'en', 'de'],
     defaultLocale: 'es',
   },
+  // Ignore ESLint errors during build
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Ignore TypeScript errors during build
   typescript: {
     ignoreBuildErrors: true,
   },
