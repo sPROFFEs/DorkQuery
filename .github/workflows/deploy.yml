@@ -1,9 +1,15 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy
 
 on:
   push:
-    branches: 
-      - main  # Asegúrate de que esta es tu rama principal
+    branches:
+      - main  # O la rama en la que trabajas
+    paths-ignore:
+      - .gitignore
+      - README.md
+      - LICENSE
+
+  # Permite ejecutar el flujo de trabajo manualmente desde la pestaña de Actions
   workflow_dispatch:
 
 permissions:
@@ -11,6 +17,7 @@ permissions:
   pages: write
   id-token: write
 
+# Para asegurar que no haya múltiples despliegues en progreso
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -20,33 +27,43 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Asegúrate de estar usando la versión más reciente
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Obtén todo el historial de git, para facilitar la comparación y las dependencias
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: '18'  # Versión de Node.js, ajústala a la que necesites
+          cache: 'npm'  # Cache de npm para optimizar las dependencias
 
       - name: Install dependencies
-        run: npm ci --no-cache  # --no-cache puede ayudar a evitar problemas con dependencias cacheadas
+        run: npm ci --no-cache  # Instalar las dependencias de manera limpia
 
       - name: Build the project
-        run: npm run build  # Asegúrate de que el build se está ejecutando correctamente
+        run: npm run build  # Construir el proyecto
 
       - name: List files in dist folder
-        run: ls -alh ./dist  # Verifica que los archivos están en dist/
+        run: ls -alh ./dist  # Listar los archivos en la carpeta dist para verificar que la construcción fue exitosa
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v4  # Configura GitHub Pages para usar el contenido de dist
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4  # Configurar GitHub Pages para la carpeta de salida
 
-      - name: Upload artifact for Pages
+      - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'  # Ruta de los archivos a desplegar
+          path: './dist'  # Especifica la ruta correcta de los archivos generados
 
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build  # Asegura que el despliegue solo ocurra después de la construcción
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4  # Acción de deploy
+        uses: actions/deploy-pages@v4  # Despliega a GitHub Pages
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # Utiliza el token correcto para autenticación
+          token: ${{ secrets.GITHUB_TOKEN }}  # Usa el token adecuado para el despliegue
