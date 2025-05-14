@@ -1,0 +1,316 @@
+{
+  "common": {
+    "back": "Zurück",
+    "backToHome": "Zurück zur Startseite",
+    "backToChallenges": "Zurück zu den Herausforderungen",
+    "backToCourses": "Zurück zu den Kursen",
+    "continue": "Fortfahren",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "complete": "Abschließen",
+    "start": "Starten",
+    "explore": "Erkunden"
+  },
+  "nav": {
+    "home": "Startseite",
+    "challenges": "CTF-Herausforderungen",
+    "courses": "Minikurse",
+    "about": "Über das Projekt",
+    "language": "Sprache"
+  },
+  "home": {
+    "title": "Interaktives Ethisches Hacking",
+    "subtitle": "Lerne Cybersicherheit durch praktische Herausforderungen und interaktive Minispiele",
+    "ctfButton": "CTF-Herausforderungen",
+    "coursesButton": "Minikurse",
+    "whatYouWillLearn": "Was du lernen wirst",
+    "sqlInjection": {
+      "title": "SQL-Injection",
+      "description": "Lerne, SQL-Injection-Schwachstellen in Webanwendungen zu identifizieren und auszunutzen."
+    },
+    "xss": {
+      "title": "Cross-Site Scripting (XSS)",
+      "description": "Entdecke, wie XSS-Angriffe funktionieren und wie du deine Anwendungen schützen kannst."
+    },
+    "ctf": {
+      "title": "CTF-Herausforderungen",
+      "description": "Teste deine Fähigkeiten mit praktischen Herausforderungen zur Computersicherheit."
+    },
+    "aboutSection": {
+      "title": "Über dieses Projekt",
+      "description": "Dieses Projekt ist für Anfänger im Bereich Cybersicherheit und Studierende des ethischen Hackings konzipiert, die reale Fähigkeiten direkt in ihrem Browser üben möchten, ohne lokale Umgebungen einrichten zu müssen. Alle Herausforderungen und Übungen laufen direkt in deinem Browser.",
+      "learnMore": "Mehr erfahren"
+    }
+  },
+  "challenges": {
+    "title": "CTF-Herausforderungen",
+    "description": "Teste deine Fähigkeiten mit diesen Computersicherheitsherausforderungen. Jede Herausforderung ermöglicht es dir, Konzepte des ethischen Hackings in einer kontrollierten Umgebung anzuwenden.",
+    "difficulty": {
+      "beginner": "Anfänger",
+      "intermediate": "Fortgeschritten",
+      "advanced": "Experte"
+    },
+    "category": {
+      "web": "Web",
+      "crypto": "Kryptographie",
+      "forensics": "Forensik",
+      "reversing": "Reverse Engineering"
+    },
+    "locked": "Schließe vorherige Herausforderungen ab, um diese freizuschalten",
+    "points": "Punkte",
+    "startChallenge": "Herausforderung starten",
+    "challenges": {
+      "xssBasic": {
+        "title": "Grundlegendes XSS",
+        "description": "Erkunde Cross-Site-Scripting-Schwachstellen in einer einfachen Webanwendung."
+      },
+      "inputValidation": {
+        "title": "Eingabevalidierung",
+        "description": "Finde und nutze Fehler in der Validierung von Formulardaten."
+      },
+      "sqlInjection": {
+        "title": "SQL-Injection",
+        "description": "Greife auf vertrauliche Informationen zu, indem du eine SQL-Injection-Schwachstelle ausnutzt."
+      },
+      "authBypass": {
+        "title": "Authentifizierungsumgehung",
+        "description": "Finde einen Weg, das Authentifizierungssystem zu umgehen."
+      }
+    }
+  },
+  "courses": {
+    "title": "Interaktive Minikurse",
+    "description": "Lerne Konzepte der Computersicherheit mit diesen interaktiven Minikursen. Jedes Modul enthält praktische Beispiele und bearbeitbaren Code zum Experimentieren.",
+    "level": {
+      "beginner": "Anfänger",
+      "intermediate": "Fortgeschritten",
+      "advanced": "Experte"
+    },
+    "duration": "Minuten",
+    "includes": "Enthält praktische Beispiele",
+    "courses": {
+      "sqlInjection": {
+        "title": "Einführung in SQL-Injection",
+        "description": "Lerne die Grundlagen von SQL-Injections und wie man sie ethisch ausnutzt.",
+        "duration": "30"
+      },
+      "xss": {
+        "title": "Cross-Site Scripting (XSS)",
+        "description": "Entdecke, wie XSS-Angriffe funktionieren und wie du deine Webanwendungen schützen kannst.",
+        "duration": "45"
+      },
+      "formSecurity": {
+        "title": "Sicherheit von Webformularen",
+        "description": "Lerne, Benutzereingaben zu validieren und häufige Angriffe auf Formulare zu verhindern.",
+        "duration": "40"
+      },
+      "secureAuth": {
+        "title": "Sichere Authentifizierung",
+        "description": "Implementiere robuste Authentifizierungssysteme und vermeide häufige Schwachstellen.",
+        "duration": "60"
+      }
+    }
+  },
+  "about": {
+    "title": "Über das Projekt",
+    "subtitle": "Eine Bildungsplattform zum praktischen Erlernen von Cybersicherheit",
+    "description": {
+      "part1": "Dieses Projekt wurde mit dem Ziel geschaffen, eine sichere und zugängliche Umgebung für Anfänger im Bereich Cybersicherheit und Studierende des ethischen Hackings bereitzustellen, um reale Fähigkeiten direkt in ihrem Browser zu üben, ohne komplexe Umgebungen einrichten zu müssen.",
+      "part2": "Durch CTF-Herausforderungen (Capture The Flag) und interaktive Minikurse können Benutzer grundlegende Konzepte der Computersicherheit wie SQL-Injections, Cross-Site Scripting (XSS), Eingabevalidierung und vieles mehr in einer kontrollierten und ethischen Umgebung erlernen.",
+      "part3": "Alle auf dieser Plattform vorgestellten Schwachstellen und Techniken dienen Bildungszwecken, und wir fördern die verantwortungsvolle und ethische Nutzung dieses Wissens."
+    },
+    "features": {
+      "title": "Hauptfunktionen",
+      "ctf": {
+        "title": "CTF-Herausforderungen",
+        "items": [
+          "Praktische Sicherheitsherausforderungen",
+          "Hinweissystem und Stufen",
+          "Flag-Validierung",
+          "Fortschrittsverfolgung"
+        ]
+      },
+      "courses": {
+        "title": "Minikurse",
+        "items": [
+          "Schritt-für-Schritt-Erklärungen",
+          "Bearbeitbarer Code",
+          "Praktische Beispiele",
+          "Zusätzliche Ressourcen"
+        ]
+      }
+    },
+    "technologies": {
+      "title": "Verwendete Technologien",
+      "frontend": {
+        "title": "Frontend",
+        "items": ["Next.js (React)", "Tailwind CSS", "Shadcn UI", "Monaco Editor (für Code)"]
+      },
+      "storage": {
+        "title": "Speicherung",
+        "items": ["LocalStorage (Fortschritt)", "Statische Dateien"]
+      }
+    },
+    "contribute": {
+      "title": "Zum Projekt beitragen",
+      "description": "Dieses Projekt ist Open Source und Beiträge sind willkommen. Wenn du mitarbeiten möchtest, kannst du dies auf folgende Weise tun:",
+      "items": [
+        "Neue CTF-Herausforderungen hinzufügen",
+        "Minikurse zu Sicherheitsthemen erstellen",
+        "Dokumentation verbessern",
+        "Fehler melden oder Verbesserungen vorschlagen"
+      ],
+      "github": "Auf GitHub ansehen"
+    }
+  },
+  "challenge": {
+    "xssBasic": {
+      "title": "Herausforderung: Grundlegendes XSS",
+      "description": "Du hast eine Website gefunden, die direkt anzeigt, was du in ein Textfeld eingibst. Dein Ziel ist es, eine XSS-Schwachstelle (Cross-Site Scripting) zu finden und auszunutzen, um die Flag zu erhalten.",
+      "objective": {
+        "title": "Ziel",
+        "description": "Führe ein alert() mit der Nachricht 'xss' aus, um die Flag zu erhalten."
+      },
+      "tabs": {
+        "challenge": "Herausforderung",
+        "hints": "Hinweise",
+        "submit": "Flag einreichen"
+      },
+      "vulnerableWebsite": {
+        "title": "Verwundbare Website",
+        "description": "Diese Seite zeigt an, was du schreibst. Kannst du eine Schwachstelle finden?",
+        "inputLabel": "Gib deine Nachricht ein:",
+        "submitButton": "Absenden",
+        "resultLabel": "Ergebnis:"
+      },
+      "hints": {
+        "noHints": "Du hast noch keine Hinweise aufgedeckt.",
+        "revealHint": "Hinweis aufdecken",
+        "hintsList": [
+          "Die Seite zeigt direkt an, was du eingibst, ohne zu filtern. Was würde passieren, wenn du HTML-Code eingibst?",
+          "Versuche, ein <script>-Tag mit JavaScript-Code einzufügen.",
+          "Um die Flag zu erhalten, musst du ein alert() mit der Nachricht 'xss' ausführen lassen."
+        ]
+      },
+      "submitFlag": {
+        "title": "Flag einreichen",
+        "description": "Sobald du die Flag gefunden hast, gib sie hier ein, um die Herausforderung abzuschließen.",
+        "inputLabel": "Flag (Format CTF{text}):",
+        "placeholder": "CTF{...}",
+        "verifyButton": "Flag überprüfen",
+        "completedButton": "Bereits abgeschlossen",
+        "success": "Richtig! Du hast die Herausforderung abgeschlossen.",
+        "error": "Falsche Flag. Versuche es erneut.",
+        "foundFlag": "Du hast die Flag gefunden!"
+      }
+    }
+  },
+  "course": {
+    "sqlInjection": {
+      "title": "Einführung in SQL-Injection",
+      "tabs": {
+        "content": "Inhalt",
+        "resources": "Ressourcen"
+      },
+      "step": "Schritt",
+      "of": "von",
+      "steps": {
+        "intro": {
+          "title": "Einführung in SQL-Injection",
+          "content": {
+            "part1": "SQL-Injections sind einer der häufigsten und gefährlichsten Angriffe auf Webanwendungen. Sie treten auf, wenn ein Angreifer bösartigen SQL-Code in eine Abfrage einfügen oder \"injizieren\" kann, die die Anwendung an ihre Datenbank sendet.",
+            "dangerTitle": "Warum ist es gefährlich?",
+            "dangerContent": "Ein erfolgreicher SQL-Injection-Angriff kann Angreifern ermöglichen:",
+            "dangerItems": [
+              "Zugriff auf sensible Daten",
+              "Daten in der Datenbank zu ändern",
+              "Wichtige Informationen zu löschen",
+              "In einigen Fällen Befehle auf dem Server auszuführen"
+            ],
+            "part2": "In diesem Minikurs lernst du, SQL-Injection-Schwachstellen zu identifizieren, wie man sie ethisch ausnutzt und vor allem, wie du deine Anwendungen davor schützen kannst."
+          }
+        },
+        "identifying": {
+          "title": "Identifizierung von anfälligem Code",
+          "content": {
+            "part1": "Der erste Schritt zum Verständnis von SQL-Injections ist die Identifizierung von anfälligem Code. Betrachte das folgende Beispiel einer typischen Login-Funktion:",
+            "part2": "Dieser Code ist anfällig, weil er Benutzereingabewerte direkt in die SQL-Abfrage verkettet. Wenn ein Angreifer spezielle Werte eingibt, kann er die Struktur der Abfrage manipulieren.",
+            "exampleTitle": "Angriffsbeispiel",
+            "exampleContent": "Wenn ein Angreifer admin' -- als Benutzernamen eingibt, würde die resultierende Abfrage lauten:",
+            "exampleQuery": "SELECT * FROM users WHERE username = 'admin' --' AND password = 'beliebig'",
+            "exampleExplanation": "Das -- kommentiert den Rest der Abfrage aus, wodurch die Passwortprüfung ignoriert wird."
+          }
+        },
+        "practice": {
+          "title": "Übung: Ausnutzen einer Schwachstelle",
+          "content": {
+            "part1": "Jetzt bist du an der Reihe zu üben. Ändere den Code im Editor, um die SQL-Injection-Schwachstelle auszunutzen. Dein Ziel ist es, die Funktion testLogin() so zu ändern, dass sie true zurückgibt, ohne das richtige Passwort zu kennen.",
+            "hintTitle": "Hinweis",
+            "hintContent": "Versuche, SQL-Kommentare (-- oder #) oder die OR-Klausel zu verwenden, um die Logik der Abfrage zu manipulieren."
+          }
+        },
+        "prevention": {
+          "title": "Verhinderung von SQL-Injection",
+          "content": {
+            "part1": "Nachdem du verstanden hast, wie SQL-Injections funktionieren, ist es entscheidend zu lernen, wie man sie verhindert. Hier sind einige effektive Techniken:",
+            "technique1": {
+              "title": "1. Verwendung parametrisierter Abfragen",
+              "description": "Parametrisierte Abfragen (oder vorbereitete Anweisungen) trennen SQL-Code von Daten und verhindern, dass Benutzerdaten als SQL-Code interpretiert werden."
+            },
+            "technique2": {
+              "title": "2. ORM (Object-Relational Mapping)",
+              "description": "Die Verwendung eines ORM wie Sequelize, Prisma oder TypeORM kann dazu beitragen, SQL-Injections zu verhindern, indem die Datensanitisierung automatisch gehandhabt wird."
+            },
+            "technique3": {
+              "title": "3. Eingabevalidierung",
+              "description": "Validiere und bereinige immer Benutzereingabedaten, bevor du sie in SQL-Abfragen verwendest."
+            },
+            "technique4": {
+              "title": "4. Prinzip der geringsten Privilegien",
+              "description": "Verwende Datenbankkonten mit den minimalen Berechtigungen, die für die Anwendung erforderlich sind."
+            },
+            "bestPracticeTitle": "Beste Praxis",
+            "bestPracticeContent": "Vertraue niemals Benutzereingabedaten. Validiere, bereinige und verwende immer parametrisierte Abfragen, um deine Anwendung vor SQL-Injections zu schützen."
+          }
+        },
+        "finalExercise": {
+          "title": "Abschlussübung",
+          "content": {
+            "part1": "Um diesen Minikurs abzuschließen, wollen wir den anfälligen Code, den wir zuvor gesehen haben, korrigieren. Deine Aufgabe ist es, die Funktion loginUser so zu ändern, dass sie parametrisierte Abfragen verwendet und gegen SQL-Injections geschützt ist.",
+            "solutionTitle": "Beispiellösung"
+          }
+        }
+      },
+      "resources": {
+        "title": "Zusätzliche Ressourcen",
+        "description": "Links und ergänzende Materialien zur Vertiefung des Themas.",
+        "documentation": {
+          "title": "Dokumentation und Anleitungen",
+          "items": [
+            {
+              "title": "OWASP: SQL-Injection",
+              "url": "https://owasp.org/www-community/attacks/SQL_Injection"
+            },
+            {
+              "title": "PortSwigger: SQL-Injection",
+              "url": "https://portswigger.net/web-security/sql-injection"
+            }
+          ]
+        },
+        "tools": {
+          "title": "Übungswerkzeuge",
+          "items": [
+            {
+              "title": "SQLMap - Tool zur Erkennung und Ausnutzung von SQL-Injection",
+              "url": "https://github.com/sqlmapproject/sqlmap"
+            },
+            {
+              "title": "Hacksplaining: Interaktives SQL-Injection-Tutorial",
+              "url": "https://www.hacksplaining.com/exercises/sql-injection"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "common": {
+    "back": "Back",
+    "backToHome": "Back to home",
+    "backToChallenges": "Back to challenges",
+    "backToCourses": "Back to courses",
+    "continue": "Continue",
+    "next": "Next",
+    "previous": "Previous",
+    "complete": "Complete",
+    "start": "Start",
+    "explore": "Explore"
+  },
+  "nav": {
+    "home": "Home",
+    "challenges": "CTF Challenges",
+    "courses": "Mini-courses",
+    "about": "About the project",
+    "language": "Language"
+  },
+  "home": {
+    "title": "Interactive Ethical Hacking",
+    "subtitle": "Learn cybersecurity through practical challenges and interactive mini-games",
+    "ctfButton": "CTF Challenges",
+    "coursesButton": "Mini-courses",
+    "whatYouWillLearn": "What you'll learn",
+    "sqlInjection": {
+      "title": "SQL Injection",
+      "description": "Learn to identify and exploit SQL injection vulnerabilities in web applications."
+    },
+    "xss": {
+      "title": "Cross-Site Scripting (XSS)",
+      "description": "Discover how XSS attacks work and how to protect your applications."
+    },
+    "ctf": {
+      "title": "CTF Challenges",
+      "description": "Test your skills with practical computer security challenges."
+    },
+    "aboutSection": {
+      "title": "About this project",
+      "description": "This project is designed for cybersecurity beginners and ethical hacking students who want to practice real skills from their browser, without the need to set up local environments. All challenges and exercises run directly in your browser.",
+      "learnMore": "Learn more"
+    }
+  },
+  "challenges": {
+    "title": "CTF Challenges",
+    "description": "Test your skills with these computer security challenges. Each challenge will allow you to apply ethical hacking concepts in a controlled environment.",
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "category": {
+      "web": "Web",
+      "crypto": "Cryptography",
+      "forensics": "Forensics",
+      "reversing": "Reverse Engineering"
+    },
+    "locked": "Complete previous challenges to unlock",
+    "points": "points",
+    "startChallenge": "Start challenge",
+    "challenges": {
+      "xssBasic": {
+        "title": "Basic XSS",
+        "description": "Explore Cross-Site Scripting vulnerabilities in a simple web application."
+      },
+      "inputValidation": {
+        "title": "Input Validation",
+        "description": "Find and exploit flaws in form data validation."
+      },
+      "sqlInjection": {
+        "title": "SQL Injection",
+        "description": "Access confidential information by exploiting an SQL injection vulnerability."
+      },
+      "authBypass": {
+        "title": "Authentication Bypass",
+        "description": "Find a way to bypass the authentication system."
+      }
+    }
+  },
+  "courses": {
+    "title": "Interactive Mini-courses",
+    "description": "Learn computer security concepts with these interactive mini-courses. Each module includes practical examples and editable code to experiment with.",
+    "level": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "duration": "minutes",
+    "includes": "Includes practical examples",
+    "courses": {
+      "sqlInjection": {
+        "title": "Introduction to SQL Injection",
+        "description": "Learn the fundamentals of SQL injections and how to exploit them ethically.",
+        "duration": "30"
+      },
+      "xss": {
+        "title": "Cross-Site Scripting (XSS)",
+        "description": "Discover how XSS attacks work and how to protect your web applications.",
+        "duration": "45"
+      },
+      "formSecurity": {
+        "title": "Web Form Security",
+        "description": "Learn to validate user inputs and prevent common attacks on forms.",
+        "duration": "40"
+      },
+      "secureAuth": {
+        "title": "Secure Authentication",
+        "description": "Implement robust authentication systems and avoid common vulnerabilities.",
+        "duration": "60"
+      }
+    }
+  },
+  "about": {
+    "title": "About the Project",
+    "subtitle": "An educational platform to learn cybersecurity in a practical way",
+    "description": {
+      "part1": "This project was created with the goal of providing a safe and accessible environment for cybersecurity beginners and ethical hacking students to practice real skills directly from their browser, without the need to set up complex environments.",
+      "part2": "Through CTF (Capture The Flag) challenges and interactive mini-courses, users can learn fundamental computer security concepts, such as SQL injections, Cross-Site Scripting (XSS), input validation, and much more, all in a controlled and ethical environment.",
+      "part3": "All vulnerabilities and techniques presented on this platform are for educational purposes, and we promote the responsible and ethical use of this knowledge."
+    },
+    "features": {
+      "title": "Main features",
+      "ctf": {
+        "title": "CTF Challenges",
+        "items": ["Practical security challenges", "Hint system and levels", "Flag validation", "Progress tracking"]
+      },
+      "courses": {
+        "title": "Mini-courses",
+        "items": ["Step-by-step explanations", "Editable code", "Practical examples", "Additional resources"]
+      }
+    },
+    "technologies": {
+      "title": "Technologies used",
+      "frontend": {
+        "title": "Frontend",
+        "items": ["Next.js (React)", "Tailwind CSS", "Shadcn UI", "Monaco Editor (for code)"]
+      },
+      "storage": {
+        "title": "Storage",
+        "items": ["LocalStorage (progress)", "Static files"]
+      }
+    },
+    "contribute": {
+      "title": "Contribute to the project",
+      "description": "This project is open source and contributions are welcome. If you want to collaborate, you can do so in the following ways:",
+      "items": [
+        "Add new CTF challenges",
+        "Create mini-courses on security topics",
+        "Improve documentation",
+        "Report bugs or suggest improvements"
+      ],
+      "github": "View on GitHub"
+    }
+  },
+  "challenge": {
+    "xssBasic": {
+      "title": "Challenge: Basic XSS",
+      "description": "You've found a website that directly displays what you enter in a text field. Your goal is to find an XSS (Cross-Site Scripting) vulnerability and exploit it to get the flag.",
+      "objective": {
+        "title": "Objective",
+        "description": "Execute an alert() with the message 'xss' to get the flag."
+      },
+      "tabs": {
+        "challenge": "Challenge",
+        "hints": "Hints",
+        "submit": "Submit Flag"
+      },
+      "vulnerableWebsite": {
+        "title": "Vulnerable website",
+        "description": "This site displays what you write. Can you find a vulnerability?",
+        "inputLabel": "Enter your message:",
+        "submitButton": "Submit",
+        "resultLabel": "Result:"
+      },
+      "hints": {
+        "noHints": "You haven't revealed any hints yet.",
+        "revealHint": "Reveal hint",
+        "hintsList": [
+          "The site directly displays what you enter without filtering. What would happen if you enter HTML code?",
+          "Try inserting a <script> tag with JavaScript code.",
+          "To get the flag, you need to make an alert() execute with the message 'xss'."
+        ]
+      },
+      "submitFlag": {
+        "title": "Submit Flag",
+        "description": "Once you've found the flag, enter it here to complete the challenge.",
+        "inputLabel": "Flag (format CTF{text}):",
+        "placeholder": "CTF{...}",
+        "verifyButton": "Verify Flag",
+        "completedButton": "Already completed",
+        "success": "Correct! You've completed the challenge.",
+        "error": "Incorrect flag. Try again.",
+        "foundFlag": "You've found the flag!"
+      }
+    }
+  },
+  "course": {
+    "sqlInjection": {
+      "title": "Introduction to SQL Injection",
+      "tabs": {
+        "content": "Content",
+        "resources": "Resources"
+      },
+      "step": "Step",
+      "of": "of",
+      "steps": {
+        "intro": {
+          "title": "Introduction to SQL Injection",
+          "content": {
+            "part1": "SQL injections are one of the most common and dangerous attacks against web applications. They occur when an attacker can insert or \"inject\" malicious SQL code into a query that the application sends to its database.",
+            "dangerTitle": "Why is it dangerous?",
+            "dangerContent": "A successful SQL Injection attack can allow attackers to:",
+            "dangerItems": [
+              "Access sensitive data",
+              "Modify data in the database",
+              "Delete important information",
+              "In some cases, execute commands on the server"
+            ],
+            "part2": "In this mini-course, you'll learn to identify SQL Injection vulnerabilities, how to exploit them ethically, and most importantly, how to protect your applications against them."
+          }
+        },
+        "identifying": {
+          "title": "Identifying vulnerable code",
+          "content": {
+            "part1": "The first step to understanding SQL injections is to identify vulnerable code. Look at the following example of a typical login function:",
+            "part2": "This code is vulnerable because it directly concatenates user input values into the SQL query. If an attacker enters special values, they can manipulate the structure of the query.",
+            "exampleTitle": "Attack example",
+            "exampleContent": "If an attacker enters admin' -- as a username, the resulting query would be:",
+            "exampleQuery": "SELECT * FROM users WHERE username = 'admin' --' AND password = 'anything'",
+            "exampleExplanation": "The -- comments out the rest of the query, causing the password check to be ignored."
+          }
+        },
+        "practice": {
+          "title": "Practice: Exploiting a vulnerability",
+          "content": {
+            "part1": "Now it's your turn to practice. Modify the code in the editor to exploit the SQL Injection vulnerability. Your goal is to modify the testLogin() function to return true without knowing the correct password.",
+            "hintTitle": "Hint",
+            "hintContent": "Try using SQL comments (-- or #) or the OR clause to manipulate the query logic."
+          }
+        },
+        "prevention": {
+          "title": "SQL Injection Prevention",
+          "content": {
+            "part1": "Now that you understand how SQL injections work, it's crucial to learn how to prevent them. Here are some effective techniques:",
+            "technique1": {
+              "title": "1. Using Parameterized Queries",
+              "description": "Parameterized queries (or prepared statements) separate SQL code from data, preventing user data from being interpreted as SQL code."
+            },
+            "technique2": {
+              "title": "2. ORM (Object-Relational Mapping)",
+              "description": "Using an ORM like Sequelize, Prisma, or TypeORM can help prevent SQL injections by automatically handling data sanitization."
+            },
+            "technique3": {
+              "title": "3. Input Validation",
+              "description": "Always validate and sanitize user input data before using it in SQL queries."
+            },
+            "technique4": {
+              "title": "4. Principle of Least Privilege",
+              "description": "Use database accounts with the minimum privileges necessary for the application."
+            },
+            "bestPracticeTitle": "Best practice",
+            "bestPracticeContent": "Never trust user input data. Always validate, sanitize, and use parameterized queries to protect your application against SQL injections."
+          }
+        },
+        "finalExercise": {
+          "title": "Final Exercise",
+          "content": {
+            "part1": "To finish this mini-course, let's fix the vulnerable code we saw earlier. Your task is to modify the loginUser function to use parameterized queries and be secure against SQL injections.",
+            "solutionTitle": "Example solution"
+          }
+        }
+      },
+      "resources": {
+        "title": "Additional resources",
+        "description": "Links and supplementary materials to delve deeper into the topic.",
+        "documentation": {
+          "title": "Documentation and guides",
+          "items": [
+            {
+              "title": "OWASP: SQL Injection",
+              "url": "https://owasp.org/www-community/attacks/SQL_Injection"
+            },
+            {
+              "title": "PortSwigger: SQL Injection",
+              "url": "https://portswigger.net/web-security/sql-injection"
+            }
+          ]
+        },
+        "tools": {
+          "title": "Practice tools",
+          "items": [
+            {
+              "title": "SQLMap - SQL Injection detection and exploitation tool",
+              "url": "https://github.com/sqlmapproject/sqlmap"
+            },
+            {
+              "title": "Hacksplaining: SQL Injection Interactive Tutorial",
+              "url": "https://www.hacksplaining.com/exercises/sql-injection"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
