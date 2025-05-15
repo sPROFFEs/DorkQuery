@@ -41,125 +41,45 @@ interface DorkBlock {
   description: string
 }
 
-// Additional advanced dorks and exploit-based dorks
+type DorkBlockType =
+  | "site"
+  | "inurl"
+  | "filetype"
+  | "intitle"
+  | "intext"
+  | "cache"
+  | "related"
+  | "ext"
+  | "allintext"
+  | "allintitle"
+  | "allinurl"
+  | "allinanchor"
+  | "exploitdb"
+  | "custom"
+
 const EXPLOIT_DB_DORKS = [
-  {
-    type: "exploitdb",
-    operator: "inurl:",
-    placeholder: "view/index.shtml",
-    description: "Common vulnerable paths (ExploitDB)",
-  },
-  {
-    type: "exploitdb",
-    operator: "intitle:",
-    placeholder: "index of /admin",
-    description: "Directory listing for admin portals",
-  },
-  {
-    type: "exploitdb",
-    operator: "filetype:sql",
-    placeholder: "passwords",
-    description: "Possible SQL dump with passwords",
-  },
-  {
-    type: "exploitdb",
-    operator: "ext:log",
-    placeholder: "error",
-    description: "Publicly exposed .log files",
-  },
-  {
-    type: "exploitdb",
-    operator: "filetype:conf",
-    placeholder: "apache",
-    description: "Configuration files exposed",
-  },
-  {
-    type: "exploitdb",
-    operator: "inurl:login",
-    placeholder: "admin",
-    description: "Common login pages indexed",
-  },
-  {
-    type: "exploitdb",
-    operator: "ext:bak",
-    placeholder: "config",
-    description: "Backup configuration files exposed",
-  }
+  { type: "exploitdb", operator: "inurl:", placeholder: "view/index.shtml", description: "Common vulnerable paths (ExploitDB)" },
+  { type: "exploitdb", operator: "intitle:", placeholder: "index of /admin", description: "Directory listing for admin portals" },
+  { type: "exploitdb", operator: "filetype:sql", placeholder: "passwords", description: "Possible SQL dump with passwords" },
+  { type: "exploitdb", operator: "ext:log", placeholder: "error", description: "Publicly exposed .log files" },
+  { type: "exploitdb", operator: "filetype:conf", placeholder: "apache", description: "Configuration files exposed" },
+  { type: "exploitdb", operator: "inurl:login", placeholder: "admin", description: "Common login pages indexed" },
+  { type: "exploitdb", operator: "ext:bak", placeholder: "config", description: "Backup configuration files exposed" }
 ]
 
-const PREDEFINED_BLOCKS = [
-  {
-    type: "site",
-    operator: "site:",
-    placeholder: "example.com",
-    description: "Search within a specific website or domain",
-  },
-  {
-    type: "inurl",
-    operator: "inurl:",
-    placeholder: "admin",
-    description: "Search for pages with a specific word in the URL",
-  },
-  {
-    type: "filetype",
-    operator: "filetype:",
-    placeholder: "pdf",
-    description: "Search for specific file types",
-  },
-  {
-    type: "intitle",
-    operator: "intitle:",
-    placeholder: "index of",
-    description: "Search for pages with a specific word in the title",
-  },
-  {
-    type: "intext",
-    operator: "intext:",
-    placeholder: "password",
-    description: "Search for pages containing specific text",
-  },
-  {
-    type: "cache",
-    operator: "cache:",
-    placeholder: "example.com",
-    description: "Show Google’s cached version of a page",
-  },
-  {
-    type: "related",
-    operator: "related:",
-    placeholder: "example.com",
-    description: "Find sites related to a given domain",
-  },
-  {
-    type: "ext",
-    operator: "ext:",
-    placeholder: "log",
-    description: "Search by file extension (alternative to filetype)",
-  },
-  {
-    type: "allintext",
-    operator: "allintext:",
-    placeholder: "login password",
-    description: "Find pages containing all specified words in the text",
-  },
-  {
-    type: "allintitle",
-    operator: "allintitle:",
-    placeholder: "admin login",
-    description: "Find pages containing all specified words in the title",
-  },
-  {
-    type: "allinurl",
-    operator: "allinurl:",
-    placeholder: "admin login",
-    description: "Find pages containing all specified words in the URL",
-  },
-  {
-    type: "allinanchor",
-    operator: "allinanchor:",
-    placeholder: "download free",
-    description: "Find pages with links containing all words in the anchor text",
-  },
+const PREDEFINED_BLOCKS: Omit<DorkBlock, "id" | "value">[] = [
+  { type: "site", operator: "site:", placeholder: "example.com", description: "Search within a specific website or domain" },
+  { type: "inurl", operator: "inurl:", placeholder: "admin", description: "Search for pages with a specific word in the URL" },
+  { type: "filetype", operator: "filetype:", placeholder: "pdf", description: "Search for specific file types" },
+  { type: "intitle", operator: "intitle:", placeholder: "index of", description: "Search for pages with a specific word in the title" },
+  { type: "intext", operator: "intext:", placeholder: "password", description: "Search for pages containing specific text" },
+  { type: "cache", operator: "cache:", placeholder: "example.com", description: "Show Google’s cached version of a page" },
+  { type: "related", operator: "related:", placeholder: "example.com", description: "Find sites related to a given domain" },
+  { type: "ext", operator: "ext:", placeholder: "log", description: "Search by file extension (alternative to filetype)" },
+  { type: "allintext", operator: "allintext:", placeholder: "login password", description: "Find pages containing all specified words in the text" },
+  { type: "allintitle", operator: "allintitle:", placeholder: "admin login", description: "Find pages containing all specified words in the title" },
+  { type: "allinurl", operator: "allinurl:", placeholder: "admin login", description: "Find pages containing all specified words in the URL" },
+  { type: "allinanchor", operator: "allinanchor:", placeholder: "download free", description: "Find pages with links containing all words in the anchor text" },
   ...EXPLOIT_DB_DORKS
 ]
 
