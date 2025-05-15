@@ -44,15 +44,12 @@ export function DorkBuilderArea({
     })
   );
 
-  // Handle adding a new block to the builder
   const handleAddBlock = (block: DorkBlockType) => {
     const newBlock = createNewBlock(block);
     setBlocks((prev) => [...prev, newBlock]);
-    
-    if (onAddBlock) {
-      onAddBlock(block);
-    }
-    
+
+    if (onAddBlock) onAddBlock(block);
+
     toast({
       title: "Block added",
       description: `Added ${block.type === 'custom' ? 'custom' : block.operator} block`,
@@ -60,7 +57,6 @@ export function DorkBuilderArea({
     });
   };
 
-  // Handle updating a block's value
   const handleUpdateBlock = (id: string, value: string) => {
     setBlocks((prevBlocks) =>
       prevBlocks.map((block) =>
@@ -69,15 +65,12 @@ export function DorkBuilderArea({
     );
   };
 
-  // Handle removing a block
   const handleRemoveBlock = (id: string) => {
     setBlocks((prevBlocks) => prevBlocks.filter((block) => block.id !== id));
   };
 
-  // Handle drag end
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
     if (over && active.id !== over.id) {
       setBlocks((blocks) => {
         const oldIndex = blocks.findIndex((block) => block.id === active.id);
@@ -87,10 +80,8 @@ export function DorkBuilderArea({
     }
   };
 
-  // Clear all blocks
   const handleClearAll = () => {
     if (blocks.length === 0) return;
-    
     setBlocks([]);
     toast({
       title: "Cleared all blocks",
@@ -99,14 +90,13 @@ export function DorkBuilderArea({
     });
   };
 
-  // Update the query whenever blocks or search engine changes
   useEffect(() => {
     const formattedQuery = formatDorkQuery(blocks, selectedEngine);
     onQueryChange(formattedQuery);
   }, [blocks, selectedEngine, onQueryChange]);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex flex-col max-w-2xl mx-auto w-full h-full px-4">
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Dork Builder</h2>
         {blocks.length > 0 && (
@@ -135,7 +125,7 @@ export function DorkBuilderArea({
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={blocks}
+              items={blocks.map((b) => b.id)}
               strategy={verticalListSortingStrategy}
             >
               <div className="space-y-2">

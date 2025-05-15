@@ -51,27 +51,17 @@ export function DorkBlock({ block, onUpdate, onRemove, isLast }: DorkBlockProps)
     zIndex: isDragging ? 2 : 1,
   };
 
-  // Map block type to corresponding icon
   const getIcon = () => {
     switch (block.icon) {
-      case 'globe':
-        return <Globe className="h-4 w-4" />;
-      case 'link':
-        return <Link className="h-4 w-4" />;
-      case 'file':
-        return <File className="h-4 w-4" />;
-      case 'heading':
-        return <Heading className="h-4 w-4" />;
-      case 'text':
-        return <FileText className="h-4 w-4" />;
-      case 'history':
-        return <History className="h-4 w-4" />;
-      case 'link-2':
-        return <Link2 className="h-4 w-4" />;
-      case 'edit-3':
-        return <Edit3 className="h-4 w-4" />;
-      default:
-        return <Edit3 className="h-4 w-4" />;
+      case 'globe': return <Globe className="h-4 w-4" />;
+      case 'link': return <Link className="h-4 w-4" />;
+      case 'file': return <File className="h-4 w-4" />;
+      case 'heading': return <Heading className="h-4 w-4" />;
+      case 'text': return <FileText className="h-4 w-4" />;
+      case 'history': return <History className="h-4 w-4" />;
+      case 'link-2': return <Link2 className="h-4 w-4" />;
+      case 'edit-3': return <Edit3 className="h-4 w-4" />;
+      default: return <Edit3 className="h-4 w-4" />;
     }
   };
 
@@ -98,7 +88,7 @@ export function DorkBlock({ block, onUpdate, onRemove, isLast }: DorkBlockProps)
             </span>
           )}
         </div>
-        
+
         <Input
           type="text"
           value={block.value}
@@ -108,7 +98,7 @@ export function DorkBlock({ block, onUpdate, onRemove, isLast }: DorkBlockProps)
           onBlur={() => setIsFocused(false)}
           className="flex-1 border-none bg-transparent px-2 py-1 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
-        
+
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -125,15 +115,17 @@ export function DorkBlock({ block, onUpdate, onRemove, isLast }: DorkBlockProps)
             <p>Remove block</p>
           </TooltipContent>
         </Tooltip>
-        
+
         <Tooltip>
           <TooltipTrigger asChild>
-            <div
+            <Button
               {...listeners}
+              variant="ghost"
+              size="icon"
               className="absolute -left-3 top-1/2 h-6 w-6 -translate-y-1/2 cursor-move rounded-full bg-muted opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
             >
               <GripVertical className="h-4 w-4 text-muted-foreground" />
-            </div>
+            </Button>
           </TooltipTrigger>
           <TooltipContent side="left">
             <p>Drag to reorder</p>
