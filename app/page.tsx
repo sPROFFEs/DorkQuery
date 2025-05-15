@@ -12,6 +12,7 @@ import { BlockPalette } from "../components/block-palette"
 import { DorkCanvas } from "../components/dork-canvas"
 import { DorkPreview } from "../components/dork-preview"
 import { useMediaQuery } from "@/hooks/use-mobile"
+import "../app/globals.css" // Add this import to ensure CSS is loaded
 
 // Define block types and their colors
 export const BLOCK_TYPES = {

@@ -31,6 +31,13 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Debug output
+        run: |
+          echo "Checking for CSS files in the build output"
+          find dist -name "*.css" -type f
+          echo "Checking HTML files for CSS references"
+          grep -r "<link.*css" dist || echo "No CSS links found"
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
