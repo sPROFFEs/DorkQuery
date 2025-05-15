@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  distDir: './dist',
+  distDir: 'dist',
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   eslint: {
     ignoreDuringBuilds: true,
@@ -12,7 +12,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  trailingSlash: true,
+  reactStrictMode: true,
 }
 
 export default nextConfig
