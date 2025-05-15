@@ -31,7 +31,7 @@ jobs:
         uses: actions/configure-pages@v4
         
       - name: Install dependencies
-        run: npm Install --legacy-peer-deps
+        run: npm install --legacy-peer-deps
         
       - name: Build with Next.js
         run: npm run build
