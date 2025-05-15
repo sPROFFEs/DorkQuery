@@ -24,12 +24,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          # Remove the cache option that's causing issues
-          # cache: 'npm'
 
       - name: Install dependencies
-        # Use --no-package-lock to avoid issues with missing lock file
-        run: npm install --no-package-lock
+        run: npm install --legacy-peer-deps
 
       - name: Build project
         run: npm run build
