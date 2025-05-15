@@ -34,8 +34,7 @@ jobs:
         run: npm install date-fns@3.6.0
       
       - name: Fix missing dependencies
-        run: npm install @dnd-kit/sortable @dnd-kit/utilities
-        run: npm install react@18.3.1 react-dom@18.3.1
+        run: npm install @dnd-kit/sortable @dnd-kit/utilities react@18.3.1 react-dom@18.3.1
 
       - name: Install dependencies
         run: npm install
