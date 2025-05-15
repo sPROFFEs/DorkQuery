@@ -1,12 +1,3 @@
-interface DorkBlock {
-  id: string
-  type: DorkBlockType
-  operator: string
-  value: string
-  placeholder: string
-  description: string
-}
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -51,52 +42,15 @@ type DorkBlockType =
   | "cache"
   | "related"
   | "custom"
-  | "exploitdb"  // <--- agregado
 
-const EXPLOIT_DB_BLOCKS: Omit<DorkBlock, "id" | "value">[] = [
-  {
-    type: "exploitdb",
-    operator: "inurl:",
-    placeholder: "view/index.shtml",
-    description: "Common vulnerable paths (ExploitDB)",
-  },
-  {
-    type: "exploitdb",
-    operator: "intitle:",
-    placeholder: "index of /admin",
-    description: "Directory listing for admin portals",
-  },
-  {
-    type: "exploitdb",
-    operator: "filetype:",
-    placeholder: "sql",
-    description: "Possible SQL dump with passwords",
-  },
-  {
-    type: "exploitdb",
-    operator: "ext:",
-    placeholder: "log",
-    description: "Publicly exposed .log files",
-  },
-  {
-    type: "exploitdb",
-    operator: "filetype:",
-    placeholder: "conf",
-    description: "Configuration files exposed",
-  },
-  {
-    type: "exploitdb",
-    operator: "inurl:",
-    placeholder: "login",
-    description: "Common login pages indexed",
-  },
-  {
-    type: "exploitdb",
-    operator: "ext:",
-    placeholder: "bak",
-    description: "Backup configuration files exposed",
-  },
-]
+interface DorkBlock {
+  id: string
+  type: DorkBlockType
+  operator: string
+  value: string
+  placeholder: string
+  description: string
+}
 
 const PREDEFINED_BLOCKS: Omit<DorkBlock, "id" | "value">[] = [
   {
@@ -141,11 +95,7 @@ const PREDEFINED_BLOCKS: Omit<DorkBlock, "id" | "value">[] = [
     placeholder: "example.com",
     description: "Find sites related to a given domain",
   },
-
-  // Aquí agregamos los bloques de ExploitDB al final para que estén disponibles
-  ...EXPLOIT_DB_BLOCKS,
 ]
-
 
 const generateId = () => Math.random().toString(36).substring(2, 9)
 
@@ -290,7 +240,7 @@ export default function DorkingLab() {
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center gap-2">
             <Code className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">Dorking Lab – OSINT Tool</h1>
+            <h1 className="text-xl font-bold">DorkLabs – OSINT Tool</h1>
           </div>
           <Button variant="ghost" size="icon" onClick={cycleTheme} title="Toggle theme (Dark, Light, High Contrast)">
             {theme === "dark" ? (
@@ -476,7 +426,7 @@ export default function DorkingLab() {
         </div>
       </main>
       <footer className="mt-12 text-center text-muted-foreground text-sm">
-        © 2025 Dorking Lab • Made for OSINT enthusiasts
+        © 2025 DorkLabs • Made for OSINT enthusiasts
       </footer>
     </div>
   )
