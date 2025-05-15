@@ -32,6 +32,15 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+interface DorkBlock {
+  id: string
+  type: DorkBlockType
+  operator: string
+  value: string
+  placeholder: string
+  description: string
+}
+
 // Additional advanced dorks and exploit-based dorks
 const EXPLOIT_DB_DORKS = [
   {
@@ -153,7 +162,6 @@ const PREDEFINED_BLOCKS = [
   },
   ...EXPLOIT_DB_DORKS
 ]
-
 
 const generateId = () => Math.random().toString(36).substring(2, 9)
 
