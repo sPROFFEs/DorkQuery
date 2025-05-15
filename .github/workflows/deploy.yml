@@ -29,6 +29,9 @@ jobs:
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
+      - name: Fix peer dependency conflict
+        run: npm install date-fns@3.6.0
       
       - name: Fix missing dependencies
         run: npm install @dnd-kit/sortable @dnd-kit/utilities
