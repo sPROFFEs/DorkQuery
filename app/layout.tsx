@@ -1,6 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter, JetBrains_Mono } from "next/font/google"
+import CriticalCSS from "@/components/critical-css"
 import "./globals.css"
 
 const inter = Inter({
@@ -26,7 +27,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>{children}</body>
+      <head>
+        <meta name="color-scheme" content="dark" />
+        {/* Add critical CSS inline */}
+        <CriticalCSS />
+        {/* Add fallback CSS */}
+        <link rel="stylesheet" href={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/fallback.css`} />
+      </head>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-black text-white`}>{children}</body>
     </html>
   )
 }

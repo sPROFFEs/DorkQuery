@@ -18,25 +18,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci
 
       - name: Build project
         run: npm run build
+        env:
+          # Set the base path for GitHub Pages
+          NEXT_PUBLIC_BASE_PATH: "/visual-dork-builder"
 
-      - name: Debug output
+      - name: Debug build output
         run: |
           echo "Checking for CSS files in the build output"
           find dist -name "*.css" -type f
           echo "Checking HTML files for CSS references"
           grep -r "<link.*css" dist || echo "No CSS links found"
+          echo "Listing all files in dist directory"
+          find dist -type f | sort
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

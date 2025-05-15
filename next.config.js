@@ -12,8 +12,11 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // This is critical for CSS processing
+  // Critical for CSS processing in static exports
+  transpilePackages: ["lucide-react"],
+  // Ensure CSS is properly extracted
   webpack: (config) => {
+    // This helps with CSS extraction for static exports
     return config
   },
 }
