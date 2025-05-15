@@ -2,8 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]  # Se ejecuta al hacer push en main
-  workflow_dispatch:  # Permite lanzarlo manualmente desde GitHub
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -17,32 +17,30 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
+          # Remove the cache option that's causing issues
+          # cache: 'npm'
 
-      # Asegúrate de tener package-lock.json. Si no lo tienes, usa `npm install` en vez de `ci`.
       - name: Install dependencies
-        run: npm ci
+        # Use --no-package-lock to avoid issues with missing lock file
+        run: npm install --no-package-lock
 
-      # Asegúrate de que vite.config.ts tiene base: '/visual-dork-builder/'
       - name: Build project
         run: npm run build
 
-      - name: Setup GitHub Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload build artifact
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist  # Esto debe coincidir con tu outDir en vite.config.ts
+          path: ./dist
 
   deploy:
     needs: build
@@ -50,7 +48,6 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
