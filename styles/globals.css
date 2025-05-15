@@ -17,6 +17,9 @@ textarea {
     text-wrap: balance;
   }
 }
+.force-black-text {
+  color: black !important;
+}
 
 @layer base {
   :root {
