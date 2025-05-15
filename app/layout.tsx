@@ -17,7 +17,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.png" type="image/png" />
+        {/* Puedes añadir más variantes si quieres */}
+      </head>
       <body>{children}</body>
     </html>
-  )
+  );
 }
+
