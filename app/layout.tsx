@@ -3,8 +3,12 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'DorkLabs',
-  description: 'Created with by pr0ff3'
+  description: 'Created with by pr0ff3',
+  icons: {
+    icon: '/favicon.png',
+  },
 }
+
 
 export default function RootLayout({
   children,
