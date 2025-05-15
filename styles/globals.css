@@ -6,19 +6,24 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-input[type="text"],
-textarea {
+input.force-black-text,
+input.force-black-text::placeholder {
   color: black !important;
+  opacity: 1 !important; /* para el placeholder */
 }
 
+.dark input.force-black-text,
+.dark input.force-black-text::placeholder {
+  color: black !important;
+  opacity: 1 !important;
+  background-color: white !important;
+  border-color: #ccc !important;
+}
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-}
-.force-black-text {
-  color: black !important;
 }
 
 @layer base {

@@ -296,7 +296,7 @@ export default function DorkingLab() {
                     placeholder={block.placeholder}
                     value={block.value}
                     onChange={(e) => updateBlockValue(block.id, e.target.value)}
-                    className="flex-grow rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text"
+                    className="flex-grow rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text text-black"
                     aria-label={`Input for ${block.operator} block`}
                   />
                   <Button
@@ -370,7 +370,7 @@ export default function DorkingLab() {
                 placeholder="Operator (e.g., myop:)"
                 value={newCustomOperator}
                 onChange={(e) => setNewCustomOperator(e.target.value)}
-                className="w-full rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text"
+                className="w-full rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text text-black"
                 aria-label="Custom operator"
               />
               <input
@@ -378,7 +378,7 @@ export default function DorkingLab() {
                 placeholder="Placeholder (e.g., something)"
                 value={newCustomPlaceholder}
                 onChange={(e) => setNewCustomPlaceholder(e.target.value)}
-                className="w-full rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text"
+                className="w-full rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text text-black"
                 aria-label="Custom placeholder"
               />
               <input
@@ -386,7 +386,7 @@ export default function DorkingLab() {
                 placeholder="Description"
                 value={newCustomDescription}
                 onChange={(e) => setNewCustomDescription(e.target.value)}
-                className="w-full rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text"
+                className="w-full rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text text-black"
                 aria-label="Custom description"
               />
               <Button onClick={saveCustomBlock} className="w-full">
