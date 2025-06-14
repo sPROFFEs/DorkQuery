@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Static Dork Builder</title>
+    <title>DorkQuery</title>
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
@@ -123,9 +123,12 @@
     </section>
 
     <footer>
-        <p>&copy; 2024 Static Dork Builder</p>
+        <p>&copy; <span id="year"></span> DorkQuery - by pr0ff3</p>
     </footer>
 
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
     <!-- SortableJS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="js/main.js" type="module"></script>
