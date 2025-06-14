@@ -42,6 +42,13 @@
             <section id="ghdb-explorer-section" aria-labelledby="ghdb-explorer-title">
                  <h2 id="ghdb-explorer-title">GHDB Explorer</h2>
                  <div id="ghdb-search-area">
+                    <div class="ghdb-filter-item">
+                        <label for="ghdb-category-filter">Category:</label>
+                        <select id="ghdb-category-filter">
+                            <option value="All">All Categories</option>
+                            <!-- Categories will be populated by JavaScript -->
+                        </select>
+                    </div>
                      <input type="search" id="ghdb-search-input" placeholder="Search GHDB...">
                      <button id="ghdb-search-button">Search</button>
                  </div>
