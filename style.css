@@ -2,10 +2,18 @@
 :root {
     --primary-color: #4a90e2; /* A muted blue */
     --primary-hover-color: #3a7bc8;
+    --accent-blue: var(--primary-color); /* For SortableJS ghost, if needed */
+    --accent-blue-muted: rgba(74, 144, 226, 0.3); /* Lighter, muted blue for ghost bg */
     --secondary-color: #5cb85c; /* Green for save/add */
     --secondary-hover-color: #4cae4c;
     --destructive-color: #d9534f;
     --destructive-hover-color: #c9302c;
+
+    --accent-cyan: #22d3ee; /* For GHDB entries, distinct from primary blue */
+    --accent-green: var(--secondary-color); /* Re-use for consistency or define new if needed */
+    --accent-green-hover: var(--secondary-hover-color);
+    --accent-link-color: var(--primary-color); /* Or a specific link color */
+
 
     --bg-color: #22272e; /* Dark gray */
     --bg-panel-color: #2d333b; /* Slightly lighter for panels */
@@ -17,7 +25,7 @@
     --text-muted-color: #8b949e;
     --text-on-primary-color: #ffffff;
     --text-on-secondary-color: #ffffff;
-
+    
     --border-color: #444c56;
     --border-light-color: #586069;
     --border-focus-color: var(--primary-color);
@@ -114,7 +122,7 @@ section h2 {
 
 /* ==== Block Lists (Palette, Workspace, GHDB Results) ==== */
 .block-list {
-    min-height: 80px;
+    min-height: 80px; 
     padding: 0.5rem;
     border-radius: var(--border-radius);
     background-color: var(--bg-color); /* Slightly darker than panel for contrast */
@@ -204,7 +212,7 @@ section h2 {
     font-weight: bold;
     font-size: 0.8em; /* Slightly smaller font for 'X' */
     line-height: 1; /* Ensure 'X' is centered if padding makes it look off */
-    margin-left: 0.5rem;
+    margin-left: 0.5rem; 
     transition: background-color 0.2s ease;
 }
 .dork-block .remove-block-btn:hover {
@@ -406,4 +414,129 @@ button[type="submit"]:hover {
 }
 ::-webkit-scrollbar-thumb:hover {
     background: var(--border-color);
+}
+
+
+/* SortableJS Feedback Classes */
+.dork-block-ghost { /* Placeholder style for where the item will be dropped */
+    opacity: 0.4;
+    background-color: var(--accent-blue-muted); 
+    border: 2px dashed var(--accent-blue);
+}
+
+.dork-block-chosen, 
+.dork-block-drag { /* Style for the item being dragged */
+    opacity: 0.85 !important; /* Important to override potential inline styles by SortableJS */
+    transform: scale(1.02); 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    cursor: grabbing !important;
+}
+
+
+/* GHDB Explorer Section specific styling */
+#ghdb-explorer-section { 
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; 
+    flex-grow: 1; 
+    overflow-y: hidden; 
+    min-height: 0; /* Important for flex children in a flex column parent */
+}
+
+/* #ghdb-search-area is mostly styled by general form styles, ensure margin is appropriate */
+#ghdb-search-area {
+    margin-bottom: 0.5rem; 
+}
+
+#ghdb-results {
+    min-height: 150px; 
+    flex-grow: 1; /* Allow results to take available space */
+    overflow-y: auto;
+    padding: 0.5rem; 
+    border: 1px solid var(--border-color); 
+    border-radius: var(--border-radius);
+    background-color: var(--bg-color); 
+}
+
+/* GHDB Entry specific styling (inside #ghdb-results) */
+/* Re-using .ghdb-entry class from previous attempt, but ensuring it's complete here */
+.ghdb-entry {
+    background-color: var(--bg-element-color); 
+    border: 1px solid var(--border-light-color);
+    border-left-width: 5px;
+    border-left-color: var(--accent-cyan); 
+    border-radius: var(--border-radius);
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; 
+    gap: 0.4rem; 
+}
+.ghdb-entry:hover {
+    border-color: var(--accent-cyan); /* Highlight on hover */
+    box-shadow: var(--shadow-md);
+}
+
+.ghdb-entry h4 { 
+    font-size: 1rem; 
+    margin: 0 0 0.25rem 0; 
+    color: var(--accent-cyan); /* Use accent color for title */
+    font-weight: 600;
+}
+.ghdb-meta { 
+    font-size: 0.8em;
+    color: var(--text-muted-color);
+    margin-bottom: 0.4rem;
+}
+.ghdb-dork { 
+    display: block;
+    background-color: var(--bg-color); 
+    padding: 0.5rem;
+    border-radius: var(--border-radius); 
+    margin-bottom: 0.4rem;
+    font-family: var(--font-family-mono);
+    word-break: break-all; /* Prevent long dorks from breaking layout */
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    font-size: 0.85em;
+}
+.ghdb-entry a.ghdb-link { 
+    font-size: 0.85em;
+    color: var(--accent-link-color); /* Use defined link color */
+    text-decoration: none;
+    display: inline-block; 
+    margin-top: 0.25rem;
+}
+.ghdb-entry a.ghdb-link:hover {
+    text-decoration: underline;
+}
+
+.import-ghdb-btn { 
+    margin-top: 0.5rem;
+    background-color: var(--accent-green);
+    color: var(--text-on-secondary-color);
+    padding: 0.3rem 0.7rem; 
+    font-size: 0.85rem;
+    border-radius: var(--border-radius);
+    border:none;
+    cursor: pointer;
+    align-self: flex-start; /* Align button to the left under content */
+}
+.import-ghdb-btn:hover {
+    background-color: var(--accent-green-hover);
+}
+
+/* Styles for loading, info, and error messages within GHDB results or other areas */
+.loading-message, .info-message, .error-message {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-muted-color);
+    font-style: italic;
+}
+.error-message {
+    color: var(--destructive-color); 
+    font-style: normal;
+    font-weight: 500;
 }

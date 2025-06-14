@@ -1,5 +1,7 @@
-import { initBlockManager, updateQueryOutput } from './blockManager.js';
-import { initCustomBlockEditor } from './customBlock.js'; // Import
+import * as blockManager from './blockManager.js'; // Import all exports as blockManager object
+import { initCustomBlockEditor } from './customBlock.js';
+import { initGhdbExplorer } from './ghdbExplorerUI.js';
+import { initDragAndDrop, _setBlockManagerModule } from './dnd.js'; // Import DnD functions
 import { qs } from './domUtils.js';
 
 /**
@@ -7,13 +9,32 @@ import { qs } from './domUtils.js';
  */
 function main() {
     console.log("Static Dork Builder Initializing...");
-    initBlockManager();
-    initCustomBlockEditor(); // Initialize custom block editor
+    
+    // Provide blockManager module to dnd.js to resolve circular dependency pattern
+    _setBlockManagerModule(blockManager);
 
+    blockManager.initBlockManager(); 
+    initCustomBlockEditor(); 
+    
     const headerTitle = qs('header h1');
     if (headerTitle) {
         console.log('Found header:', headerTitle.textContent);
     }
+
+    function handleImportGhdbDorkFromExplorer(ghdbEntry) {
+        console.log('Importing GHDB Entry to workspace:', ghdbEntry);
+        const blockData = {
+            type: 'custom', 
+            operator: '',    
+            value: ghdbEntry.dork, 
+            placeholder: 'Imported GHDB dork', 
+            description: ghdbEntry.title, 
+        };
+        blockManager.addBlockToWorkspace(blockData); 
+    }
+
+    initGhdbExplorer(handleImportGhdbDorkFromExplorer); 
+    initDragAndDrop(); // Initialize Drag and Drop functionality
 
     // Setup Search Engine Logic and Execute Search Button
     const searchEngineSelect = qs('#search-engine-select');

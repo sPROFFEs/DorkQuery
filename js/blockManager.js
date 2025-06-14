@@ -10,10 +10,79 @@ const predefinedBlocksData = [
     { id: 'cache', type: 'cache', operator: 'cache:', placeholder: 'example.com', description: 'Show Google\'s cached version of a page.' }
 ];
 
+const CUSTOM_BLOCKS_STORAGE_KEY = 'staticDorkBuilder_customBlocks';
+const NEXT_CUSTOM_ID_STORAGE_KEY = 'staticDorkBuilder_nextCustomId';
+
 let activeWorkspaceBlocks = [];
-let customBlockTemplates = []; // Initialize customBlockTemplates array
+let customBlockTemplates = []; 
 let nextWorkspaceId = 1;
-let nextCustomTemplateId = 1; // For custom block template IDs
+let nextCustomTemplateId = 1; 
+
+// Exported getter functions
+export function getPredefinedBlockById(id) {
+    return predefinedBlocksData.find(b => b.id === id);
+}
+export function getCustomBlockTemplateById(id) {
+    return customBlockTemplates.find(b => b.id === id);
+}
+
+function saveCustomBlockTemplatesToLocalStorage() {
+    try {
+        localStorage.setItem(CUSTOM_BLOCKS_STORAGE_KEY, JSON.stringify(customBlockTemplates));
+        localStorage.setItem(NEXT_CUSTOM_ID_STORAGE_KEY, nextCustomTemplateId.toString());
+    } catch (e) {
+        console.error("Error saving custom blocks to LocalStorage:", e);
+    }
+}
+
+function loadCustomBlockTemplatesFromLocalStorage() {
+    try {
+        const storedBlocks = localStorage.getItem(CUSTOM_BLOCKS_STORAGE_KEY);
+        if (storedBlocks) {
+            const parsedBlocks = JSON.parse(storedBlocks);
+            if (Array.isArray(parsedBlocks)) {
+                // TODO: Add more robust validation for each block's structure
+                customBlockTemplates = parsedBlocks;
+            } else {
+                console.warn("Invalid custom blocks data found in LocalStorage, expected an array.");
+                customBlockTemplates = [];
+            }
+        }
+
+        const storedNextId = localStorage.getItem(NEXT_CUSTOM_ID_STORAGE_KEY);
+        if (storedNextId) {
+            const parsedId = parseInt(storedNextId, 10);
+            if (!isNaN(parsedId) && parsedId > 0) {
+                nextCustomTemplateId = parsedId;
+            } else {
+                 console.warn("Invalid nextCustomTemplateId found in LocalStorage.");
+                 // Recalculate if needed, or default.
+                 recalculateNextCustomIdIfNeeded();
+            }
+        } else if (customBlockTemplates.length > 0) { 
+             recalculateNextCustomIdIfNeeded();
+        }
+
+    } catch (e) {
+        console.error("Error loading custom blocks from LocalStorage:", e);
+        customBlockTemplates = []; 
+        nextCustomTemplateId = 1; 
+    }
+}
+
+function recalculateNextCustomIdIfNeeded() {
+    if (customBlockTemplates.length > 0) {
+        const maxId = customBlockTemplates.reduce((max, block) => {
+            // Extracts number from "custom_tpl_NUMBER"
+            const idNum = parseInt((block.id || "").split('_').pop() || "0", 10); 
+            return idNum > max ? idNum : max;
+        }, 0);
+        nextCustomTemplateId = maxId + 1;
+    } else {
+        nextCustomTemplateId = 1;
+    }
+}
+
 
 function generateUniqueCustomId() {
     return `custom_tpl_${nextCustomTemplateId++}`;
@@ -33,25 +102,34 @@ function updateBlockValue(workspaceBlockId, newValue) {
 
 function removeBlockFromWorkspace(workspaceBlockId) {
     activeWorkspaceBlocks = activeWorkspaceBlocks.filter(b => b.id !== workspaceBlockId);
-    renderWorkspace();
+    renderWorkspace(); 
     updateQueryOutput(); // Update query output after removing a block
 }
 
-function addBlockToWorkspace(originalBlockData) {
+// Modified to accept an optional index for inserting the block
+export function addBlockToWorkspace(originalBlockData, index = -1) { 
     const newBlock = {
-        ...originalBlockData,
-        id: generateUniqueId(),
-        value: ''
+        id: generateUniqueId(), // This is the unique ID for the workspace instance
+        type: originalBlockData.type, // Keep the original type for styling etc.
+        operator: originalBlockData.operator,
+        placeholder: originalBlockData.placeholder,
+        description: originalBlockData.description,
+        value: originalBlockData.value || '' // Preserve incoming value (e.g., from GHDB) or default to empty
     };
-    activeWorkspaceBlocks.push(newBlock);
+
+    if (index !== -1 && index >= 0 && index <= activeWorkspaceBlocks.length) { // Ensure index is valid
+        activeWorkspaceBlocks.splice(index, 0, newBlock);
+    } else {
+        activeWorkspaceBlocks.push(newBlock);
+    }
     renderWorkspace();
-    updateQueryOutput(); // Update query output after adding a block
+    updateQueryOutput();
 }
 
 function renderWorkspace() {
     const workspaceContainer = qs('#workspace-blocks');
     const emptyMessage = qs('.empty-workspace-message'); // Assumes this element exists outside the container if innerHTML is cleared
-
+    
     if (!workspaceContainer) { // emptyMessage can be null if not found, handle that
         console.error('Workspace container #workspace-blocks not found!');
         return;
@@ -60,7 +138,7 @@ function renderWorkspace() {
     // Clear only block elements, keep the empty message if it's a child
     // Or, ensure emptyMessage is outside workspaceContainer if workspaceContainer.innerHTML is used.
     // For this implementation, let's assume emptyMessage is a direct child and we manage its display.
-
+    
     // Remove all children except the empty message
     while (workspaceContainer.firstChild && workspaceContainer.firstChild !== emptyMessage) {
         workspaceContainer.removeChild(workspaceContainer.firstChild);
@@ -104,12 +182,12 @@ function renderWorkspace() {
 
             const removeButton = createElement('button', 'remove-block-btn', 'X');
             removeButton.title = `Remove ${block.operator} block`;
-            removeButton.dataset.id = block.id;
+            removeButton.dataset.id = block.id; 
             removeButton.addEventListener('click', () => {
                 removeBlockFromWorkspace(block.id);
             });
             blockElement.appendChild(removeButton);
-
+            
             workspaceContainer.appendChild(blockElement);
         });
     }
@@ -131,42 +209,32 @@ function renderPalette() {
         // For custom blocks, type is 'custom'. For predefined, it's blockData.type.
         const displayType = isCustom ? 'custom' : blockData.type;
         // Ensure custom blocks get the .dork-block-custom style correctly
-        const typeClass = `dork-block-${displayType}`;
+        const typeClass = `dork-block-${displayType}`; 
         const blockElement = createElement('div', ['dork-block', typeClass]);
-
+        
         const operatorText = createElement('span', 'block-operator', blockData.operator);
         blockElement.appendChild(operatorText);
-
+        
         // Hidden description span
         // const descriptionSpan = createElement('span', 'block-description', blockData.description);
         // descriptionSpan.style.display = 'none';
         // blockElement.appendChild(descriptionSpan);
 
         blockElement.dataset.blockId = blockData.id; // This ID is template ID (predefined or custom_tpl_X)
-        blockElement.dataset.blockType = displayType;
+        blockElement.dataset.blockType = displayType; 
         blockElement.dataset.operator = blockData.operator;
         blockElement.dataset.placeholder = blockData.placeholder;
         blockElement.dataset.description = blockData.description;
+        
+        blockElement.title = blockData.description; 
 
-        blockElement.title = blockData.description;
+        blockElement.tabIndex = 0; 
+        blockElement.setAttribute('role', 'button'); // Still useful for accessibility if one wants to tab to it
+        blockElement.setAttribute('aria-label', `Draggable block: ${blockData.operator} - ${blockData.description}`);
 
-        blockElement.tabIndex = 0;
-        blockElement.setAttribute('role', 'button');
-        blockElement.setAttribute('aria-label', `Add ${blockData.operator} block: ${blockData.description}`);
-
-        const handlePaletteBlockActivation = () => {
-            // addBlockToWorkspace expects the full block data structure to copy from.
-            // blockData already holds this (either from predefinedBlocksData or customBlockTemplates)
-            addBlockToWorkspace(blockData);
-        };
-
-        blockElement.addEventListener('click', handlePaletteBlockActivation);
-        blockElement.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                handlePaletteBlockActivation();
-            }
-        });
+        // Event listeners for click/keydown to add to workspace are REMOVED.
+        // Drag and drop will be the primary interaction, handled by SortableJS.
+        
         return blockElement;
     }
 
@@ -190,7 +258,8 @@ function renderPalette() {
  */
 export function initBlockManager() {
     console.log("Block Manager Initialized");
-    renderPalette();
+    loadCustomBlockTemplatesFromLocalStorage(); // Load first
+    renderPalette(); // Then render palette (which now includes custom blocks)
     renderWorkspace();
     updateQueryOutput();
 }
@@ -198,16 +267,48 @@ export function initBlockManager() {
 export function addCustomBlockTemplate(blockDetails) {
     const newCustomBlock = {
         id: generateUniqueCustomId(),
-        type: 'custom', // Specific type for custom blocks
+        type: 'custom', 
         operator: blockDetails.operator,
-        placeholder: blockDetails.placeholder || 'Enter value...', // Default placeholder
+        placeholder: blockDetails.placeholder || 'Enter value...', 
         description: blockDetails.description,
-        // icon: 'edit-3' // Default icon for custom type, handled by styling/rendering if needed
+        // icon: 'edit-3' // Default icon for custom type, can be set here or handled by rendering logic
     };
     customBlockTemplates.push(newCustomBlock);
-    renderPalette(); // Re-render palette to include the new custom block
-    // TODO: In a later step, save customBlockTemplates to LocalStorage
+    saveCustomBlockTemplatesToLocalStorage(); // Save after adding
+    renderPalette(); 
     // console.log('Custom block templates:', customBlockTemplates); // For debugging
+}
+
+export function reorderWorkspaceBlock(oldIndex, newIndex) {
+    if (oldIndex === newIndex || 
+        oldIndex < 0 || oldIndex >= activeWorkspaceBlocks.length ||
+        newIndex < 0 || newIndex >= activeWorkspaceBlocks.length) {
+        // console.warn('Attempted to reorder with invalid indices or no actual move.');
+        if (oldIndex === newIndex && oldIndex >= 0 && oldIndex < activeWorkspaceBlocks.length) {
+             // This can happen if item is dragged but dropped in same spot.
+             // No data change needed, but SortableJS might have altered DOM.
+             // Re-render to ensure our data model is source of truth.
+             // However, if no actual DOM change occurred, this is redundant.
+             // For now, let's assume SortableJS handles DOM correctly if index is same.
+             return; 
+        }
+        if(oldIndex !== newIndex) { // Log if indices are different but still problematic
+             console.error('Invalid indices for reorder:', oldIndex, newIndex, 'Current length:', activeWorkspaceBlocks.length);
+        }
+        return; // Return if truly invalid or no-op for data
+    }
+
+    const itemToMove = activeWorkspaceBlocks.splice(oldIndex, 1)[0];
+    if (itemToMove) {
+        activeWorkspaceBlocks.splice(newIndex, 0, itemToMove);
+        renderWorkspace(); // Re-render from the updated data model for consistency
+        updateQueryOutput(); // Query order will change
+    } else {
+        console.error('Failed to reorder: item not found at oldIndex', oldIndex);
+        // Re-render to try and fix any visual inconsistencies if SortableJS moved something
+        // but our data model couldn't find the item.
+        renderWorkspace(); 
+    }
 }
 
 export function generateQueryString() {
