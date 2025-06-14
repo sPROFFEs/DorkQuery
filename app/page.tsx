@@ -22,101 +22,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+// import { Textarea } from "@/components/ui/textarea" // No longer directly used here
+// import { Switch } from "@/components/ui/switch" // No longer directly used here
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs" // No longer directly used here
 import {
   Card,
   CardContent,
-  CardDescription,
+  // CardDescription, // No longer directly used here
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+// import { DorkBlock, DorkBlockType } from "@/types/dork" // Types will be handled by DorkingInterface
+// import { PREDEFINED_DORK_BLOCKS } from "@/lib/dork-utils" // Data will be handled by DorkingInterface
+import { DorkingInterface } from "@/components/dork-builder/dorking-interface"; // Import the new main component
 
-type DorkBlockType =
-  | "site"
-  | "inurl"
-  | "filetype"
-  | "intitle"
-  | "intext"
-  | "cache"
-  | "related"
-  | "custom"
-
-interface DorkBlock {
-  id: string
-  type: DorkBlockType
-  operator: string
-  value: string
-  placeholder: string
-  description: string
-}
-
-const PREDEFINED_BLOCKS: Omit<DorkBlock, "id" | "value">[] = [
-  {
-    type: "site",
-    operator: "site:",
-    placeholder: "example.com",
-    description: "Search within a specific website or domain",
-  },
-  {
-    type: "inurl",
-    operator: "inurl:",
-    placeholder: "admin",
-    description: "Search for pages with a specific word in the URL",
-  },
-  {
-    type: "filetype",
-    operator: "filetype:",
-    placeholder: "pdf",
-    description: "Search for specific file types",
-  },
-  {
-    type: "intitle",
-    operator: "intitle:",
-    placeholder: "index of",
-    description: "Search for pages with a specific word in the title",
-  },
-  {
-    type: "intext",
-    operator: "intext:",
-    placeholder: "password",
-    description: "Search for pages containing specific text",
-  },
-  {
-    type: "cache",
-    operator: "cache:",
-    placeholder: "example.com",
-    description: "Show Google’s cached version of a page",
-  },
-  {
-    type: "related",
-    operator: "related:",
-    placeholder: "example.com",
-    description: "Find sites related to a given domain",
-  },
-]
-
-const generateId = () => Math.random().toString(36).substring(2, 9)
+// const generateId = () => Math.random().toString(36).substring(2, 9) // ID generation will be handled internally by components
 
 export default function DorkingLab() {
   // Theme & Accessibility states
   const [theme, setTheme] = useState<"light" | "dark" | "high-contrast">("dark")
   const [fontSize, setFontSize] = useState(14) // px
-
-  // Blocks states
-  const [blocks, setBlocks] = useState<DorkBlock[]>([])
-  const [customBlocks, setCustomBlocks] = useState<DorkBlock[]>([])
-
-  // Search engine: only one selectable
-  const [selectedEngine, setSelectedEngine] = useState<
-    "google" | "bing" | "duckduckgo" | "yahoo"
-  >("google")
-
-  // New custom block input states
-  const [newCustomOperator, setNewCustomOperator] = useState("")
-  const [newCustomPlaceholder, setNewCustomPlaceholder] = useState("")
-  const [newCustomDescription, setNewCustomDescription] = useState("")
 
   // Initialize theme from localStorage or system preference
   useEffect(() => {
@@ -140,92 +65,6 @@ export default function DorkingLab() {
 
     document.documentElement.style.fontSize = fontSize + "px"
   }, [theme, fontSize])
-
-  // Add a new block from predefined or custom
-  const addBlock = (block: Omit<DorkBlock, "id" | "value">) => {
-    setBlocks([
-      ...blocks,
-      { ...block, id: generateId(), value: "" }, // start empty value
-    ])
-  }
-
-  // Add a new custom block saved by user
-  const saveCustomBlock = () => {
-    if (
-      !newCustomOperator.trim() ||
-      !newCustomPlaceholder.trim() ||
-      !newCustomDescription.trim()
-    ) {
-      alert("Please fill all fields to create a custom block")
-      return
-    }
-    if (!newCustomOperator.endsWith(":")) {
-      alert("Operator should end with a colon (:)")
-      return
-    }
-
-    const newBlock: DorkBlock = {
-      id: generateId(),
-      type: "custom",
-      operator: newCustomOperator.trim(),
-      value: "",
-      placeholder: newCustomPlaceholder.trim(),
-      description: newCustomDescription.trim(),
-    }
-    setCustomBlocks([...customBlocks, newBlock])
-    // reset form inputs
-    setNewCustomOperator("")
-    setNewCustomPlaceholder("")
-    setNewCustomDescription("")
-  }
-
-  // Update block value on user input
-  const updateBlockValue = (id: string, newValue: string) => {
-    setBlocks(
-      blocks.map((block) =>
-        block.id === id ? { ...block, value: newValue } : block
-      )
-    )
-  }
-
-  // Remove a block
-  const removeBlock = (id: string) => {
-    setBlocks(blocks.filter((block) => block.id !== id))
-  }
-
-  // Build query string from blocks
-  const buildQuery = () => {
-    const parts = blocks
-      .map((b) => {
-        if (!b.value.trim()) return null
-        if (b.type === "custom") return `${b.operator}${b.value.trim()}`
-        return `${b.operator}${b.value.trim()}`
-      })
-      .filter(Boolean)
-    return parts.join(" ")
-  }
-
-  // Execute search on selected engine
-  const executeSearch = () => {
-    const query = buildQuery()
-    if (!query) {
-      alert("Add at least one block with a value")
-      return
-    }
-    const encodedQuery = encodeURIComponent(query)
-    const urls = {
-      google: `https://www.google.com/search?q=${encodedQuery}`,
-      bing: `https://www.bing.com/search?q=${encodedQuery}`,
-      duckduckgo: `https://duckduckgo.com/?q=${encodedQuery}`,
-      yahoo: `https://search.yahoo.com/search?p=${encodedQuery}`,
-    }
-    window.open(urls[selectedEngine], "_blank")
-  }
-
-  // Handle search engine change (only one can be selected)
-  const handleEngineChange = (engine: typeof selectedEngine) => {
-    setSelectedEngine(engine)
-  }
 
   // Toggle theme through options (dark, light, high-contrast)
   const cycleTheme = () => {
@@ -254,148 +93,13 @@ export default function DorkingLab() {
         </div>
       </header>
 
-      <main className="grid gap-6 md:grid-cols-3">
-        {/* Blocks builder */}
-        <Card className="border-primary/20 col-span-2">
-          <CardHeader>
-            <CardTitle className="text-primary">Visual Dork Builder</CardTitle>
-            <CardDescription>
-              Add, edit, and combine dork blocks visually
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              {[...PREDEFINED_BLOCKS, ...customBlocks].map((block) => (
-                <Button
-                  key={block.operator + block.placeholder}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => addBlock(block)}
-                >
-                  {block.operator}
-                </Button>
-              ))}
-            </div>
+      {/* Render the DorkingInterface which now contains the main dork building UI and logic */}
+      <main>
+        <DorkingInterface />
+      </main>
 
-            {blocks.length === 0 && (
-              <p className="text-muted-foreground mt-4">Add blocks above to start building your dork.</p>
-            )}
-
-            <div className="space-y-3 mt-4">
-              {blocks.map((block) => (
-                <div
-                  key={block.id}
-                  className="flex items-center gap-2"
-                  aria-label={`Block for operator ${block.operator}`}
-                >
-                  <span className="font-mono bg-primary/10 px-2 py-1 rounded select-none">
-                    {block.operator}
-                  </span>
-                  <input
-                    type="text"
-                    placeholder={block.placeholder}
-                    value={block.value}
-                    onChange={(e) => updateBlockValue(block.id, e.target.value)}
-                    className="flex-grow rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text text-black"
-                    aria-label={`Input for ${block.operator} block`}
-                  />
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => removeBlock(block.id)}
-                    aria-label="Remove block"
-                    title="Remove block"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-
-            <Button
-              className="mt-6"
-              onClick={executeSearch}
-              disabled={blocks.length === 0 || blocks.every(b => !b.value.trim())}
-            >
-              <Search className="mr-2 h-4 w-4" /> Search {selectedEngine.charAt(0).toUpperCase() + selectedEngine.slice(1)}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Side Panel */}
-        <div className="space-y-6">
-          {/* Search engine selection */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Search Engine</CardTitle>
-              <CardDescription>
-                Select one search engine (only one active)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {(["google", "bing", "duckduckgo", "yahoo"] as const).map(
-                (engine) => (
-                  <div key={engine} className="flex items-center space-x-2 mb-2">
-                    <input
-                      type="radio"
-                      id={`engine-${engine}`}
-                      name="search-engine"
-                      checked={selectedEngine === engine}
-                      onChange={() => handleEngineChange(engine)}
-                      className="cursor-pointer"
-                    />
-                    <label
-                      htmlFor={`engine-${engine}`}
-                      className="cursor-pointer select-none"
-                    >
-                      {engine.charAt(0).toUpperCase() + engine.slice(1)}
-                    </label>
-                  </div>
-                )
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Custom block creation */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Create Custom Block</CardTitle>
-              <CardDescription>
-                Define a new operator block to reuse
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <input
-                type="text"
-                placeholder="Operator (e.g., myop:)"
-                value={newCustomOperator}
-                onChange={(e) => setNewCustomOperator(e.target.value)}
-                className="w-full rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text text-black"
-                aria-label="Custom operator"
-              />
-              <input
-                type="text"
-                placeholder="Placeholder (e.g., something)"
-                value={newCustomPlaceholder}
-                onChange={(e) => setNewCustomPlaceholder(e.target.value)}
-                className="w-full rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text text-black"
-                aria-label="Custom placeholder"
-              />
-              <input
-                type="text"
-                placeholder="Description"
-                value={newCustomDescription}
-                onChange={(e) => setNewCustomDescription(e.target.value)}
-                className="w-full rounded border border-gray-300 px-2 py-1 font-mono focus:outline-none focus:ring-2 focus:ring-primary force-black-text text-black"
-                aria-label="Custom description"
-              />
-              <Button onClick={saveCustomBlock} className="w-full">
-                <PlusCircle className="mr-2 h-4 w-4" /> Save Custom Block
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Accessibility & Theme */}
+      {/* Side Panel for Accessibility & Theme - kept in app/page.tsx */}
+      <div className="fixed bottom-6 right-6 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Accessibility & Theme</CardTitle>
@@ -423,8 +127,7 @@ export default function DorkingLab() {
               </p>
             </CardContent>
           </Card>
-        </div>
-      </main>
+      </div>
       <footer className="mt-12 text-center text-muted-foreground text-sm">
         © 2025 DorkLabs • Made for OSINT enthusiasts
       </footer>
