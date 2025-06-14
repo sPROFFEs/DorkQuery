@@ -41,7 +41,7 @@ export async function fetchGhdbDorks(searchTerm = '', start = 0, length = 15) {
     try {
         const response = await fetch(apiUrl, {
             headers: {
-                // 'X-Requested-With': 'XMLHttpRequest' // Often required for DataTables backends
+                'X-Requested-With': 'XMLHttpRequest' // Often required for DataTables backends
                                                       // but Exploit-DB seems to work without it for GET if no CORS policy blocks.
             }
         });
