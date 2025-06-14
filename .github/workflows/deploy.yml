@@ -30,8 +30,15 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # Opción 1: Si el package-lock.json está actualizado
       - name: Install dependencies
-        run: npm ci # Changed from npm install and removed previous fix steps
+        run: npm ci
+        
+      # Opción 2: Si hay problemas con package-lock.json (usar solo una)
+      # - name: Install dependencies (fallback)
+      #   run: |
+      #     npm install --package-lock-only
+      #     npm ci
         
       - name: Build with Next.js
         run: npm run build
