@@ -6,9 +6,13 @@ import { PREDEFINED_DORK_BLOCKS, createNewBlock, formatDorkQuery, generateSearch
 import { DorkBlockList } from "./dork-block-list";
 import { DorkBuilderArea } from "./dork-builder-area";
 import { CustomBlockManager } from "./custom-block-manager";
+import { GhdbExplorer } from "./ghdb-explorer"; // Import GhdbExplorer
+import { GhdbEntry } from "@/lib/ghdb-service"; // Import GhdbEntry for the callback
+import { useToast } from "@/hooks/use-toast"; // Import useToast
 
 // UI Imports
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Import Tabs components
 import {
   Select,
   SelectContent,
@@ -19,18 +23,20 @@ import {
 import { Search } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  DndContext,
+  DndContext, // Reverted alias
   DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
   closestCenter,
+  rectIntersection, // Import an alternative
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable"; // Keep for reordering
 
 
 export function DorkingInterface() {
+  const { toast } = useToast(); // Initialize toast
   // Migrated State
   const [activeBlocks, setActiveBlocks] = useState<DorkBlock[]>([]);
   const [customBlocks, setCustomBlocks] = useState<DorkBlock[]>(() => {
@@ -161,21 +167,48 @@ export function DorkingInterface() {
     // For now, only handle direct drop on workspace area or reorder within workspace
   };
 
+  const handleImportGhdbDork = (entry: GhdbEntry) => {
+    const newBlock: DorkBlock = {
+      id: generateId(), // New unique ID for the workspace instance
+      type: 'custom', // Treat imported dorks as 'custom' type for now
+      operator: "",    // Operator is empty, dork string goes into value
+      value: entry.dork,
+      placeholder: "Imported GHDB dork",
+      description: entry.title, // Use GHDB title as description
+      icon: 'edit-3', // Use 'edit-3' as confirmed available
+    };
+    setActiveBlocks(prev => [...prev, newBlock]);
+    toast({
+      title: "GHDB Dork Imported",
+      description: `"${entry.dork}" added to your workspace.`,
+    });
+  };
+
   // Render Structure with DndContext
   return (
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
-        {/* Left Panel: DorkBlockList and CustomBlockManager */}
-        <div className="space-y-6 md:col-span-1">
-          <DorkBlockList
-            predefinedBlocks={PREDEFINED_DORK_BLOCKS}
-            customBlocks={customBlocks}
-            // onRequestAddBlock is removed as D&D handles adding to workspace
-          />
-          <CustomBlockManager
-            onSaveCustomBlock={handleSaveCustomBlockToList}
-            customBlocks={customBlocks} // Pass current customBlocks for duplicate checking
-          />
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={rectIntersection}> {/* Using rectIntersection instead */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 h-full"> {/* Ensure h-full for flex children */}
+        {/* Left Panel: Tabs for Palette and GHDB Explorer */}
+        <div className="space-y-6 md:col-span-1 flex flex-col h-full"> {/* flex flex-col h-full */}
+          <Tabs defaultValue="palette" className="flex-grow flex flex-col bg-card rounded-lg shadow">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="palette">Palette</TabsTrigger>
+              <TabsTrigger value="ghdb">GHDB</TabsTrigger>
+            </TabsList>
+            <TabsContent value="palette" className="flex-grow overflow-y-auto p-4 space-y-4">
+              <DorkBlockList
+                predefinedBlocks={PREDEFINED_DORK_BLOCKS}
+                customBlocks={customBlocks}
+              />
+              <CustomBlockManager
+                onSaveCustomBlock={handleSaveCustomBlockToList}
+                customBlocks={customBlocks}
+              />
+            </TabsContent>
+            <TabsContent value="ghdb" className="flex-grow overflow-y-auto p-0"> {/* p-0 as GhdbExplorer has its own Card padding */}
+              <GhdbExplorer onImportDork={handleImportGhdbDork} />
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Right Panel: DorkBuilderArea and Search Controls */}
