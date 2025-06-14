@@ -1,8 +1,18 @@
 export type SearchEngine = 'google' | 'bing' | 'duckduckgo';
 
+export type DorkBlockType =
+  | "site"
+  | "inurl"
+  | "filetype"
+  | "intitle"
+  | "intext"
+  | "cache"
+  | "related"
+  | "custom";
+
 export interface DorkBlock {
   id: string;
-  type: string;
+  type: DorkBlockType;
   operator: string;
   value: string;
   placeholder: string;

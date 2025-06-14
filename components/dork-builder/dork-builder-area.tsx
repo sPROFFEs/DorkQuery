@@ -1,110 +1,87 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { DorkBlock as DorkBlockType, SearchEngine } from "@/types/dork";
-import { DorkBlock } from "@/components/dork-builder/blocks/dork-block";
-import { createNewBlock, formatDorkQuery } from "@/lib/dork-utils";
+import { useEffect } from "react"; // useState is no longer needed here directly for blocks
+import { DorkBlock as DorkBlockType, SearchEngine } from "@/types/dork"; // Keep SearchEngine if used, DorkBlockType as BlockType
+import { DorkBlock as DorkBlockComponent } from "@/components/dork-builder/blocks/dork-block"; // Alias component import
+// import { createNewBlock, formatDorkQuery } from "@/lib/dork-utils"; // No longer needed here
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
+  // DndContext,     // Removed
+  // closestCenter,  // Removed
+  // KeyboardSensor, // Will be used by DorkingInterface's DndContext or SortableContext items
+  // PointerSensor,  // Will be used by DorkingInterface's DndContext
+  // useSensor,      // Removed
+  // useSensors,     // Removed
+  DragEndEvent,   // Not directly used here anymore
 } from "@dnd-kit/core";
 import {
-  arrayMove,
+  // arrayMove, // This logic moves to DorkingInterface
   SortableContext,
-  sortableKeyboardCoordinates,
+  sortableKeyboardCoordinates, // Still needed for Sortable items
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/core"; // Added for droppable area
 
 interface DorkBuilderAreaProps {
-  onQueryChange: (query: string) => void;
-  selectedEngine: SearchEngine;
-  onAddBlock?: (block: DorkBlockType) => void;
+  activeBlocks: DorkBlockType[];
+  onUpdateBlockValue: (id: string, value: string) => void;
+  onRemoveBlock: (id: string) => void;
+  // onReorderBlocks prop is removed as DorkingInterface handles reordering via its onDragEnd
+  onClearAllBlocks: () => void;
 }
 
-export function DorkBuilderArea({ 
-  onQueryChange, 
-  selectedEngine,
-  onAddBlock 
+export function DorkBuilderArea({
+  activeBlocks,
+  onUpdateBlockValue,
+  onRemoveBlock,
+  onClearAllBlocks,
 }: DorkBuilderAreaProps) {
-  const [blocks, setBlocks] = useState<DorkBlockType[]>([]);
   const { toast } = useToast();
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+  const { setNodeRef: setWorkspaceNodeRef, isOver: isWorkspaceOver } = useDroppable({
+    id: 'workspace-area', // Unique ID for the droppable area
+  });
 
-  const handleAddBlock = (block: DorkBlockType) => {
-    const newBlock = createNewBlock(block);
-    setBlocks((prev) => [...prev, newBlock]);
+  // Sensors and handleDragEnd are removed, DndContext is now in DorkingInterface.
+  // Reordering logic is also handled by DorkingInterface.
 
-    if (onAddBlock) onAddBlock(block);
-
-    toast({
-      title: "Block added",
-      description: `Added ${block.type === 'custom' ? 'custom' : block.operator} block`,
-      duration: 2000,
-    });
-  };
-
-  const handleUpdateBlock = (id: string, value: string) => {
-    setBlocks((prevBlocks) =>
-      prevBlocks.map((block) =>
-        block.id === id ? { ...block, value } : block
-      )
-    );
-  };
-
-  const handleRemoveBlock = (id: string) => {
-    setBlocks((prevBlocks) => prevBlocks.filter((block) => block.id !== id));
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      setBlocks((blocks) => {
-        const oldIndex = blocks.findIndex((block) => block.id === active.id);
-        const newIndex = blocks.findIndex((block) => block.id === over.id);
-        return arrayMove(blocks, oldIndex, newIndex);
-      });
-    }
-  };
-
-  const handleClearAll = () => {
-    if (blocks.length === 0) return;
-    setBlocks([]);
+  const handleClearAllInternal = () => {
+    if (activeBlocks.length === 0) return;
+    onClearAllBlocks(); // Call the prop
     toast({
       title: "Cleared all blocks",
-      description: "All dork blocks have been removed.",
+      description: "All dork blocks have been removed from the workspace.",
       duration: 2000,
     });
   };
 
-  useEffect(() => {
-    const formattedQuery = formatDorkQuery(blocks, selectedEngine);
-    onQueryChange(formattedQuery);
-  }, [blocks, selectedEngine, onQueryChange]);
+  // useEffect for onQueryChange has been removed as DorkingInterface will handle query logic
 
   return (
-    <div className="flex flex-col max-w-2xl mx-auto w-full h-full px-4">
+    // Attach droppable ref to the main container of the droppable area
+    <div
+      ref={setWorkspaceNodeRef}
+      className={`flex flex-col w-full h-full transition-colors p-4 rounded-lg
+                  ${isWorkspaceOver ? 'bg-primary/20 border-2 border-dashed border-primary' : 'bg-background/50 dark:bg-black/30 border border-transparent'}
+                  min-h-[200px]`} // Added padding, rounded-lg, border, and min-height
+                  // Subtle background pattern (example using radial gradient)
+      style={{
+        backgroundImage: !isWorkspaceOver
+          ? 'radial-gradient(circle at 1px 1px, hsl(var(--muted)/0.3) 1px, transparent 0)'
+          : 'none',
+        backgroundSize: !isWorkspaceOver ? '10px 10px' : 'auto',
+      }}
+    >
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Dork Builder</h2>
-        {blocks.length > 0 && (
+        <h2 className="text-lg font-semibold text-foreground">Active Dork Workspace</h2>
+        {activeBlocks.length > 0 && (
           <Button
             variant="outline"
             size="sm"
             className="gap-1 text-muted-foreground hover:text-destructive"
-            onClick={handleClearAll}
+            onClick={handleClearAllInternal}
           >
             <Trash2 className="h-4 w-4" />
             <span>Clear All</span>
@@ -112,35 +89,40 @@ export function DorkBuilderArea({
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto rounded-lg border bg-card p-4">
-        {blocks.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground">
-            <p className="mb-2">Your dork builder is empty</p>
-            <p className="text-sm">Add blocks from the sidebar to start building your dork query</p>
+      {/* The actual list area that shows blocks */}
+      {/* Removed its own border and bg-card, p-4 to inherit from parent or be transparent */}
+      <div className={`flex-1 overflow-y-auto rounded-md ${isWorkspaceOver ? 'bg-primary/10' : ''}`}>
+        {activeBlocks.length === 0 ? (
+          <div className="flex h-full min-h-[150px] flex-col items-center justify-center text-center text-muted-foreground py-10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50 mb-4">
+              <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+              <path d="M3 5v14a2 2 0 0 0 2 2h14v-5"></path>
+              <path d="M18 12a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2z"></path>
+              <path d="m11.5 3.5-1 1"></path><path d="m16.5 8.5-1 1"></path>
+            </svg>
+            <p className="text-lg font-medium mb-1">Workspace is Empty</p>
+            <p className="text-sm">Drag dork blocks from the list on the left panel and drop them here to build your query.</p>
           </div>
         ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
+          // DndContext has been removed from here.
+          // SortableContext remains to enable reordering of items within this area.
+          // The actual reordering logic is now handled by DorkingInterface's onDragEnd.
+          <SortableContext
+            items={activeBlocks.map((b) => b.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <SortableContext
-              items={blocks.map((b) => b.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="space-y-2">
-                {blocks.map((block, index) => (
-                  <DorkBlock
-                    key={block.id}
-                    block={block}
-                    onUpdate={handleUpdateBlock}
-                    onRemove={handleRemoveBlock}
-                    isLast={index === blocks.length - 1}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
+            <div className="space-y-2">
+              {activeBlocks.map((block, index) => (
+                <DorkBlockComponent
+                  key={block.id}
+                  block={block}
+                  onUpdate={onUpdateBlockValue}
+                  onRemove={onRemoveBlock}
+                  isLast={index === activeBlocks.length - 1}
+                />
+              ))}
+            </div>
+          </SortableContext>
         )}
       </div>
     </div>
