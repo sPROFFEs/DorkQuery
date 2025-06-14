@@ -567,3 +567,22 @@ button[type="submit"]:hover {
     font-style: normal;
     font-weight: 500;
 }
+
+/* Header Logo Styling */
+#header-logo {
+    max-height: 60px; /* Adjust as needed, e.g., based on header height */
+    width: auto; /* Maintain aspect ratio */
+    vertical-align: middle; /* Align with any adjacent text/elements if any */
+}
+
+/* Optional: Adjust header padding or h1 margin if needed */
+header h1 {
+    margin: 0; /* Remove default h1 margin if image is inside */
+    line-height: 1; /* Ensure h1 doesn't add extra space around image */
+    font-size: 1.5rem; /* Example: adjust if needed, or remove if only image */
+}
+header {
+    /* display: flex; /* Could be useful for alignment */
+    /* align-items: center; */
+    padding: 10px 20px; /* Ensure header has some padding */
+}
