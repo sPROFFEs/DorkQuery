@@ -90,7 +90,7 @@ export function DorkingInterface() {
     };
     setActiveBlocks(prev => [...prev, newBlockInstance]);
   };
-  
+
   // Renamed for clarity from placeholder
   const updateActiveBlockValue = (id: string, newValue: string) => {
     setActiveBlocks(prevBlocks =>
@@ -171,7 +171,7 @@ export function DorkingInterface() {
       }
       return;
     }
-    
+
     // Potentially other scenarios, like dragging from palette directly onto another block in workspace (to insert)
     // For now, only handle direct drop on workspace area or reorder within workspace
   };
@@ -206,12 +206,12 @@ export function DorkingInterface() {
               <TabsTrigger value="ghdb">GHDB</TabsTrigger>
             </TabsList>
             <TabsContent value="palette" className="flex-grow overflow-y-auto p-4 space-y-4">
-              <DorkBlockList 
-                predefinedBlocks={PREDEFINED_DORK_BLOCKS} 
+              <DorkBlockList
+                predefinedBlocks={PREDEFINED_DORK_BLOCKS}
                 customBlocks={customBlocks}
               />
-              <CustomBlockManager 
-                onSaveCustomBlock={handleSaveCustomBlockToList} 
+              <CustomBlockManager
+                onSaveCustomBlock={handleSaveCustomBlockToList}
                 customBlocks={customBlocks}
               />
             </TabsContent>
@@ -232,7 +232,7 @@ export function DorkingInterface() {
                 activeBlocks={activeBlocks}
                 onUpdateBlockValue={updateActiveBlockValue}
                 onRemoveBlock={removeActiveBlock}
-                onClearAllBlocks={handleClearAllActiveBlocks} 
+                onClearAllBlocks={handleClearAllActiveBlocks}
                 // onReorderBlocks prop is removed
               />
             </CardContent>
@@ -267,7 +267,7 @@ export function DorkingInterface() {
             )}
           </CardContent>
         </Card>
-        
+
         <Button
           className="w-full"
           onClick={executeSearch}
