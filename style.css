@@ -1,10 +1,10 @@
 /* ==== Global Resets and Base Styles ==== */
 :root {
-    --primary-color: #4a90e2; /* A muted blue */
+    --primary-color: #4a90e2;
     --primary-hover-color: #3a7bc8;
     --accent-blue: var(--primary-color);
     --accent-blue-muted: rgba(74, 144, 226, 0.3);
-    --secondary-color: #5cb85c; /* Green for save/add */
+    --secondary-color: #5cb85c;
     --secondary-hover-color: #4cae4c;
     --destructive-color: #d9534f;
     --destructive-hover-color: #c9302c;
@@ -14,7 +14,7 @@
     --accent-green-hover: var(--secondary-hover-color);
     --accent-link-color: var(--primary-color);
 
-    --bg-color: #22272e; /* Dark gray */
+    --bg-color: #22272e;
     --bg-panel-color: #2d333b; 
     --bg-element-color: #373e47;
     --bg-block-color: #4a525c;
@@ -72,16 +72,17 @@ header h1, footer p {
 
 /* ==== Main Application Container (Top Panels) ==== */
 .app-container {
-    display: flex; /* Key for side-by-side panels */
+    display: flex; 
     flex-grow: 1;
-    padding: 20px; /* Overall padding */
-    gap: 20px;     /* Gap between panels */
+    padding: 20px; 
+    gap: 20px;     
     overflow: hidden; 
+    align-items: flex-start; /* Align items to the top */
 }
 
 /* ==== Left Panel (Palette) ==== */
 .left-panel {
-    flex: 0 0 280px; /* Fixed width for palette, adjusted from 250px */
+    flex: 0 0 280px; 
     background-color: var(--bg-panel-color);
     padding: 1rem;
     border-radius: var(--border-radius);
@@ -92,13 +93,13 @@ header h1, footer p {
     gap: 1.5rem;
 }
 
-/* ==== Center Column (Workspace, Query, Actions, Trash) ==== */
-#center-column-content {
+/* ==== Main Area Beside Palette (Workspace, Query, Custom Editor, Trash) ==== */
+.main-area-beside-palette {
     flex: 1 1 auto; /* Allow it to grow and shrink, takes remaining space */
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Space between workspace and query-controls */
-    min-width: 0; /* Important for flex children if they also use flex */
+    gap: 20px; /* Space between its main sections */
+    min-width: 0; /* Important for nested flex items */
     background-color: var(--bg-panel-color); /* Give it a panel background */
     padding: 1rem;
     border-radius: var(--border-radius);
@@ -106,68 +107,63 @@ header h1, footer p {
     overflow-y: auto; /* Scroll if content exceeds height */
 }
 
+/* No longer a separate #center-column-content or .right-panel as direct children of .app-container */
+/* .right-panel styles for flex column removed/merged if not needed for other .right-panel instances */
+
 .workspace-area {
-    /* flex: 1 1 auto; /* Workspace itself can grow if #center-column-content has extra space */
-    /* No longer a direct flex child of app-container, so % flex-basis is removed */
     display: flex; 
     flex-direction: column;
-    /* background-color, padding, etc., are fine from previous rules if #center-column-content doesn't provide them */
+    /* background-color, padding, etc. are inherited or can be specific if needed */
 }
 
 #workspace-blocks {
-    /* max-width: 800px; /* Example max-width for the droppable area if desired */
-    /* margin: 0 auto; /* Centers #workspace-blocks if it's narrower than .workspace-area */
-    flex-grow: 1; /* Make workspace blocks container take available vertical space */
+    flex-grow: 1; 
 }
 
 #query-controls-section {
-    margin-top: 10px; /* Reduced from 20px as parent has gap */
-    background-color: var(--bg-element-color); /* Slight distinction for this control group */
+    margin-top: 10px; 
+    background-color: var(--bg-element-color); 
     padding: 1rem;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
 }
-#query-controls-section h3 { /* Styles for the new h3s */
+#query-controls-section h3 { 
     font-size: 1rem;
     color: var(--text-muted-color);
     margin-top: 0;
     margin-bottom: 0.5rem;
 }
-#query-controls-section > div { /* Spacing for direct children like query-output-section, search-engine-section */
+#query-controls-section > div { 
     margin-bottom: 1rem;
 }
 #query-controls-section > button#execute-search-button {
-    margin-bottom: 1rem; /* Space before trash area */
+    margin-bottom: 1rem; 
 }
 
-
-/* ==== Right Panel (Custom Block Form) ==== */
-.right-panel {
-    flex: 0 0 300px; /* Fixed width for tools/custom blocks, adjusted from 280px */
-    background-color: var(--bg-panel-color);
+/* Custom block editor is now a section within .main-area-beside-palette */
+#custom-block-editor-section {
+    margin-top: 10px; /* Space above it within the main area */
+    background-color: var(--bg-element-color); /* Optional: give it a distinct background */
     padding: 1rem;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
 }
+
 
 /* ==== GHDB Full-Width Bottom Section ==== */
 #ghdb-section-fullwidth {
     width: 100%;
-    padding: 20px; /* Match app-container padding */
-    margin-top: 20px; /* Space above it, reduced from 30px */
+    padding: 20px; 
+    margin-top: 20px; 
     box-sizing: border-box;
-    background-color: var(--bg-panel-color); /* Give it a panel background */
+    background-color: var(--bg-panel-color); 
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
     display: flex;
-    flex-direction: column; /* Stack title, search, results, pagination */
+    flex-direction: column; 
 }
-#ghdb-section-fullwidth h2 { /* Style for the main GHDB title */
-    font-size: 1.2rem; /* Make it a bit more prominent */
+#ghdb-section-fullwidth h2 { 
+    font-size: 1.2rem; 
     color: var(--text-color);
     margin-top: 0;
     margin-bottom: 1rem;
@@ -177,36 +173,32 @@ header h1, footer p {
 
 #ghdb-search-area {
     display: flex;
-    gap: 10px; /* Space between filter and search input/button */
-    align-items: center; /* Align items vertically */
-    margin-bottom: 1rem; /* Overriding old margin-bottom: 0.5rem */
-    flex-wrap: wrap; /* Allow wrapping on smaller screens if needed */
+    gap: 10px; 
+    align-items: center; 
+    margin-bottom: 1rem; 
+    flex-wrap: wrap; 
 }
-.ghdb-filter-item { /* Wrapper for label and select */
+.ghdb-filter-item { 
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    flex-grow: 1; /* Allow filter to take some space */
+    flex-grow: 1; 
 }
 .ghdb-filter-item label {
-    margin-bottom: 0; /* Remove default label margin */
+    margin-bottom: 0; 
     flex-shrink: 0;
 }
 .ghdb-filter-item select {
-    flex-grow: 1; /* Allow select to take available space in filter item */
-    margin-bottom: 0; /* Remove default select margin */
-    max-width: 250px; /* Prevent select from becoming too wide */
+    flex-grow: 1; 
+    margin-bottom: 0; 
+    max-width: 250px; 
 }
 #ghdb-search-area input[type="search"] {
-    flex-grow: 2; /* Allow search input to take more space */
-    min-width: 200px; /* Ensure it doesn't get too small */
+    flex-grow: 2; 
+    min-width: 200px; 
 }
 
-
-/* ==== Sections within Panels (General) ==== */
-/* This was too broad, now handled by panel styles or specific section styles */
-/* section { } */ 
-section h2 { /* For h2 within palette, custom block editor */
+section h2 { /* For h2 within palette, custom block editor (if not styled by new section rules) */
     font-size: 1.1rem;
     color: var(--text-color);
     margin-top: 0;
@@ -215,8 +207,6 @@ section h2 { /* For h2 within palette, custom block editor */
     border-bottom: 1px solid var(--border-light-color);
 }
 
-
-/* ==== Block Lists (Palette, Workspace, GHDB Results) ==== */
 .block-list {
     min-height: 80px; 
     padding: 0.5rem;
@@ -226,17 +216,14 @@ section h2 { /* For h2 within palette, custom block editor */
     flex-grow: 1; 
     overflow-y: auto; 
 }
-#ghdb-results { /* Specific styling for GHDB results block list */
-    min-height: 200px; /* Ensure it has decent height */
-    /* background-color is var(--bg-color) from .block-list */
-    /* border is also from .block-list */
+#ghdb-results { 
+    min-height: 200px; 
 }
 .active-blocks-container { 
     border-style: solid; 
 }
 .active-blocks-container.drag-over { 
     border-color: var(--primary-color);
-    /* background-color: rgba(var(--primary-color), 0.1); /* Needs JS to parse color - consider var(--accent-blue-muted) */
     background-color: var(--accent-blue-muted);
 }
 .empty-workspace-message {
@@ -246,7 +233,6 @@ section h2 { /* For h2 within palette, custom block editor */
     font-style: italic;
 }
 
-/* ==== Dork Block Styling (.dork-block) ==== */
 .dork-block {
     background-color: var(--bg-block-color);
     border: 1px solid var(--border-light-color); 
@@ -266,7 +252,6 @@ section h2 { /* For h2 within palette, custom block editor */
     box-shadow: var(--shadow-md);
 }
 
-/* Specific block type colors */
 .dork-block-site { border-left-color: #3b82f6; } 
 .dork-block-filetype { border-left-color: #22c55e; } 
 .dork-block-inurl { border-left-color: #f97316; } 
@@ -301,7 +286,6 @@ section h2 { /* For h2 within palette, custom block editor */
 .dork-block input[type="text"]:focus {
     outline: none;
     border-color: var(--border-focus-color);
-    /* box-shadow: 0 0 0 2px rgba(var(--primary-color), 0.3); /* Needs JS for color parsing */
     box-shadow: 0 0 0 2px var(--accent-blue-muted);
 }
 
@@ -330,8 +314,6 @@ section h2 { /* For h2 within palette, custom block editor */
     font-size: 0.85em;
 }
 
-
-/* ==== Form Elements & Controls (General) ==== */
 label {
     display: block;
     margin-bottom: 0.3rem;
@@ -358,15 +340,13 @@ textarea:focus,
 select:focus {
     outline: none;
     border-color: var(--border-focus-color);
-    /* box-shadow: 0 0 0 2px rgba(var(--primary-color), 0.3); /* Needs JS for color parsing */
     box-shadow: 0 0 0 2px var(--accent-blue-muted);
 }
 
 textarea#query-output {
     font-family: var(--font-family-mono);
-    min-height: 80px; /* Keep min-height */
+    min-height: 80px; 
     resize: vertical;
-    /* width: 100%; /* Ensure it takes full width of its new parent in query-controls */
 }
 
 button,
@@ -395,9 +375,6 @@ button[type="submit"]:hover {
     background-color: var(--secondary-hover-color);
 }
 
-/* #ghdb-search-area input[type="search"] handled by new flex rules */
-/* #ghdb-search-area button handled by new flex rules */
-
 #ghdb-pagination {
     display: flex;
     justify-content: space-between;
@@ -421,14 +398,12 @@ button[type="submit"]:hover {
 }
 
 #execute-search-button {
-    width: 100%; /* Takes width of its parent in query-controls */
-    margin-top: 1rem; /* Spacing within query-controls */
+    width: 100%; 
+    margin-top: 1rem; 
     padding: 0.75rem 1rem; 
     font-size: 1rem;
 }
 
-/* GHDB Entry specific styling */
-/* .ghdb-entry styles are largely okay, ensure they fit new context */
 .ghdb-entry {
     background-color: var(--bg-element-color); 
     border: 1px solid var(--border-light-color);
@@ -497,40 +472,41 @@ button[type="submit"]:hover {
     background-color: var(--accent-green-hover);
 }
 
-/* Clearfix removed as .ghdb-entry is now flexbox */
-
 /* Responsive adjustments */
-@media (max-width: 1024px) { /* Adjusted breakpoint for 3-column to 2-column/1-column */
+@media (max-width: 1024px) { 
     .app-container {
         flex-direction: column;
     }
-    .left-panel, #center-column-content, .right-panel {
-        width: 100%; /* Full width when stacked */
+    /* Make .left-panel and .main-area-beside-palette full width when stacked */
+    .left-panel, .main-area-beside-palette { 
+        width: 100%; 
         flex: 0 0 auto; 
-        margin-bottom: 20px; /* Add space when stacked */
+        margin-bottom: 20px; 
     }
-    .right-panel {
-        margin-bottom: 0; /* No margin for the last stacked item in app-container */
+    /* Remove margin from the last item in the stacked app-container */
+    .main-area-beside-palette {
+        margin-bottom: 0; 
     }
 }
 @media (max-width: 768px) {
-    /* Further adjustments if needed for smaller screens, 
-       e.g., GHDB search area items might need to stack */
     #ghdb-search-area {
         flex-direction: column;
-        align-items: stretch; /* Make items full width when stacked */
+        align-items: stretch; 
     }
     .ghdb-filter-item select {
-        max-width: none; /* Allow select to go full width */
+        max-width: none; 
     }
     #ghdb-search-area input[type="search"], 
     #ghdb-search-area button {
-        width: 100%; /* Stack search input and button */
+        width: 100%; 
+    }
+    /* If .main-area-beside-palette children need to stack differently on small screens */
+    .main-area-beside-palette {
+        /* Children sections will stack naturally due to flex-direction: column.
+           Further adjustments if specific sections need to change behavior. */
     }
 }
 
-
-/* Scrollbar styling */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -546,8 +522,6 @@ button[type="submit"]:hover {
     background: var(--border-color);
 }
 
-
-/* SortableJS Feedback Classes */
 .dork-block-ghost { 
     opacity: 0.4;
     background-color: var(--accent-blue-muted); 
@@ -562,30 +536,26 @@ button[type="submit"]:hover {
     cursor: grabbing !important;
 }
 
-/* Trash Area Styling */
 .trash-zone {
-    border: 2px dashed var(--border-color); /* Using theme variable */
+    border: 2px dashed var(--border-color); 
     padding: 20px;
-    margin-top: 15px; /* Adjusted from 20px */
+    margin-top: 15px; 
     text-align: center;
-    background-color: var(--bg-element-color); /* Using theme variable */
-    color: var(--text-muted-color); /* Using theme variable */
-    min-height: 80px; /* Increased min-height for better drop target */
+    background-color: var(--bg-element-color); 
+    color: var(--text-muted-color); 
+    min-height: 80px; 
     border-radius: var(--border-radius); 
-    display: flex; /* For centering text vertically if needed */
+    display: flex; 
     align-items: center;
     justify-content: center;
 }
 
 .trash-zone.dork-block-ghost-trash { 
-    background-color: rgba(217, 83, 79, 0.1); /* var(--destructive-color) with transparency */
+    background-color: rgba(217, 83, 79, 0.1); 
     border-color: var(--destructive-color); 
     color: var(--destructive-color); 
 }
 
-
-/* Styling for #ghdb-explorer-section (old ID) is removed as it's now #ghdb-section-fullwidth */
-/* Styles for loading, info, and error messages within GHDB results or other areas */
 .loading-message, .info-message, .error-message {
     padding: 1rem;
     text-align: center;

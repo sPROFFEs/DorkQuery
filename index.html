@@ -21,7 +21,7 @@
             </section>
         </aside>
 
-        <main id="center-column-content" class="center-column">
+        <div class="main-area-beside-palette">
             <section class="workspace-area" aria-labelledby="workspace-title">
                 <h2 id="workspace-title">Workspace</h2>
                 <div id="workspace-blocks" class="block-list active-blocks-container">
@@ -32,12 +32,12 @@
 
             <section id="query-controls-section" aria-labelledby="query-controls-title">
                 <h2 id="query-controls-title">Query & Actions</h2>
-                <div id="query-output-section"> <!-- Keep internal structure for now -->
-                    <h3>Generated Dork</h3> <!-- Re-adding h3 for clarity, was h2 -->
+                <div id="query-output-section">
+                    <h3>Generated Dork</h3>
                     <textarea id="query-output" rows="5" readonly placeholder="Your dork will appear here..."></textarea>
                 </div>
-                <div id="search-engine-section"> <!-- Keep internal structure -->
-                    <h3>Search Engine</h3> <!-- Re-adding h3 for clarity, was h2 -->
+                <div id="search-engine-section">
+                    <h3>Search Engine</h3>
                     <select id="search-engine-select">
                         <option value="google" selected>Google</option>
                         <option value="bing">Bing</option>
@@ -49,9 +49,7 @@
                     <p>Drag blocks here to delete</p>
                 </div>
             </section>
-        </main>
-
-        <aside class="right-panel">
+            
             <section id="custom-block-editor-section" aria-labelledby="custom-block-editor-title">
                 <h2 id="custom-block-editor-title">Create Custom Block</h2>
                 <form id="custom-block-form">
@@ -70,7 +68,7 @@
                     <button type="submit">Save Custom Block</button>
                 </form>
             </section>
-        </aside>
+        </div>
     </main>
 
     <section id="ghdb-section-fullwidth" aria-labelledby="ghdb-main-title">
