@@ -108,6 +108,8 @@ function removeBlockFromWorkspace(workspaceBlockId) {
 
 // Modified to accept an optional index for inserting the block
 export function addBlockToWorkspace(originalBlockData, index = -1) { 
+    console.log('[blockManager.js addBlockToWorkspace] Called with originalBlockData:', originalBlockData, 'at index:', index);
+    console.log('[blockManager.js addBlockToWorkspace] Active workspace blocks BEFORE add:', JSON.parse(JSON.stringify(activeWorkspaceBlocks)));
     const newBlock = {
         id: generateUniqueId(), // This is the unique ID for the workspace instance
         type: originalBlockData.type, // Keep the original type for styling etc.
@@ -122,11 +124,13 @@ export function addBlockToWorkspace(originalBlockData, index = -1) {
     } else {
         activeWorkspaceBlocks.push(newBlock);
     }
+    console.log('[blockManager.js addBlockToWorkspace] Active workspace blocks AFTER add:', JSON.parse(JSON.stringify(activeWorkspaceBlocks)));
     renderWorkspace();
     updateQueryOutput();
 }
 
 function renderWorkspace() {
+    console.log('[blockManager.js renderWorkspace] Called. Active blocks:', JSON.parse(JSON.stringify(activeWorkspaceBlocks)));
     const workspaceContainer = qs('#workspace-blocks');
     const emptyMessage = qs('.empty-workspace-message'); // Assumes this element exists outside the container if innerHTML is cleared
     
@@ -225,6 +229,8 @@ function renderPalette() {
         blockElement.dataset.operator = blockData.operator;
         blockElement.dataset.placeholder = blockData.placeholder;
         blockElement.dataset.description = blockData.description;
+        console.log('[blockManager.js createPaletteBlockElement] Setting dataset for block:', blockData.id, 'Type:', displayType, 'Operator:', blockData.operator);
+        console.log('[blockManager.js createPaletteBlockElement] Full dataset:', blockElement.dataset);
         
         blockElement.title = blockData.description; 
 

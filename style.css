@@ -432,6 +432,24 @@ button[type="submit"]:hover {
     cursor: grabbing !important;
 }
 
+/* Trash Area Styling */
+.trash-zone {
+    border: 2px dashed #ccc; /* Use a variable if available e.g. var(--border-color) */
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+    background-color: #f9f9f9; /* Use a variable e.g. var(--bg-element-color) or slightly different */
+    color: #555; /* Use a variable e.g. var(--text-muted-color) */
+    min-height: 50px; /* Ensure it has some height */
+    border-radius: var(--border-radius); /* Consistent border radius */
+}
+
+.trash-zone.dork-block-ghost-trash { /* Style for when an item is dragged over it */
+    background-color: #ffe0e0; /* Light red to indicate deletion possibility - consider var(--destructive-color) with transparency */
+    border-color: #ff0000; /* var(--destructive-color) */
+    color: #ff0000; /* var(--destructive-color) */
+}
+
 
 /* GHDB Explorer Section specific styling */
 #ghdb-explorer-section { 

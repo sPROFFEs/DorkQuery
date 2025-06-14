@@ -50,6 +50,7 @@ export async function fetchGhdbDorks(searchTerm = '', start = 0, length = 15) {
             throw new Error(`HTTP error! status: ${response.status} while fetching GHDB.`);
         }
         const responseJson = await response.json();
+        console.log('[ghdbService.js] Raw API Response JSON:', JSON.stringify(responseJson, null, 2));
 
         // Expected structure: { "draw": number, "recordsTotal": number, "recordsFiltered": number, "data": any[] }
         // Each item in `data` is an object e.g., 

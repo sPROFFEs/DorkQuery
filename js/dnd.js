@@ -13,6 +13,7 @@ import { qs } from './domUtils.js';
 let _blockManagerModule = null;
 
 export function _setBlockManagerModule(blockManager) {
+    console.log('[dnd.js] _setBlockManagerModule called with:', blockManager);
     _blockManagerModule = blockManager;
 }
 
@@ -54,24 +55,30 @@ export function initDragAndDrop() {
         chosenClass: 'dork-block-chosen',
         dragClass: 'dork-block-drag',
         onAdd: function (evt) {
+            console.log('[dnd.js onAdd] _blockManagerModule is:', _blockManagerModule);
             const itemEl = evt.item; // The dragged DOM element (clone from palette)
             const blockId = itemEl.dataset.blockId;
             const blockType = itemEl.dataset.blockType; // 'predefined' or 'custom'
             const originalIndex = evt.oldDraggableIndex; // Index from the source (palette)
-
-            // console.log('Item added to workspace:', blockId, blockType, 'at index', evt.newDraggableIndex);
+            console.log('[dnd.js onAdd] Event:', evt);
+            console.log('[dnd.js onAdd] itemEl:', itemEl, 'blockId:', blockId, 'blockType:', blockType);
+            console.log('[dnd.js onAdd] Attempting to get originalBlockData...');
 
             let originalBlockData = null;
             if (_blockManagerModule) { // Check if module is set
-                if (blockType === 'predefined' || blockData.type !== 'custom') { // blockData.type might be from a predefined block directly
-                    originalBlockData = _blockManagerModule.getPredefinedBlockById(blockId);
-                } else if (blockType === 'custom') {
+                if (blockType === 'custom') { // Custom blocks have 'custom' as their blockType
+                    console.log('[dnd.js onAdd] Calling getCustomBlockTemplateById with:', blockId);
                     originalBlockData = _blockManagerModule.getCustomBlockTemplateById(blockId);
+                } else { // Predefined blocks have their specific type (e.g., 'site', 'filetype') as blockType
+                    console.log('[dnd.js onAdd] Calling getPredefinedBlockById with ID (expecting specific type like \'site\'):', blockId);
+                    originalBlockData = _blockManagerModule.getPredefinedBlockById(blockId);
                 }
             }
+            console.log('[dnd.js onAdd] originalBlockData:', originalBlockData);
 
 
             if (originalBlockData) {
+                console.log('[dnd.js onAdd] Calling addBlockToWorkspace with:', originalBlockData, evt.newDraggableIndex);
                 // Add to our data model at the correct index
                 // evt.newDraggableIndex refers to the index in the workspaceContainer
                 _blockManagerModule.addBlockToWorkspace(originalBlockData, evt.newDraggableIndex); 
@@ -87,6 +94,7 @@ export function initDragAndDrop() {
                 // For now, let renderWorkspace handle the DOM based on the data model.
                 // If issues arise, itemEl.remove() can be reconsidered.
             } else {
+                console.error('[dnd.js onAdd] originalBlockData is null. Block not added to workspace data.');
                 console.error('Could not find original block data for:', blockId, 'Type:', blockType);
                 itemEl.remove(); 
             }
