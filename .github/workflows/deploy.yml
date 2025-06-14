@@ -30,14 +30,8 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Fix peer dependency conflict
-        run: npm install date-fns@3.6.0
-      
-      - name: Fix missing dependencies
-        run: npm install @dnd-kit/sortable @dnd-kit/utilities react@18.3.1 react-dom@18.3.1
-
       - name: Install dependencies
-        run: npm install
+        run: npm ci # Changed from npm install and removed previous fix steps
         
       - name: Build with Next.js
         run: npm run build

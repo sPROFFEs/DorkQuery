@@ -1,18 +1,38 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+// @dnd-kit imports
+import {
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  rectIntersection
+} from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+
+// Local type imports
 import { DorkBlock, DorkBlockType, SearchEngine } from "@/types/dork";
-import { PREDEFINED_DORK_BLOCKS, createNewBlock, formatDorkQuery, generateSearchUrl, generateId } from "@/lib/dork-utils"; // Added generateId
+import { GhdbEntry } from "@/lib/ghdb-service";
+
+// Local util/service imports
+import { PREDEFINED_DORK_BLOCKS, createNewBlock, formatDorkQuery, generateSearchUrl, generateId } from "@/lib/dork-utils";
+
+// Local component imports
 import { DorkBlockList } from "./dork-block-list";
 import { DorkBuilderArea } from "./dork-builder-area";
 import { CustomBlockManager } from "./custom-block-manager";
-import { GhdbExplorer } from "./ghdb-explorer"; // Import GhdbExplorer
-import { GhdbEntry } from "@/lib/ghdb-service"; // Import GhdbEntry for the callback
-import { useToast } from "@/hooks/use-toast"; // Import useToast
+import { GhdbExplorer } from "./ghdb-explorer";
 
-// UI Imports
+// Hook imports
+import { useToast } from "@/hooks/use-toast";
+
+// UI component imports
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Import Tabs components
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -22,17 +42,6 @@ import {
 } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  DndContext, // Reverted alias
-  DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  closestCenter,
-  rectIntersection, // Import an alternative
-} from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable"; // Keep for reordering
 
 
 export function DorkingInterface() {
@@ -186,7 +195,8 @@ export function DorkingInterface() {
 
   // Render Structure with DndContext
   return (
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={rectIntersection}> {/* Using rectIntersection instead */}
+    // Using minimal DndContext props for this test
+    <DndContext onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 h-full"> {/* Ensure h-full for flex children */}
         {/* Left Panel: Tabs for Palette and GHDB Explorer */}
         <div className="space-y-6 md:col-span-1 flex flex-col h-full"> {/* flex flex-col h-full */}

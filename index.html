@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Dork Builder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Dork Builder Lab (Static Version)</h1>
+    </header>
+
+    <main class="app-container">
+        <aside class="left-panel">
+            <section id="palette-section" aria-labelledby="palette-title">
+                <h2 id="palette-title">Blocks Palette</h2>
+                <div id="palette-blocks" class="block-list">
+                    <!-- Predefined blocks will be rendered here by JS -->
+                </div>
+            </section>
+
+            <section id="custom-block-editor-section" aria-labelledby="custom-block-editor-title">
+                <h2 id="custom-block-editor-title">Create Custom Block</h2>
+                <form id="custom-block-form">
+                    <div>
+                        <label for="custom-op">Operator:</label>
+                        <input type="text" id="custom-op" name="operator" required placeholder="e.g., site:">
+                    </div>
+                    <div>
+                        <label for="custom-val-placeholder">Value Placeholder:</label>
+                        <input type="text" id="custom-val-placeholder" name="valuePlaceholder" placeholder="e.g., example.com">
+                    </div>
+                    <div>
+                        <label for="custom-desc">Description:</label>
+                        <input type="text" id="custom-desc" name="description" required placeholder="Description of the block">
+                    </div>
+                    <button type="submit">Save Custom Block</button>
+                </form>
+            </section>
+
+            <section id="ghdb-explorer-section" aria-labelledby="ghdb-explorer-title">
+                 <h2 id="ghdb-explorer-title">GHDB Explorer</h2>
+                 <div id="ghdb-search-area">
+                     <input type="search" id="ghdb-search-input" placeholder="Search GHDB...">
+                     <button id="ghdb-search-button">Search</button>
+                 </div>
+                 <div id="ghdb-results" class="block-list">
+                     <!-- GHDB results will be rendered here -->
+                 </div>
+                 <div id="ghdb-pagination">
+                     <!-- Pagination controls -->
+                 </div>
+            </section>
+        </aside>
+
+        <section class="workspace-area" aria-labelledby="workspace-title">
+            <h2 id="workspace-title">Workspace</h2>
+            <div id="workspace-blocks" class="block-list active-blocks-container">
+                <!-- Active dork blocks will be rendered here by JS -->
+                <p class="empty-workspace-message">Workspace is empty. Add blocks from the palette.</p>
+            </div>
+        </section>
+
+        <aside class="right-panel">
+             <section id="query-output-section" aria-labelledby="query-output-title">
+                 <h2 id="query-output-title">Generated Dork</h2>
+                 <textarea id="query-output" rows="5" readonly placeholder="Your dork will appear here..."></textarea>
+             </section>
+
+             <section id="search-engine-section" aria-labelledby="search-engine-title">
+                 <h2 id="search-engine-title">Search Engine</h2>
+                 <select id="search-engine-select">
+                     <option value="google" selected>Google</option>
+                     <option value="bing">Bing</option>
+                     <option value="duckduckgo">DuckDuckGo</option>
+                 </select>
+             </section>
+
+             <button id="execute-search-button">Execute Search</button>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Static Dork Builder</p>
+    </footer>
+
+    <script src="js/main.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+/* ==== Global Resets and Base Styles ==== */
+:root {
+    --primary-color: #4a90e2; /* A muted blue */
+    --primary-hover-color: #3a7bc8;
+    --secondary-color: #5cb85c; /* Green for save/add */
+    --secondary-hover-color: #4cae4c;
+    --destructive-color: #d9534f;
+    --destructive-hover-color: #c9302c;
+
+    --bg-color: #22272e; /* Dark gray */
+    --bg-panel-color: #2d333b; /* Slightly lighter for panels */
+    --bg-element-color: #373e47; /* For inputs, buttons within panels */
+    --bg-block-color: #4a525c; /* Default block background */
+    --bg-block-hover-color: #5a626c;
+
+    --text-color: #c9d1d9; /* Light gray/off-white */
+    --text-muted-color: #8b949e;
+    --text-on-primary-color: #ffffff;
+    --text-on-secondary-color: #ffffff;
+
+    --border-color: #444c56;
+    --border-light-color: #586069;
+    --border-focus-color: var(--primary-color);
+
+    --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+
+    --border-radius: 6px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.15);
+    --shadow-md: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family-sans);
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ==== Header & Footer ==== */
+header, footer {
+    background-color: var(--bg-panel-color);
+    color: var(--text-color);
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+footer {
+    border-top: 1px solid var(--border-color);
+    border-bottom: none;
+    margin-top: auto; /* Pushes footer to bottom */
+}
+header h1, footer p {
+    margin: 0;
+}
+
+/* ==== Main Application Container ==== */
+.app-container {
+    display: flex;
+    flex-grow: 1;
+    padding: 1rem;
+    gap: 1rem;
+    overflow: hidden; /* Prevent overall page scroll if panels handle their own */
+}
+
+/* ==== Panels ==== */
+.left-panel, .right-panel {
+    flex: 0 0 25%; /* flex-grow, flex-shrink, flex-basis */
+    background-color: var(--bg-panel-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.workspace-area {
+    flex: 0 0 50%;
+    background-color: var(--bg-panel-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow-y: auto;
+    display: flex; /* For vertical stacking if needed */
+    flex-direction: column;
+}
+
+/* ==== Sections within Panels ==== */
+section {
+    /* Sections can have their own background if needed for more separation */
+    /* background-color: var(--bg-element-color); */
+    /* padding: 0.75rem; */
+    /* border-radius: var(--border-radius); */
+    /* border: 1px solid var(--border-color); */
+}
+section h2 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-light-color);
+}
+
+/* ==== Block Lists (Palette, Workspace, GHDB Results) ==== */
+.block-list {
+    min-height: 80px;
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--bg-color); /* Slightly darker than panel for contrast */
+    border: 1px dashed var(--border-light-color); /* Default state */
+    flex-grow: 1; /* For GHDB results and workspace blocks */
+    overflow-y: auto; /* If many blocks */
+}
+.active-blocks-container { /* Specific to workspace */
+    border-style: solid; /* Solid for active area */
+}
+.active-blocks-container.drag-over { /* Class to be added by JS */
+    border-color: var(--primary-color);
+    background-color: rgba(var(--primary-color), 0.1); /* Needs JS to parse color */
+}
+.empty-workspace-message {
+    color: var(--text-muted-color);
+    text-align: center;
+    padding: 2rem 1rem;
+    font-style: italic;
+}
+
+/* ==== Dork Block Styling (.dork-block) ==== */
+.dork-block {
+    background-color: var(--bg-block-color);
+    border: 1px solid var(--border-light-color); /* Subtle border around block */
+    border-left-width: 5px; /* Colored left border for type indication */
+    border-radius: var(--border-radius);
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    color: var(--text-color); /* Default text color */
+}
+.dork-block:hover {
+    background-color: var(--bg-block-hover-color);
+    box-shadow: var(--shadow-md);
+}
+
+/* Specific block type colors (applied by JS by adding classes like .dork-block-site) */
+.dork-block-site { border-left-color: #3b82f6; } /* Blue */
+.dork-block-filetype { border-left-color: #22c55e; } /* Green */
+.dork-block-inurl { border-left-color: #f97316; } /* Orange */
+.dork-block-custom { border-left-color: #8b5cf6; } /* Purple */
+.dork-block-ghdb { border-left-color: #ec4899; } /* Pink for GHDB imported */
+
+.dork-block .drag-handle {
+    cursor: grab;
+    color: var(--text-muted-color);
+    padding: 0.2rem;
+}
+.dork-block .drag-handle:hover {
+    color: var(--text-color);
+}
+
+.dork-block .block-operator {
+    font-family: var(--font-family-mono);
+    font-weight: bold;
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+.dork-block input[type="text"] {
+    flex-grow: 1;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border-color);
+    border-radius: calc(var(--border-radius) - 2px);
+    background-color: var(--bg-element-color);
+    color: var(--text-color);
+    font-size: 0.9em;
+}
+.dork-block input[type="text"]:focus {
+    outline: none;
+    border-color: var(--border-focus-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color), 0.3); /* Needs JS for color parsing */
+}
+
+.dork-block .remove-block-btn {
+    background-color: var(--destructive-color);
+    color: var(--text-on-primary-color); /* Assuming white/light text on dark red */
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius); /* Use global border-radius */
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.8em; /* Slightly smaller font for 'X' */
+    line-height: 1; /* Ensure 'X' is centered if padding makes it look off */
+    margin-left: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+.dork-block .remove-block-btn:hover {
+    background-color: var(--destructive-hover-color);
+}
+
+/* Palette block specific styling (if needed to be smaller/different) */
+#palette-blocks .dork-block {
+    padding: 0.4rem 0.6rem;
+    cursor: grab;
+}
+#palette-blocks .dork-block .block-operator {
+    font-size: 0.85em;
+}
+
+
+/* ==== Form Elements & Controls ==== */
+label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+    color: var(--text-muted-color);
+}
+
+input[type="text"],
+input[type="search"],
+textarea,
+select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--bg-element-color);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem; /* Default spacing */
+}
+input[type="text"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--border-focus-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color), 0.3); /* Needs JS for color parsing */
+}
+
+textarea#query-output {
+    font-family: var(--font-family-mono);
+    min-height: 80px;
+    resize: vertical;
+}
+
+button,
+button[type="submit"] {
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    background-color: var(--primary-color);
+    color: var(--text-on-primary-color);
+}
+button:hover,
+button[type="submit"]:hover {
+    background-color: var(--primary-hover-color);
+}
+
+#custom-block-form button[type="submit"] {
+    background-color: var(--secondary-color);
+    color: var(--text-on-secondary-color);
+    width: 100%;
+}
+#custom-block-form button[type="submit"]:hover {
+    background-color: var(--secondary-hover-color);
+}
+
+#ghdb-search-area {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem; /* More space below search */
+}
+#ghdb-search-area input[type="search"] {
+    flex-grow: 1;
+    margin-bottom: 0; /* Remove default margin */
+}
+#ghdb-search-area button {
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+#ghdb-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+    border-top: 1px solid var(--border-light-color);
+    font-size: 0.9rem;
+}
+#ghdb-pagination button {
+    background-color: var(--bg-element-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+#ghdb-pagination button:hover {
+    background-color: var(--border-color);
+}
+#ghdb-pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#execute-search-button {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem; /* Larger execute button */
+    font-size: 1rem;
+}
+
+/* GHDB Entry specific styling (inside #ghdb-results) */
+.ghdb-entry {
+    background-color: var(--bg-element-color);
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+.ghdb-entry h3 {
+    font-size: 1rem;
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+    color: var(--primary-color);
+}
+.ghdb-entry .category, .ghdb-entry .date {
+    font-size: 0.8rem;
+    color: var(--text-muted-color);
+    margin-bottom: 0.25rem;
+}
+.ghdb-entry .dork-string {
+    font-family: var(--font-family-mono);
+    background-color: var(--bg-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: calc(var(--border-radius) - 2px);
+    display: block;
+    margin-bottom: 0.5rem;
+    word-break: break-all;
+}
+.ghdb-entry .import-button {
+    background-color: var(--secondary-color);
+    color: var(--text-on-secondary-color);
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    float: right; /* Example positioning */
+}
+.ghdb-entry .import-button:hover {
+    background-color: var(--secondary-hover-color);
+}
+.ghdb-entry .ghdb-link {
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+.ghdb-entry .ghdb-link:hover {
+    text-decoration: underline;
+}
+
+/* Clearfix for floated elements if any (like import button) */
+.ghdb-entry::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+    .left-panel, .right-panel, .workspace-area {
+        width: 100%;
+        flex: 0 0 auto; /* Reset flex property for stacking */
+        max-height: none; /* Allow full height in column layout */
+    }
+}
+
+/* Scrollbar styling (optional, for webkit browsers) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-panel-color);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-light-color);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--border-color);
+}
