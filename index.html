@@ -19,7 +19,39 @@
                     <!-- Predefined blocks will be rendered here by JS -->
                 </div>
             </section>
-            
+        </aside>
+
+        <main id="center-column-content" class="center-column">
+            <section class="workspace-area" aria-labelledby="workspace-title">
+                <h2 id="workspace-title">Workspace</h2>
+                <div id="workspace-blocks" class="block-list active-blocks-container">
+                    <!-- Active dork blocks will be rendered here by JS -->
+                    <p class="empty-workspace-message">Workspace is empty. Add blocks from the palette.</p>
+                </div>
+            </section>
+
+            <section id="query-controls-section" aria-labelledby="query-controls-title">
+                <h2 id="query-controls-title">Query & Actions</h2>
+                <div id="query-output-section"> <!-- Keep internal structure for now -->
+                    <h3>Generated Dork</h3> <!-- Re-adding h3 for clarity, was h2 -->
+                    <textarea id="query-output" rows="5" readonly placeholder="Your dork will appear here..."></textarea>
+                </div>
+                <div id="search-engine-section"> <!-- Keep internal structure -->
+                    <h3>Search Engine</h3> <!-- Re-adding h3 for clarity, was h2 -->
+                    <select id="search-engine-select">
+                        <option value="google" selected>Google</option>
+                        <option value="bing">Bing</option>
+                        <option value="duckduckgo">DuckDuckGo</option>
+                    </select>
+                </div>
+                <button id="execute-search-button">Execute Search</button>
+                <div id="trash-area" class="trash-zone">
+                    <p>Drag blocks here to delete</p>
+                </div>
+            </section>
+        </main>
+
+        <aside class="right-panel">
             <section id="custom-block-editor-section" aria-labelledby="custom-block-editor-title">
                 <h2 id="custom-block-editor-title">Create Custom Block</h2>
                 <form id="custom-block-form">
@@ -38,59 +70,29 @@
                     <button type="submit">Save Custom Block</button>
                 </form>
             </section>
-
-            <section id="ghdb-explorer-section" aria-labelledby="ghdb-explorer-title">
-                 <h2 id="ghdb-explorer-title">GHDB Explorer</h2>
-                 <div id="ghdb-search-area">
-                    <div class="ghdb-filter-item">
-                        <label for="ghdb-category-filter">Category:</label>
-                        <select id="ghdb-category-filter">
-                            <option value="All">All Categories</option>
-                            <!-- Categories will be populated by JavaScript -->
-                        </select>
-                    </div>
-                     <input type="search" id="ghdb-search-input" placeholder="Search GHDB...">
-                     <button id="ghdb-search-button">Search</button>
-                 </div>
-                 <div id="ghdb-results" class="block-list">
-                     <!-- GHDB results will be rendered here -->
-                 </div>
-                 <div id="ghdb-pagination">
-                     <!-- Pagination controls -->
-                 </div>
-            </section>
-        </aside>
-
-        <section class="workspace-area" aria-labelledby="workspace-title">
-            <h2 id="workspace-title">Workspace</h2>
-            <div id="workspace-blocks" class="block-list active-blocks-container">
-                <!-- Active dork blocks will be rendered here by JS -->
-                <p class="empty-workspace-message">Workspace is empty. Add blocks from the palette.</p>
-            </div>
-        </section>
-
-        <aside class="right-panel">
-             <section id="query-output-section" aria-labelledby="query-output-title">
-                 <h2 id="query-output-title">Generated Dork</h2>
-                 <textarea id="query-output" rows="5" readonly placeholder="Your dork will appear here..."></textarea>
-             </section>
-
-             <section id="search-engine-section" aria-labelledby="search-engine-title">
-                 <h2 id="search-engine-title">Search Engine</h2>
-                 <select id="search-engine-select">
-                     <option value="google" selected>Google</option>
-                     <option value="bing">Bing</option>
-                     <option value="duckduckgo">DuckDuckGo</option>
-                 </select>
-             </section>
-
-             <button id="execute-search-button">Execute Search</button>
-
-            <div id="trash-area" class="trash-zone">
-                <p>Drag blocks here to delete</p>
-            </div>
         </aside>
     </main>
+
+    <section id="ghdb-section-fullwidth" aria-labelledby="ghdb-main-title">
+        <h2 id="ghdb-main-title">GHDB Explorer</h2>
+        <div id="ghdb-search-area">
+            <div class="ghdb-filter-item">
+                <label for="ghdb-category-filter">Category:</label>
+                <select id="ghdb-category-filter">
+                    <option value="All">All Categories</option>
+                    <!-- Categories will be populated by JavaScript -->
+                </select>
+            </div>
+            <input type="search" id="ghdb-search-input" placeholder="Search GHDB...">
+            <button id="ghdb-search-button">Search</button>
+        </div>
+        <div id="ghdb-results" class="block-list">
+            <!-- GHDB results will be rendered here -->
+        </div>
+        <div id="ghdb-pagination">
+            <!-- Pagination controls -->
+        </div>
+    </section>
 
     <footer>
         <p>&copy; 2024 Static Dork Builder</p>

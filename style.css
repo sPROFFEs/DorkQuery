@@ -2,26 +2,25 @@
 :root {
     --primary-color: #4a90e2; /* A muted blue */
     --primary-hover-color: #3a7bc8;
-    --accent-blue: var(--primary-color); /* For SortableJS ghost, if needed */
-    --accent-blue-muted: rgba(74, 144, 226, 0.3); /* Lighter, muted blue for ghost bg */
+    --accent-blue: var(--primary-color);
+    --accent-blue-muted: rgba(74, 144, 226, 0.3);
     --secondary-color: #5cb85c; /* Green for save/add */
     --secondary-hover-color: #4cae4c;
     --destructive-color: #d9534f;
     --destructive-hover-color: #c9302c;
 
-    --accent-cyan: #22d3ee; /* For GHDB entries, distinct from primary blue */
-    --accent-green: var(--secondary-color); /* Re-use for consistency or define new if needed */
+    --accent-cyan: #22d3ee; 
+    --accent-green: var(--secondary-color);
     --accent-green-hover: var(--secondary-hover-color);
-    --accent-link-color: var(--primary-color); /* Or a specific link color */
-
+    --accent-link-color: var(--primary-color);
 
     --bg-color: #22272e; /* Dark gray */
-    --bg-panel-color: #2d333b; /* Slightly lighter for panels */
-    --bg-element-color: #373e47; /* For inputs, buttons within panels */
-    --bg-block-color: #4a525c; /* Default block background */
+    --bg-panel-color: #2d333b; 
+    --bg-element-color: #373e47;
+    --bg-block-color: #4a525c;
     --bg-block-hover-color: #5a626c;
 
-    --text-color: #c9d1d9; /* Light gray/off-white */
+    --text-color: #c9d1d9; 
     --text-muted-color: #8b949e;
     --text-on-primary-color: #ffffff;
     --text-on-secondary-color: #ffffff;
@@ -59,29 +58,30 @@ header, footer {
     color: var(--text-color);
     padding: 1rem;
     text-align: center;
+}
+header {
     border-bottom: 1px solid var(--border-color);
 }
 footer {
     border-top: 1px solid var(--border-color);
-    border-bottom: none;
-    margin-top: auto; /* Pushes footer to bottom */
+    margin-top: auto; 
 }
 header h1, footer p {
     margin: 0;
 }
 
-/* ==== Main Application Container ==== */
+/* ==== Main Application Container (Top Panels) ==== */
 .app-container {
-    display: flex;
+    display: flex; /* Key for side-by-side panels */
     flex-grow: 1;
-    padding: 1rem;
-    gap: 1rem;
-    overflow: hidden; /* Prevent overall page scroll if panels handle their own */
+    padding: 20px; /* Overall padding */
+    gap: 20px;     /* Gap between panels */
+    overflow: hidden; 
 }
 
-/* ==== Panels ==== */
-.left-panel, .right-panel {
-    flex: 0 0 25%; /* flex-grow, flex-shrink, flex-basis */
+/* ==== Left Panel (Palette) ==== */
+.left-panel {
+    flex: 0 0 280px; /* Fixed width for palette, adjusted from 250px */
     background-color: var(--bg-panel-color);
     padding: 1rem;
     border-radius: var(--border-radius);
@@ -92,26 +92,121 @@ header h1, footer p {
     gap: 1.5rem;
 }
 
+/* ==== Center Column (Workspace, Query, Actions, Trash) ==== */
+#center-column-content {
+    flex: 1 1 auto; /* Allow it to grow and shrink, takes remaining space */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between workspace and query-controls */
+    min-width: 0; /* Important for flex children if they also use flex */
+    background-color: var(--bg-panel-color); /* Give it a panel background */
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow-y: auto; /* Scroll if content exceeds height */
+}
+
 .workspace-area {
-    flex: 0 0 50%;
+    /* flex: 1 1 auto; /* Workspace itself can grow if #center-column-content has extra space */
+    /* No longer a direct flex child of app-container, so % flex-basis is removed */
+    display: flex; 
+    flex-direction: column;
+    /* background-color, padding, etc., are fine from previous rules if #center-column-content doesn't provide them */
+}
+
+#workspace-blocks {
+    /* max-width: 800px; /* Example max-width for the droppable area if desired */
+    /* margin: 0 auto; /* Centers #workspace-blocks if it's narrower than .workspace-area */
+    flex-grow: 1; /* Make workspace blocks container take available vertical space */
+}
+
+#query-controls-section {
+    margin-top: 10px; /* Reduced from 20px as parent has gap */
+    background-color: var(--bg-element-color); /* Slight distinction for this control group */
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+#query-controls-section h3 { /* Styles for the new h3s */
+    font-size: 1rem;
+    color: var(--text-muted-color);
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+#query-controls-section > div { /* Spacing for direct children like query-output-section, search-engine-section */
+    margin-bottom: 1rem;
+}
+#query-controls-section > button#execute-search-button {
+    margin-bottom: 1rem; /* Space before trash area */
+}
+
+
+/* ==== Right Panel (Custom Block Form) ==== */
+.right-panel {
+    flex: 0 0 300px; /* Fixed width for tools/custom blocks, adjusted from 280px */
     background-color: var(--bg-panel-color);
     padding: 1rem;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
     overflow-y: auto;
-    display: flex; /* For vertical stacking if needed */
+    display: flex;
     flex-direction: column;
+    gap: 1.5rem;
 }
 
-/* ==== Sections within Panels ==== */
-section {
-    /* Sections can have their own background if needed for more separation */
-    /* background-color: var(--bg-element-color); */
-    /* padding: 0.75rem; */
-    /* border-radius: var(--border-radius); */
-    /* border: 1px solid var(--border-color); */
+/* ==== GHDB Full-Width Bottom Section ==== */
+#ghdb-section-fullwidth {
+    width: 100%;
+    padding: 20px; /* Match app-container padding */
+    margin-top: 20px; /* Space above it, reduced from 30px */
+    box-sizing: border-box;
+    background-color: var(--bg-panel-color); /* Give it a panel background */
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column; /* Stack title, search, results, pagination */
 }
-section h2 {
+#ghdb-section-fullwidth h2 { /* Style for the main GHDB title */
+    font-size: 1.2rem; /* Make it a bit more prominent */
+    color: var(--text-color);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-light-color);
+}
+
+#ghdb-search-area {
+    display: flex;
+    gap: 10px; /* Space between filter and search input/button */
+    align-items: center; /* Align items vertically */
+    margin-bottom: 1rem; /* Overriding old margin-bottom: 0.5rem */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens if needed */
+}
+.ghdb-filter-item { /* Wrapper for label and select */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-grow: 1; /* Allow filter to take some space */
+}
+.ghdb-filter-item label {
+    margin-bottom: 0; /* Remove default label margin */
+    flex-shrink: 0;
+}
+.ghdb-filter-item select {
+    flex-grow: 1; /* Allow select to take available space in filter item */
+    margin-bottom: 0; /* Remove default select margin */
+    max-width: 250px; /* Prevent select from becoming too wide */
+}
+#ghdb-search-area input[type="search"] {
+    flex-grow: 2; /* Allow search input to take more space */
+    min-width: 200px; /* Ensure it doesn't get too small */
+}
+
+
+/* ==== Sections within Panels (General) ==== */
+/* This was too broad, now handled by panel styles or specific section styles */
+/* section { } */ 
+section h2 { /* For h2 within palette, custom block editor */
     font-size: 1.1rem;
     color: var(--text-color);
     margin-top: 0;
@@ -120,22 +215,29 @@ section h2 {
     border-bottom: 1px solid var(--border-light-color);
 }
 
+
 /* ==== Block Lists (Palette, Workspace, GHDB Results) ==== */
 .block-list {
     min-height: 80px; 
     padding: 0.5rem;
     border-radius: var(--border-radius);
-    background-color: var(--bg-color); /* Slightly darker than panel for contrast */
-    border: 1px dashed var(--border-light-color); /* Default state */
-    flex-grow: 1; /* For GHDB results and workspace blocks */
-    overflow-y: auto; /* If many blocks */
+    background-color: var(--bg-color); 
+    border: 1px dashed var(--border-light-color); 
+    flex-grow: 1; 
+    overflow-y: auto; 
 }
-.active-blocks-container { /* Specific to workspace */
-    border-style: solid; /* Solid for active area */
+#ghdb-results { /* Specific styling for GHDB results block list */
+    min-height: 200px; /* Ensure it has decent height */
+    /* background-color is var(--bg-color) from .block-list */
+    /* border is also from .block-list */
 }
-.active-blocks-container.drag-over { /* Class to be added by JS */
+.active-blocks-container { 
+    border-style: solid; 
+}
+.active-blocks-container.drag-over { 
     border-color: var(--primary-color);
-    background-color: rgba(var(--primary-color), 0.1); /* Needs JS to parse color */
+    /* background-color: rgba(var(--primary-color), 0.1); /* Needs JS to parse color - consider var(--accent-blue-muted) */
+    background-color: var(--accent-blue-muted);
 }
 .empty-workspace-message {
     color: var(--text-muted-color);
@@ -147,8 +249,8 @@ section h2 {
 /* ==== Dork Block Styling (.dork-block) ==== */
 .dork-block {
     background-color: var(--bg-block-color);
-    border: 1px solid var(--border-light-color); /* Subtle border around block */
-    border-left-width: 5px; /* Colored left border for type indication */
+    border: 1px solid var(--border-light-color); 
+    border-left-width: 5px; 
     border-radius: var(--border-radius);
     padding: 0.6rem 0.8rem;
     margin-bottom: 0.6rem;
@@ -157,19 +259,19 @@ section h2 {
     gap: 0.6rem;
     box-shadow: var(--shadow-sm);
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    color: var(--text-color); /* Default text color */
+    color: var(--text-color); 
 }
 .dork-block:hover {
     background-color: var(--bg-block-hover-color);
     box-shadow: var(--shadow-md);
 }
 
-/* Specific block type colors (applied by JS by adding classes like .dork-block-site) */
-.dork-block-site { border-left-color: #3b82f6; } /* Blue */
-.dork-block-filetype { border-left-color: #22c55e; } /* Green */
-.dork-block-inurl { border-left-color: #f97316; } /* Orange */
-.dork-block-custom { border-left-color: #8b5cf6; } /* Purple */
-.dork-block-ghdb { border-left-color: #ec4899; } /* Pink for GHDB imported */
+/* Specific block type colors */
+.dork-block-site { border-left-color: #3b82f6; } 
+.dork-block-filetype { border-left-color: #22c55e; } 
+.dork-block-inurl { border-left-color: #f97316; } 
+.dork-block-custom { border-left-color: #8b5cf6; } 
+.dork-block-ghdb { border-left-color: #ec4899; } 
 
 .dork-block .drag-handle {
     cursor: grab;
@@ -199,19 +301,20 @@ section h2 {
 .dork-block input[type="text"]:focus {
     outline: none;
     border-color: var(--border-focus-color);
-    box-shadow: 0 0 0 2px rgba(var(--primary-color), 0.3); /* Needs JS for color parsing */
+    /* box-shadow: 0 0 0 2px rgba(var(--primary-color), 0.3); /* Needs JS for color parsing */
+    box-shadow: 0 0 0 2px var(--accent-blue-muted);
 }
 
 .dork-block .remove-block-btn {
     background-color: var(--destructive-color);
-    color: var(--text-on-primary-color); /* Assuming white/light text on dark red */
+    color: var(--text-on-primary-color); 
     border: none;
     padding: 0.25rem 0.5rem;
-    border-radius: var(--border-radius); /* Use global border-radius */
+    border-radius: var(--border-radius); 
     cursor: pointer;
     font-weight: bold;
-    font-size: 0.8em; /* Slightly smaller font for 'X' */
-    line-height: 1; /* Ensure 'X' is centered if padding makes it look off */
+    font-size: 0.8em; 
+    line-height: 1; 
     margin-left: 0.5rem; 
     transition: background-color 0.2s ease;
 }
@@ -219,7 +322,6 @@ section h2 {
     background-color: var(--destructive-hover-color);
 }
 
-/* Palette block specific styling (if needed to be smaller/different) */
 #palette-blocks .dork-block {
     padding: 0.4rem 0.6rem;
     cursor: grab;
@@ -229,7 +331,7 @@ section h2 {
 }
 
 
-/* ==== Form Elements & Controls ==== */
+/* ==== Form Elements & Controls (General) ==== */
 label {
     display: block;
     margin-bottom: 0.3rem;
@@ -248,7 +350,7 @@ select {
     background-color: var(--bg-element-color);
     color: var(--text-color);
     font-size: 0.9rem;
-    margin-bottom: 0.75rem; /* Default spacing */
+    margin-bottom: 0.75rem; 
 }
 input[type="text"]:focus,
 input[type="search"]:focus,
@@ -256,13 +358,15 @@ textarea:focus,
 select:focus {
     outline: none;
     border-color: var(--border-focus-color);
-    box-shadow: 0 0 0 2px rgba(var(--primary-color), 0.3); /* Needs JS for color parsing */
+    /* box-shadow: 0 0 0 2px rgba(var(--primary-color), 0.3); /* Needs JS for color parsing */
+    box-shadow: 0 0 0 2px var(--accent-blue-muted);
 }
 
 textarea#query-output {
     font-family: var(--font-family-mono);
-    min-height: 80px;
+    min-height: 80px; /* Keep min-height */
     resize: vertical;
+    /* width: 100%; /* Ensure it takes full width of its new parent in query-controls */
 }
 
 button,
@@ -291,18 +395,8 @@ button[type="submit"]:hover {
     background-color: var(--secondary-hover-color);
 }
 
-#ghdb-search-area {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem; /* More space below search */
-}
-#ghdb-search-area input[type="search"] {
-    flex-grow: 1;
-    margin-bottom: 0; /* Remove default margin */
-}
-#ghdb-search-area button {
-    flex-shrink: 0; /* Prevent button from shrinking */
-}
+/* #ghdb-search-area input[type="search"] handled by new flex rules */
+/* #ghdb-search-area button handled by new flex rules */
 
 #ghdb-pagination {
     display: flex;
@@ -327,157 +421,14 @@ button[type="submit"]:hover {
 }
 
 #execute-search-button {
-    width: 100%;
-    margin-top: 1rem;
-    padding: 0.75rem 1rem; /* Larger execute button */
+    width: 100%; /* Takes width of its parent in query-controls */
+    margin-top: 1rem; /* Spacing within query-controls */
+    padding: 0.75rem 1rem; 
     font-size: 1rem;
 }
 
-/* GHDB Entry specific styling (inside #ghdb-results) */
-.ghdb-entry {
-    background-color: var(--bg-element-color);
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    font-size: 0.9rem;
-}
-.ghdb-entry h3 {
-    font-size: 1rem;
-    margin-top: 0;
-    margin-bottom: 0.25rem;
-    color: var(--primary-color);
-}
-.ghdb-entry .category, .ghdb-entry .date {
-    font-size: 0.8rem;
-    color: var(--text-muted-color);
-    margin-bottom: 0.25rem;
-}
-.ghdb-entry .dork-string {
-    font-family: var(--font-family-mono);
-    background-color: var(--bg-color);
-    padding: 0.25rem 0.5rem;
-    border-radius: calc(var(--border-radius) - 2px);
-    display: block;
-    margin-bottom: 0.5rem;
-    word-break: break-all;
-}
-.ghdb-entry .import-button {
-    background-color: var(--secondary-color);
-    color: var(--text-on-secondary-color);
-    font-size: 0.8rem;
-    padding: 0.25rem 0.6rem;
-    float: right; /* Example positioning */
-}
-.ghdb-entry .import-button:hover {
-    background-color: var(--secondary-hover-color);
-}
-.ghdb-entry .ghdb-link {
-    font-size: 0.8rem;
-    color: var(--primary-color);
-    text-decoration: none;
-}
-.ghdb-entry .ghdb-link:hover {
-    text-decoration: underline;
-}
-
-/* Clearfix for floated elements if any (like import button) */
-.ghdb-entry::after {
-    content: "";
-    clear: both;
-    display: table;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .app-container {
-        flex-direction: column;
-    }
-    .left-panel, .right-panel, .workspace-area {
-        width: 100%;
-        flex: 0 0 auto; /* Reset flex property for stacking */
-        max-height: none; /* Allow full height in column layout */
-    }
-}
-
-/* Scrollbar styling (optional, for webkit browsers) */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: var(--bg-panel-color);
-}
-::-webkit-scrollbar-thumb {
-    background: var(--border-light-color);
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: var(--border-color);
-}
-
-
-/* SortableJS Feedback Classes */
-.dork-block-ghost { /* Placeholder style for where the item will be dropped */
-    opacity: 0.4;
-    background-color: var(--accent-blue-muted); 
-    border: 2px dashed var(--accent-blue);
-}
-
-.dork-block-chosen, 
-.dork-block-drag { /* Style for the item being dragged */
-    opacity: 0.85 !important; /* Important to override potential inline styles by SortableJS */
-    transform: scale(1.02); 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    cursor: grabbing !important;
-}
-
-/* Trash Area Styling */
-.trash-zone {
-    border: 2px dashed #ccc; /* Use a variable if available e.g. var(--border-color) */
-    padding: 20px;
-    margin-top: 20px;
-    text-align: center;
-    background-color: #f9f9f9; /* Use a variable e.g. var(--bg-element-color) or slightly different */
-    color: #555; /* Use a variable e.g. var(--text-muted-color) */
-    min-height: 50px; /* Ensure it has some height */
-    border-radius: var(--border-radius); /* Consistent border radius */
-}
-
-.trash-zone.dork-block-ghost-trash { /* Style for when an item is dragged over it */
-    background-color: #ffe0e0; /* Light red to indicate deletion possibility - consider var(--destructive-color) with transparency */
-    border-color: #ff0000; /* var(--destructive-color) */
-    color: #ff0000; /* var(--destructive-color) */
-}
-
-
-/* GHDB Explorer Section specific styling */
-#ghdb-explorer-section { 
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem; 
-    flex-grow: 1; 
-    overflow-y: hidden; 
-    min-height: 0; /* Important for flex children in a flex column parent */
-}
-
-/* #ghdb-search-area is mostly styled by general form styles, ensure margin is appropriate */
-#ghdb-search-area {
-    margin-bottom: 0.5rem; 
-}
-
-#ghdb-results {
-    min-height: 150px; 
-    flex-grow: 1; /* Allow results to take available space */
-    overflow-y: auto;
-    padding: 0.5rem; 
-    border: 1px solid var(--border-color); 
-    border-radius: var(--border-radius);
-    background-color: var(--bg-color); 
-}
-
-/* GHDB Entry specific styling (inside #ghdb-results) */
-/* Re-using .ghdb-entry class from previous attempt, but ensuring it's complete here */
+/* GHDB Entry specific styling */
+/* .ghdb-entry styles are largely okay, ensure they fit new context */
 .ghdb-entry {
     background-color: var(--bg-element-color); 
     border: 1px solid var(--border-light-color);
@@ -493,14 +444,14 @@ button[type="submit"]:hover {
     gap: 0.4rem; 
 }
 .ghdb-entry:hover {
-    border-color: var(--accent-cyan); /* Highlight on hover */
+    border-color: var(--accent-cyan); 
     box-shadow: var(--shadow-md);
 }
 
 .ghdb-entry h4 { 
     font-size: 1rem; 
     margin: 0 0 0.25rem 0; 
-    color: var(--accent-cyan); /* Use accent color for title */
+    color: var(--accent-cyan); 
     font-weight: 600;
 }
 .ghdb-meta { 
@@ -515,14 +466,14 @@ button[type="submit"]:hover {
     border-radius: var(--border-radius); 
     margin-bottom: 0.4rem;
     font-family: var(--font-family-mono);
-    word-break: break-all; /* Prevent long dorks from breaking layout */
+    word-break: break-all; 
     color: var(--text-color);
     border: 1px solid var(--border-color);
     font-size: 0.85em;
 }
 .ghdb-entry a.ghdb-link { 
     font-size: 0.85em;
-    color: var(--accent-link-color); /* Use defined link color */
+    color: var(--accent-link-color); 
     text-decoration: none;
     display: inline-block; 
     margin-top: 0.25rem;
@@ -540,12 +491,100 @@ button[type="submit"]:hover {
     border-radius: var(--border-radius);
     border:none;
     cursor: pointer;
-    align-self: flex-start; /* Align button to the left under content */
+    align-self: flex-start; 
 }
 .import-ghdb-btn:hover {
     background-color: var(--accent-green-hover);
 }
 
+/* Clearfix removed as .ghdb-entry is now flexbox */
+
+/* Responsive adjustments */
+@media (max-width: 1024px) { /* Adjusted breakpoint for 3-column to 2-column/1-column */
+    .app-container {
+        flex-direction: column;
+    }
+    .left-panel, #center-column-content, .right-panel {
+        width: 100%; /* Full width when stacked */
+        flex: 0 0 auto; 
+        margin-bottom: 20px; /* Add space when stacked */
+    }
+    .right-panel {
+        margin-bottom: 0; /* No margin for the last stacked item in app-container */
+    }
+}
+@media (max-width: 768px) {
+    /* Further adjustments if needed for smaller screens, 
+       e.g., GHDB search area items might need to stack */
+    #ghdb-search-area {
+        flex-direction: column;
+        align-items: stretch; /* Make items full width when stacked */
+    }
+    .ghdb-filter-item select {
+        max-width: none; /* Allow select to go full width */
+    }
+    #ghdb-search-area input[type="search"], 
+    #ghdb-search-area button {
+        width: 100%; /* Stack search input and button */
+    }
+}
+
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-panel-color);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-light-color);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--border-color);
+}
+
+
+/* SortableJS Feedback Classes */
+.dork-block-ghost { 
+    opacity: 0.4;
+    background-color: var(--accent-blue-muted); 
+    border: 2px dashed var(--accent-blue);
+}
+
+.dork-block-chosen, 
+.dork-block-drag { 
+    opacity: 0.85 !important; 
+    transform: scale(1.02); 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    cursor: grabbing !important;
+}
+
+/* Trash Area Styling */
+.trash-zone {
+    border: 2px dashed var(--border-color); /* Using theme variable */
+    padding: 20px;
+    margin-top: 15px; /* Adjusted from 20px */
+    text-align: center;
+    background-color: var(--bg-element-color); /* Using theme variable */
+    color: var(--text-muted-color); /* Using theme variable */
+    min-height: 80px; /* Increased min-height for better drop target */
+    border-radius: var(--border-radius); 
+    display: flex; /* For centering text vertically if needed */
+    align-items: center;
+    justify-content: center;
+}
+
+.trash-zone.dork-block-ghost-trash { 
+    background-color: rgba(217, 83, 79, 0.1); /* var(--destructive-color) with transparency */
+    border-color: var(--destructive-color); 
+    color: var(--destructive-color); 
+}
+
+
+/* Styling for #ghdb-explorer-section (old ID) is removed as it's now #ghdb-section-fullwidth */
 /* Styles for loading, info, and error messages within GHDB results or other areas */
 .loading-message, .info-message, .error-message {
     padding: 1rem;
