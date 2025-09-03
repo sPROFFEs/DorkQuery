@@ -1,11 +1,12 @@
 // js/ghdbExplorerUI.js
 import { qs, createElement } from './domUtils.js';
 // Import new service functions
-import { loadAllLocalGhdbEntries, getLocalGhdbDorks } from './ghdbService.js';
+import { loadAllLocalGhdbEntries, getLocalGhdbDorks, getAvailableSources, getDataStatistics } from './ghdbService.js';
 
 const RESULTS_PER_PAGE = 15;
 let currentSearchTerm = '';
 let currentCategoryFilter = 'All'; // Initialize category filter
+let currentSourceFilter = 'All'; // Initialize source filter
 let currentPage = 0;
 let totalFilteredRecords = 0;
 // isLoading might be less critical for local data, but kept for UI consistency during initial load
@@ -14,7 +15,7 @@ let ghdbEntries = [];
 let onImportDorkCallback = null; // Will be set by init
 
 // DOM Elements
-let searchInput, searchButton, resultsContainer, paginationContainer, categoryFilterSelect;
+let searchInput, searchButton, resultsContainer, paginationContainer, categoryFilterSelect, sourceFilterSelect, statsElement;
 
 // Function to display error messages in the results container
 function displayGhdbError(message) {
@@ -27,25 +28,26 @@ function displayGhdbError(message) {
 }
 
 // Unified function to load and render entries
-function loadAndRenderEntries(page, term, category) {
+function loadAndRenderEntries(page, term, category, source) {
     isLoading = true;
     currentSearchTerm = term;
     currentCategoryFilter = category;
+    currentSourceFilter = source;
     currentPage = page;
 
     if (resultsContainer) {
         resultsContainer.innerHTML = ''; 
-        resultsContainer.appendChild(createElement('p', 'loading-message', 'Loading GHDB entries...'));
+        resultsContainer.appendChild(createElement('p', 'loading-message', 'Loading dork entries...'));
     }
     if (paginationContainer) {
         paginationContainer.innerHTML = '';
     }
-    // renderGhdbUI(); // Show loading state
 
     try {
         // getLocalGhdbDorks is synchronous after initial data load
         const response = getLocalGhdbDorks({ 
-            categoryFilter: currentCategoryFilter, 
+            categoryFilter: currentCategoryFilter,
+            sourceFilter: currentSourceFilter,
             searchTerm: currentSearchTerm, 
             page: currentPage, 
             pageSize: RESULTS_PER_PAGE 
@@ -56,8 +58,8 @@ function loadAndRenderEntries(page, term, category) {
     } catch (error) {
         // This catch is more for unexpected errors in filtering logic,
         // as data loading errors are handled in init.
-        console.error('GHDB UI Error during filtering/pagination:', error);
-        displayGhdbError(`Error processing GHDB data: ${error.message}`);
+        console.error('Dork UI Error during filtering/pagination:', error);
+        displayGhdbError(`Error processing dork data: ${error.message}`);
         isLoading = false;
     }
     renderGhdbUI();
@@ -82,45 +84,75 @@ function renderGhdbUI() {
     }
 
     if (ghdbEntries.length === 0) {
-        resultsContainer.appendChild(createElement('p', 'info-message', 'No GHDB entries found matching your criteria.'));
+        resultsContainer.appendChild(createElement('p', 'info-message', 'No dork entries found matching your criteria.'));
     } else {
         ghdbEntries.forEach(entry => {
             const entryDiv = createElement('div', 'ghdb-entry');
             
-            // The JSON sample uses 'query' for the dork string, and 'category' for category name.
-            // It does not have a separate descriptive 'title' for the dork itself.
-            // We'll use the query as the main display title, or part of it.
+            // Create source badge
+            const sourceEl = createElement('span', 'source-badge', entry.source || 'Unknown');
+            if (entry.source === 'DorkHub') {
+                sourceEl.classList.add('dorkhub-badge');
+            } else if (entry.source === 'GHDB') {
+                sourceEl.classList.add('ghdb-badge');
+            }
+            entryDiv.appendChild(sourceEl);
+            
             const dorkTitle = entry.query.length > 100 ? entry.query.substring(0, 97) + "..." : entry.query;
-            const titleEl = createElement('h4', null, dorkTitle); // Use entry.query or a snippet as title
+            const titleEl = createElement('h4', null, dorkTitle);
             entryDiv.appendChild(titleEl);
 
-            const metaEl = createElement('p', 'ghdb-meta', `Category: ${entry.category} | Date: ${entry.date}`);
+            // Enhanced meta information
+            let metaText = `Category: ${entry.category}`;
+            if (entry.subcategory) {
+                metaText += ` > ${entry.subcategory}`;
+            }
+            metaText += ` | Date: ${entry.date}`;
+            if (entry.author) {
+                metaText += ` | Author: ${entry.author}`;
+            }
+            
+            const metaEl = createElement('p', 'ghdb-meta', metaText);
             entryDiv.appendChild(metaEl);
 
-            // Display the full dork string (was entry.dork, now entry.query)
+            // Display the full dork string
             const dorkEl = createElement('code', 'ghdb-dork', entry.query);
             entryDiv.appendChild(dorkEl);
             
-            if (entry.ghdb_id) { // Check if ghdb_id exists
+            // Links section
+            const linksEl = createElement('p', 'entry-links');
+            
+            if (entry.ghdb_id) {
                 const linkEl = createElement('a', 'ghdb-link', 'View on Exploit-DB');
                 linkEl.href = `https://www.exploit-db.com/ghdb/${entry.ghdb_id}`;
                 linkEl.target = '_blank';
                 linkEl.rel = 'noopener noreferrer';
-                const linkParagraph = createElement('p');
-                linkParagraph.appendChild(linkEl);
-                entryDiv.appendChild(linkParagraph);
+                linksEl.appendChild(linkEl);
+            }
+            
+            if (entry.source === 'DorkHub' && entry.source_file) {
+                if (linksEl.children.length > 0) {
+                    linksEl.appendChild(document.createTextNode(' | '));
+                }
+                const fileInfo = createElement('span', 'file-info', `From: ${entry.source_file}`);
+                linksEl.appendChild(fileInfo);
+            }
+            
+            if (linksEl.children.length > 0) {
+                entryDiv.appendChild(linksEl);
             }
 
             const importButton = createElement('button', 'import-ghdb-btn', 'Import');
-            // Tooltip: use the query string as it's the most descriptive part of the entry now
-            importButton.title = `Import dork: ${entry.query}`; 
+            importButton.title = `Import dork: ${entry.query}`;
             importButton.addEventListener('click', () => {
                 if (onImportDorkCallback) {
-                    // Adapt the object passed to the callback if its structure expectation changed
-                    // Assuming the callback expects an object with a 'dork' field for the query string
+                    const title = entry.ghdb_id ? 
+                        `GHDB-${entry.ghdb_id}: ${entry.query.substring(0,50)}...` :
+                        `${entry.source}-${entry.category}: ${entry.query.substring(0,50)}...`;
+                    
                     onImportDorkCallback({ 
                         dork: entry.query, 
-                        title: `GHDB-${entry.ghdb_id}: ${entry.query.substring(0,50)}...` // Construct a title
+                        title: title
                     });
                 }
             });
@@ -153,7 +185,7 @@ function updatePaginationUI() {
     prevButton.disabled = currentPage === 0 || isLoading;
     prevButton.addEventListener('click', () => {
         if (currentPage > 0) {
-            loadAndRenderEntries(currentPage - 1, currentSearchTerm, currentCategoryFilter);
+            loadAndRenderEntries(currentPage - 1, currentSearchTerm, currentCategoryFilter, currentSourceFilter);
         }
     });
     paginationContainer.appendChild(prevButton);
@@ -162,7 +194,7 @@ function updatePaginationUI() {
     nextButton.disabled = (currentPage + 1) >= totalPages || isLoading;
     nextButton.addEventListener('click', () => {
         if ((currentPage + 1) < totalPages) {
-            loadAndRenderEntries(currentPage + 1, currentSearchTerm, currentCategoryFilter);
+            loadAndRenderEntries(currentPage + 1, currentSearchTerm, currentCategoryFilter, currentSourceFilter);
         }
     });
     paginationContainer.appendChild(nextButton);
@@ -171,7 +203,15 @@ function updatePaginationUI() {
 function handleSearchAndFilter() {
     const term = searchInput ? searchInput.value.trim() : '';
     const category = categoryFilterSelect ? categoryFilterSelect.value : 'All';
-    loadAndRenderEntries(0, term, category);
+    const source = sourceFilterSelect ? sourceFilterSelect.value : 'All';
+    loadAndRenderEntries(0, term, category, source);
+}
+
+function updateStatsDisplay() {
+    const stats = getDataStatistics();
+    if (statsElement && stats.loaded) {
+        statsElement.textContent = `${stats.totalEntries.toLocaleString()} dorks | ${stats.categoriesCount} categories | ${stats.sourcesCount} sources`;
+    }
 }
 
 export async function initGhdbExplorer(importCallback) {
@@ -181,16 +221,18 @@ export async function initGhdbExplorer(importCallback) {
     searchButton = qs('#ghdb-search-button');
     resultsContainer = qs('#ghdb-results');
     paginationContainer = qs('#ghdb-pagination');
-    categoryFilterSelect = qs('#ghdb-category-filter'); // Cache the new select element
+    categoryFilterSelect = qs('#ghdb-category-filter');
+    sourceFilterSelect = qs('#ghdb-source-filter'); // New source filter
+    statsElement = qs('#dork-stats'); // Stats badge
 
-    if (!searchInput || !searchButton || !resultsContainer || !paginationContainer || !categoryFilterSelect) {
-        console.error('GHDB Explorer UI elements not found! Check HTML IDs (searchInput, searchButton, resultsContainer, paginationContainer, categoryFilterSelect).');
-        displayGhdbError('GHDB Explorer UI could not be initialized. Required HTML elements are missing.');
+    if (!searchInput || !searchButton || !resultsContainer || !paginationContainer || !categoryFilterSelect || !sourceFilterSelect) {
+        console.error('Dork Explorer UI elements not found! Check HTML IDs.');
+        displayGhdbError('Dork Explorer UI could not be initialized. Required HTML elements are missing.');
         return;
     }
 
     // Initial UI state before data load
-    resultsContainer.innerHTML = `<p class="loading-message">Initializing GHDB Explorer...</p>`;
+    resultsContainer.innerHTML = `<p class="loading-message">Initializing Dork Explorer...</p>`;
     updatePaginationUI();
 
 
@@ -208,6 +250,20 @@ export async function initGhdbExplorer(importCallback) {
             });
             categoryFilterSelect.addEventListener('change', handleSearchAndFilter);
         }
+
+        // Populate source filter
+        if (sourceFilterSelect) {
+            const sources = getAvailableSources();
+            sources.forEach(source => {
+                const option = createElement('option', null, source);
+                option.value = source;
+                sourceFilterSelect.appendChild(option);
+            });
+            sourceFilterSelect.addEventListener('change', handleSearchAndFilter);
+        }
+
+        // Update stats display
+        updateStatsDisplay();
         
         searchButton.addEventListener('click', handleSearchAndFilter);
         searchInput.addEventListener('keypress', (event) => {
@@ -216,12 +272,12 @@ export async function initGhdbExplorer(importCallback) {
             }
         });
 
-        handleSearchAndFilter(); // Initial load of entries with "All Categories" and empty search
+        handleSearchAndFilter(); // Initial load of entries with default filters
 
     } catch (error) {
         // Error from loadAllLocalGhdbEntries (e.g., file not found, JSON parse error)
-        console.error('Failed to initialize GHDB Explorer:', error);
-        displayGhdbError(`Failed to load local GHDB data: ${error.message}. Check if 'data/ghdb_entries.json' is valid.`);
+        console.error('Failed to initialize Dork Explorer:', error);
+        displayGhdbError(`Failed to load dork data: ${error.message}. Check if dork data files are valid.`);
         isLoading = false; // Ensure loading is reset
         updatePaginationUI(); // Update pagination to reflect error state
     }

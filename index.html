@@ -102,7 +102,7 @@
     </main>
 
     <section id="ghdb-section-fullwidth" aria-labelledby="ghdb-main-title">
-        <h2 id="ghdb-main-title">GHDB Explorer</h2>
+        <h2 id="ghdb-main-title">Dork Explorer <span id="dork-stats" class="stats-badge"></span></h2>
         <div id="ghdb-search-area">
             <div class="ghdb-filter-item">
                 <label for="ghdb-category-filter">Category:</label>
@@ -111,11 +111,18 @@
                     <!-- Categories will be populated by JavaScript -->
                 </select>
             </div>
-            <input type="search" id="ghdb-search-input" placeholder="Search GHDB...">
+            <div class="ghdb-filter-item">
+                <label for="ghdb-source-filter">Source:</label>
+                <select id="ghdb-source-filter">
+                    <option value="All">All Sources</option>
+                    <!-- Sources will be populated by JavaScript -->
+                </select>
+            </div>
+            <input type="search" id="ghdb-search-input" placeholder="Search dorks...">
             <button id="ghdb-search-button">Search</button>
         </div>
         <div id="ghdb-results" class="block-list">
-            <!-- GHDB results will be rendered here -->
+            <!-- Dork results will be rendered here -->
         </div>
         <div id="ghdb-pagination">
             <!-- Pagination controls -->
@@ -124,6 +131,12 @@
 
     <footer>
         <p>&copy; <span id="year"></span> DorkQuery - <a href="https://sproffes.github.io/resources/">by pr0ff3</a></p>
+        <p class="credits">
+            Dork databases powered by: 
+            <a href="https://www.exploit-db.com/google-hacking-database" target="_blank" rel="noopener">Google Hacking Database (GHDB)</a> 
+            & 
+            <a href="https://github.com/TrixSec/DorkHub" target="_blank" rel="noopener">TrixSec DorkHub</a>
+        </p>
     </footer>
 
     <script>
@@ -131,6 +144,8 @@
     </script>
     <!-- SortableJS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <!-- Pako for gzip decompression -->
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
     <script src="js/main.js" type="module"></script>
 </body>
 

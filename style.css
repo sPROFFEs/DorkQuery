@@ -70,6 +70,21 @@ header h1, footer p {
     margin: 0;
 }
 
+footer .credits {
+    font-size: 0.85rem;
+    color: var(--text-muted-color);
+    margin-top: 0.5rem;
+}
+
+footer .credits a {
+    color: var(--accent-link-color);
+    text-decoration: none;
+}
+
+footer .credits a:hover {
+    text-decoration: underline;
+}
+
 /* ==== Main Application Container (Top Panels) ==== */
 .app-container {
     display: flex; 
@@ -470,6 +485,51 @@ button[type="submit"]:hover {
 }
 .import-ghdb-btn:hover {
     background-color: var(--accent-green-hover);
+}
+
+/* Source badges for dork entries */
+.source-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: var(--border-radius);
+    text-transform: uppercase;
+    align-self: flex-start;
+    margin-bottom: 0.3rem;
+}
+
+.dorkhub-badge {
+    background-color: #ff6b6b;
+    color: white;
+}
+
+.ghdb-badge {
+    background-color: var(--accent-cyan);
+    color: var(--bg-color);
+}
+
+/* Stats badge */
+.stats-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+    background-color: var(--bg-element-color);
+    color: var(--text-muted-color);
+    border-radius: var(--border-radius);
+    margin-left: 0.5rem;
+    font-weight: normal;
+}
+
+/* Enhanced entry meta styling */
+.entry-links {
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+}
+
+.file-info {
+    color: var(--text-muted-color);
+    font-style: italic;
 }
 
 /* Responsive adjustments */
