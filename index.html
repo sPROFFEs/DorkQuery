@@ -13,29 +13,97 @@
 </head>
 
 <body>
+    <!-- Welcome overlay - initially hidden -->
+    <div id="welcome-overlay" class="overlay hidden">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2>🔍 Welcome to DorkQuery</h2>
+                <button id="close-overlay" class="close-btn">&times;</button>
+            </div>
+            <div class="overlay-body">
+                <div class="info-section">
+                    <h3>📊 Local Database</h3>
+                    <p>This application uses a local database with <strong>600MB+ of compressed dork data</strong> from multiple sources:</p>
+                    <ul>
+                        <li><strong>Google Hacking Database (GHDB)</strong> - Official exploit-db collection</li>
+                        <li><strong>TrixSec DorkHub</strong> - Community-driven repository</li>
+                    </ul>
+                </div>
+                
+                <div class="warning-section">
+                    <h3>⚠️ Performance Notice</h3>
+                    <p>Due to GitHub's file size restrictions, the entire database loads into your browser's memory:</p>
+                    <ul>
+                        <li>Initial load may take <strong>10-30 seconds</strong></li>
+                        <li>Uses approximately <strong>300-600MB of RAM</strong></li>
+                        <li>Provides <strong>instant search</strong> after loading</li>
+                        <li>Works completely <strong>offline</strong> once loaded</li>
+                    </ul>
+                </div>
+
+                <div class="features-section">
+                    <h3>🚀 Features</h3>
+                    <ul>
+                        <li>Visual dork query builder with drag & drop</li>
+                        <li>Browse 100,000+ dorks from multiple sources</li>
+                        <li>Filter by category, source, and keywords</li>
+                        <li>Direct search engine integration</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="overlay-footer">
+                <button id="got-it-btn" class="primary-btn">Got it, let's start! 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading indicator for database loading -->
+    <div id="database-loading" class="database-loading">
+        <div class="loading-content">
+            <div class="loading-spinner-large"></div>
+            <h3>🔄 Loading Database</h3>
+            <p>Loading 600MB+ of compressed dork data...</p>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <p class="loading-details" id="loading-details">Initializing...</p>
+            </div>
+        </div>
+    </div>
+
     <header>
-        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-        <svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink">
-            <g fill="none" stroke="none" stroke-width="1">
-                <!-- Magnifying glass circle -->
-                <circle cx="60" cy="60" r="40" stroke="#000000" stroke-width="8" fill="none" />
+        <div class="header-content">
+            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink">
+                <g fill="none" stroke="none" stroke-width="1">
+                    <!-- Magnifying glass circle -->
+                    <circle cx="60" cy="60" r="40" stroke="#ffffff" stroke-width="8" fill="none" />
 
-                <!-- Magnifying glass handle -->
-                <rect x="90" y="90" width="12" height="50" transform="rotate(-45 90 90)" fill="#000000" />
+                    <!-- Magnifying glass handle -->
+                    <rect x="90" y="90" width="12" height="50" transform="rotate(-45 90 90)" fill="#ffffff" />
 
-                <!-- Letter D inside the magnifying glass -->
-                <text x="42" y="70" font-family="Arial, sans-serif" font-size="48" fill="#000000"
-                    font-weight="bold">D</text>
+                    <!-- Letter D inside the magnifying glass -->
+                    <text x="42" y="70" font-family="Arial, sans-serif" font-size="48" fill="#ffffff"
+                        font-weight="bold">D</text>
 
-                <!-- DORKQUERY Text -->
-                <text x="140" y="75" font-family="Arial, sans-serif" font-size="48" fill="#000000"
-                    font-weight="bold">DORK</text>
-                <text x="140" y="115" font-family="Arial, sans-serif" font-size="48" fill="#000000"
-                    font-weight="bold">QUERY</text>
-            </g>
-        </svg>
-
+                    <!-- DORKQUERY Text -->
+                    <text x="140" y="75" font-family="Arial, sans-serif" font-size="48" fill="#ffffff"
+                        font-weight="bold">DORK</text>
+                    <text x="140" y="115" font-family="Arial, sans-serif" font-size="48" fill="#ffffff"
+                        font-weight="bold">QUERY</text>
+                </g>
+            </svg>
+            
+            <button id="help-button" class="help-button" title="Show help and information">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="m9,9a3,3 0 1,1 6,0c0,2 -3,3 -3,3"></path>
+                    <path d="m12,17 l.01,0"></path>
+                </svg>
+            </button>
+        </div>
     </header>
 
     <main class="app-container">

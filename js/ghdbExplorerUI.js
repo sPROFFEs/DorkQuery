@@ -37,7 +37,9 @@ function loadAndRenderEntries(page, term, category, source) {
 
     if (resultsContainer) {
         resultsContainer.innerHTML = ''; 
-        resultsContainer.appendChild(createElement('p', 'loading-message', 'Loading dork entries...'));
+        const loadingEl = createElement('p', 'loading-message');
+        loadingEl.innerHTML = '<span class="loading-spinner"></span> Loading dork entries...';
+        resultsContainer.appendChild(loadingEl);
     }
     if (paginationContainer) {
         paginationContainer.innerHTML = '';

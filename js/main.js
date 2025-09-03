@@ -2,13 +2,164 @@ import * as blockManager from './blockManager.js'; // Import all exports as bloc
 import { initCustomBlockEditor } from './customBlock.js';
 import { initGhdbExplorer } from './ghdbExplorerUI.js';
 import { initDragAndDrop, _setBlockManagerModule } from './dnd.js'; // Import DnD functions
+import { loadAllLocalGhdbEntries } from './ghdbService.js';
 import { qs } from './domUtils.js';
+
+/**
+ * Initialize the database loading screen
+ */
+function initDatabaseLoading() {
+    const loadingScreen = qs('#database-loading');
+    const progressFill = qs('#progress-fill');
+    const loadingDetails = qs('#loading-details');
+    
+    function updateProgress(percentage, message) {
+        if (progressFill) {
+            progressFill.style.width = `${percentage}%`;
+        }
+        if (loadingDetails) {
+            loadingDetails.textContent = message;
+        }
+    }
+    
+    function hideLoadingScreen() {
+        loadingScreen?.classList.add('hidden');
+    }
+    
+    // Simulate progress during database loading
+    return {
+        show: () => loadingScreen?.classList.remove('hidden'),
+        hide: hideLoadingScreen,
+        updateProgress,
+        loadDatabase: async () => {
+            updateProgress(10, 'Fetching compressed database...');
+            console.log('Starting database load...');
+            
+            try {
+                updateProgress(30, 'Downloading data...');
+                await new Promise(resolve => setTimeout(resolve, 200)); // Small delay for UX
+                
+                updateProgress(60, 'Decompressing data...');
+                console.log('Calling loadAllLocalGhdbEntries...');
+                
+                const result = await loadAllLocalGhdbEntries();
+                console.log('loadAllLocalGhdbEntries result:', result);
+                
+                updateProgress(90, 'Processing entries...');
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                updateProgress(100, 'Database loaded successfully!');
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                console.log('Database loading completed successfully');
+                hideLoadingScreen();
+                return true;
+            } catch (error) {
+                console.error('Database loading failed:', error);
+                updateProgress(0, 'Failed to load database. Please refresh to try again.');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                hideLoadingScreen();
+                return false;
+            }
+        }
+    };
+}
+
+/**
+ * Initialize the welcome overlay functionality
+ */
+function initWelcomeOverlay() {
+    const overlay = qs('#welcome-overlay');
+    const closeBtn = qs('#close-overlay');
+    const gotItBtn = qs('#got-it-btn');
+    
+    function hideOverlay() {
+        overlay?.classList.add('hidden');
+        localStorage.setItem('dorkquery_overlay_seen', 'true');
+    }
+    
+    function showOverlay() {
+        overlay?.classList.remove('hidden');
+    }
+    
+    // Setup event listeners
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideOverlay();
+        });
+    }
+    
+    if (gotItBtn) {
+        gotItBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideOverlay();
+        });
+    }
+    
+    // Close overlay when clicking outside content
+    overlay?.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            hideOverlay();
+        }
+    });
+    
+    // Close with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !overlay?.classList.contains('hidden')) {
+            hideOverlay();
+        }
+    });
+    
+    return {
+        show: showOverlay,
+        hide: hideOverlay,
+        shouldShow: () => !localStorage.getItem('dorkquery_overlay_seen')
+    };
+}
 
 /**
  * Main function to initialize the application.
  */
-function main() {
+async function main() {
     console.log("Static Dork Builder Initializing...");
+    
+    // Initialize welcome overlay
+    const welcomeOverlay = initWelcomeOverlay();
+    
+    // Load database directly without fancy loading screen for now
+    try {
+        console.log('Loading database...');
+        await loadAllLocalGhdbEntries();
+        console.log('Database loaded successfully');
+        
+        // Hide loading screen
+        const loadingScreen = qs('#database-loading');
+        if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+        }
+        
+        // Setup help button
+        const helpButton = qs('#help-button');
+        if (helpButton) {
+            helpButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                welcomeOverlay.show();
+            });
+        }
+        
+        // Show welcome overlay if user hasn't seen it before
+        if (welcomeOverlay.shouldShow()) {
+            welcomeOverlay.show();
+        }
+    } catch (error) {
+        console.error('Failed to load database:', error);
+        const loadingScreen = qs('#database-loading');
+        if (loadingScreen) {
+            loadingScreen.innerHTML = '<div class="loading-content"><h3>❌ Failed to load database</h3><p>Please refresh the page to try again.</p></div>';
+        }
+        return;
+    }
     
     // Provide blockManager module to dnd.js to resolve circular dependency pattern
     _setBlockManagerModule(blockManager);
