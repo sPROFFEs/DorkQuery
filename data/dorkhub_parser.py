@@ -13,7 +13,7 @@ from typing import Dict, List, Tuple
 import re
 
 class DorkHubParser:
-    def __init__(self, dorkhub_path: str = "../DorkHub-main"):
+    def __init__(self, dorkhub_path: str = "../DorkHub"):
         self.dorkhub_path = os.path.abspath(dorkhub_path)
         self.category_mapping = {
             'Backlink dorks': 'Backlink',
@@ -104,19 +104,95 @@ class DorkHubParser:
         
         return None
 
-    def parse_dork_file(self, file_path: str, category: str, subcategory: str) -> List[Dict]:
-        """Analiza un archivo de dorks y devuelve una lista de entradas"""
+    def parse_markdown_file(self, file_path: str, category: str, subcategory: str) -> List[Dict]:
+        """Analiza un archivo markdown de dorks y devuelve una lista de entradas"""
         dorks = []
-        
+
         try:
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 content = f.read()
-            
+
             lines = content.split('\n')
-            
+            current_section = subcategory
+            author_info = 'TrixSec/DorkHub'
+
+            # Extract author information from the beginning of the file
+            for i, line in enumerate(lines[:10]):  # Check first 10 lines for author info
+                if line.startswith('**Author**:'):
+                    author_info = line.replace('**Author**:', '').strip()
+                    break
+
+            for line_num, line in enumerate(lines, 1):
+                line = line.strip()
+
+                # Update current section based on markdown headers
+                if line.startswith('### '):
+                    current_section = line.replace('### ', '').strip()
+                    continue
+                elif line.startswith('## '):
+                    current_section = line.replace('## ', '').strip()
+                    continue
+
+                # Extract dorks from numbered lists
+                # Pattern for: 1. `site:example.com "query"`
+                numbered_pattern = r'^\d+\.\s*`([^`]+)`'
+                match = re.match(numbered_pattern, line)
+
+                if match:
+                    dork_query = match.group(1).strip()
+
+                    # Validate it looks like a dork
+                    if dork_query and len(dork_query) > 2:
+                        entry = {
+                            'id': f"dh_{len(dorks) + 1}",
+                            'query': dork_query,
+                            'category': self.category_mapping.get(category, category),
+                            'subcategory': current_section,
+                            'source': 'DorkHub',
+                            'source_file': os.path.basename(file_path),
+                            'ghdb_id': None,
+                            'date': time.strftime('%Y-%m-%d'),
+                            'author': author_info,
+                            'author_id': 'dorkhub'
+                        }
+                        dorks.append(entry)
+                else:
+                    # Fallback to regular dork line cleaning for non-numbered entries
+                    cleaned_dork = self.clean_dork_line(line)
+                    if cleaned_dork:
+                        entry = {
+                            'id': f"dh_{len(dorks) + 1}",
+                            'query': cleaned_dork,
+                            'category': self.category_mapping.get(category, category),
+                            'subcategory': current_section,
+                            'source': 'DorkHub',
+                            'source_file': os.path.basename(file_path),
+                            'ghdb_id': None,
+                            'date': time.strftime('%Y-%m-%d'),
+                            'author': author_info,
+                            'author_id': 'dorkhub'
+                        }
+                        dorks.append(entry)
+
+            return dorks
+
+        except Exception as e:
+            print(f"✗ Error procesando archivo markdown {file_path}: {e}")
+            return []
+
+    def parse_dork_file(self, file_path: str, category: str, subcategory: str) -> List[Dict]:
+        """Analiza un archivo de dorks y devuelve una lista de entradas"""
+        dorks = []
+
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+
+            lines = content.split('\n')
+
             for line_num, line in enumerate(lines, 1):
                 cleaned_dork = self.clean_dork_line(line)
-                
+
                 if cleaned_dork:
                     entry = {
                         'id': f"dh_{len(dorks) + 1}",
@@ -131,9 +207,9 @@ class DorkHubParser:
                         'author_id': 'dorkhub'
                     }
                     dorks.append(entry)
-            
+
             return dorks
-            
+
         except Exception as e:
             print(f"✗ Error procesando {file_path}: {e}")
             return []
@@ -154,37 +230,41 @@ class DorkHubParser:
             category_path = os.path.join(self.dorkhub_path, category)
             print(f"\n📂 Procesando categoría: {category}")
             
-            # Encontrar todos los archivos .txt en la categoría
-            txt_files = []
+            # Encontrar todos los archivos .txt y .md en la categoría
+            dork_files = []
             for file in os.listdir(category_path):
-                if file.endswith('.txt'):
-                    txt_files.append(file)
-            
-            if not txt_files:
-                print(f"   ⚠️  No se encontraron archivos .txt en {category}")
+                if file.endswith('.txt') or file.endswith('.md'):
+                    dork_files.append(file)
+
+            if not dork_files:
+                print(f"   ⚠️  No se encontraron archivos .txt/.md en {category}")
                 categories_stats[category] = 0
                 continue
-            
-            print(f"   📋 Encontrados {len(txt_files)} archivos: {', '.join(txt_files)}")
-            
+
+            print(f"   📋 Encontrados {len(dork_files)} archivos: {', '.join(dork_files)}")
+
             category_dorks = []
-            
-            for txt_file in txt_files:
-                file_path = os.path.join(category_path, txt_file)
-                subcategory = txt_file.replace('.txt', '')
-                
-                print(f"   📥 Procesando {txt_file}...")
-                
-                file_dorks = self.parse_dork_file(file_path, category, subcategory)
-                
+
+            for dork_file in dork_files:
+                file_path = os.path.join(category_path, dork_file)
+                subcategory = dork_file.replace('.txt', '').replace('.md', '')
+
+                print(f"   📥 Procesando {dork_file}...")
+
+                # Use appropriate parser based on file type
+                if dork_file.endswith('.md'):
+                    file_dorks = self.parse_markdown_file(file_path, category, subcategory)
+                else:
+                    file_dorks = self.parse_dork_file(file_path, category, subcategory)
+
                 if file_dorks:
                     print(f"      ✓ {len(file_dorks)} dorks extraídos")
                     category_dorks.extend(file_dorks)
                     all_dorks.extend(file_dorks)
-                    file_stats[f"{category}/{txt_file}"] = len(file_dorks)
+                    file_stats[f"{category}/{dork_file}"] = len(file_dorks)
                 else:
-                    print(f"      ⚠️  No se pudieron extraer dorks de {txt_file}")
-                    file_stats[f"{category}/{txt_file}"] = 0
+                    print(f"      ⚠️  No se pudieron extraer dorks de {dork_file}")
+                    file_stats[f"{category}/{dork_file}"] = 0
             
             categories_stats[category] = len(category_dorks)
             print(f"   ✓ Total de dorks en {category}: {len(category_dorks)}")
@@ -352,8 +432,10 @@ def main():
     
     # Intentar encontrar el directorio DorkHub
     possible_paths = [
+        "../DorkHub",
+        "./DorkHub",
         "../DorkHub-main",
-        "./DorkHub-main", 
+        "./DorkHub-main",
         "/mnt/d/Github/DorkQuery/DorkHub-main"
     ]
     
