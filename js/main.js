@@ -206,7 +206,7 @@ async function main() {
         executeSearchButton.addEventListener('click', () => {
             const query = queryOutputTextarea.value.trim(); // Get query from textarea
             if (!query) {
-                alert('Query is empty. Add some blocks and values, or write a custom query.');
+                alert('Query is empty. Add blocks to the workspace or import a dork from the explorer.');
                 return;
             }
 

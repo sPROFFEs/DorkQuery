@@ -1,71 +1,64 @@
-# 🔎 DorkQuery
+# DorkQuery
 
-A visual tool to easily build and customize advanced Google Dork queries for OSINT and penetration testing.
+DorkQuery is a static web app to build and run search dorks with a visual drag-and-drop workspace.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-None-lightgrey)
-![Stars](https://img.shields.io/github/stars/DorkQuery/DorkQuery?style=social)
-![Forks](https://img.shields.io/github/forks/DorkQuery/DorkQuery?style=social)
-![Contributors](https://img.shields.io/github/contributors/DorkQuery/DorkQuery)
-![Top Language](https://img.shields.io/github/languages/top/DorkQuery/DorkQuery)
+## What it does
 
-![DorkQuery Application Preview][preview-image]
+- Build queries with predefined operators (`site:`, `inurl:`, `filetype:`, etc.)
+- Create custom reusable blocks stored in LocalStorage
+- Explore and import dorks from a local dataset (GHDB + DorkHub)
+- Filter explorer results by category, source, and keyword
+- Open generated queries directly in Google, Bing, or DuckDuckGo
 
+## Project structure
 
-## ✨ Features
+- `index.html`: App layout and script includes
+- `style.css`: UI styles
+- `js/`: Frontend logic
+  - `main.js`: App bootstrap and search execution
+  - `blockManager.js`: Workspace and palette state
+  - `dnd.js`: Drag and drop behavior (SortableJS)
+  - `ghdbService.js`: Data loading/filtering/pagination
+  - `ghdbExplorerUI.js`: Explorer rendering and interactions
+  - `customBlock.js`: Custom block form handling
+- `data/`: Datasets and parser scripts
 
-DorkQuery empowers security researchers and OSINT enthusiasts with a powerful, intuitive interface for crafting precise Google Dork queries.
+## Run locally
 
-*   **✨ Intuitive Visual Query Builder:** Craft complex Google Dork queries with a user-friendly, drag-and-drop interface, eliminating the need to memorize advanced syntax.
-*   **🔧 Deep Customization Options:** Tailor your dorks with granular control over operators, keywords, and search parameters to pinpoint specific information efficiently.
-*   **🚀 Enhanced OSINT & Pentesting:** Streamline your reconnaissance efforts by generating precise queries for target identification, vulnerability discovery, and data leakage detection.
-*   **💾 Save & Share Queries:** Store your frequently used dorks for future reference and easily share them with your team or the wider security community.
-*   **⚡ Real-time Query Preview:** See your dork query update instantly as you build it, ensuring accuracy and allowing for quick adjustments before execution.
+Use a local HTTP server (required for `fetch` to load `data/*`).
 
+```bash
+python -m http.server 8000
+```
 
-## ⚙️ Installation
+Then open:
 
-To get DorkQuery up and running on your local machine, follow these steps:
+- `http://localhost:8000`
 
-### Prerequisites
+## Data notes
 
-Ensure you have the following installed on your system:
+The app tries to load:
 
-*   **Git:** For cloning the repository.
-*   **Python 3.x:** For running a local web server (recommended) and potential backend scripts.
-*   **Web Browser:** To access the DorkQuery interface (`Chrome`, `Firefox`, `Edge`, etc.).
+1. `data/unified_dorks.json.gz` (preferred)
+2. `data/ghdb_clean.json` (fallback)
 
-### Step-by-Step Guide
+If gzip is used, `pako` must be available (loaded from CDN in `index.html`).
 
-1.  **Clone the Repository:**
-    Start by cloning the DorkQuery repository to your local system using Git:
-    ```bash
-    git clone https://github.com/DorkQuery/DorkQuery.git
-    cd DorkQuery
-    ```
+## Regenerating datasets
 
-2.  **Install Dependencies (Optional, if applicable):**
-    Depending on the specific setup for backend processing or advanced frontend tooling, you might need to install dependencies.
+Python scripts in `data/` can refresh and merge sources:
 
-    *   **Python Dependencies (for backend logic):**
-        If your DorkQuery setup includes a `requirements.txt` file for Python backend components, install them using pip:
-        ```bash
-        pip install -r requirements.txt
-        ```
-        *(If no `requirements.txt` is present, this step can be skipped.)*
+- `data/ghdb_extractor.py`
+- `data/dorkhub_parser.py`
 
-    *   **JavaScript Dependencies (for build processes or specific libraries):**
-        If your DorkQuery setup includes a `package.json` file for frontend build processes or specific JavaScript libraries, install them using npm:
-        ```bash
-        npm install
-        ```
-        *(If no `package.json` is present, this step can be skipped.)*
+They generate files such as:
 
-3.  **Run the Application:**
+- `ghdb_clean.json`
+- `dorkhub_clean.json(.gz)`
+- `unified_dorks.json(.gz)`
 
-    *   **For a Local Web Server (Recommended for full functionality):**
-        To serve the `index.html` and associated assets correctly, it is recommended to use a local HTTP server. Python's built-in server is a convenient option:
-        ```bash
-        python -m http.server 8000
-        ```
-        After running this command, open your web browser and navigate to `http
+## Known limitations
+
+- No automated tests in repository yet
+- Large datasets can increase initial load time and memory usage
+- Query export/share is not implemented

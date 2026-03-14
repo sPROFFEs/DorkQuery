@@ -12,6 +12,7 @@ let totalFilteredRecords = 0;
 // isLoading might be less critical for local data, but kept for UI consistency during initial load
 let isLoading = false; 
 let ghdbEntries = [];
+let ghdbErrorMessage = '';
 let onImportDorkCallback = null; // Will be set by init
 
 // DOM Elements
@@ -19,9 +20,7 @@ let searchInput, searchButton, resultsContainer, paginationContainer, categoryFi
 
 // Function to display error messages in the results container
 function displayGhdbError(message) {
-    if (resultsContainer) {
-        resultsContainer.innerHTML = `<p class="error-message">${message}</p>`;
-    }
+    ghdbErrorMessage = message;
     ghdbEntries = [];
     totalFilteredRecords = 0;
     renderGhdbUI(); // Update UI (which will show no entries and update pagination)
@@ -56,6 +55,7 @@ function loadAndRenderEntries(page, term, category, source) {
         });
         ghdbEntries = response.entries;
         totalFilteredRecords = response.recordsFiltered;
+        ghdbErrorMessage = '';
         isLoading = false;
     } catch (error) {
         // This catch is more for unexpected errors in filtering logic,
@@ -73,15 +73,15 @@ function renderGhdbUI() {
 
     resultsContainer.innerHTML = ''; // Clear previous results or loading message
 
-    if (isLoading) { // This should ideally not be hit if loadAndRenderEntries handles it.
-        resultsContainer.appendChild(createElement('p', 'loading-message', 'Loading GHDB entries...'));
+    if (ghdbErrorMessage) {
+        resultsContainer.innerHTML = `<p class="error-message">${ghdbErrorMessage}</p>`;
         updatePaginationUI();
         return;
     }
 
-    // If an error message is already in resultsContainer (e.g., from init or loadAndRenderEntries catch), don't overwrite
-    if (resultsContainer.querySelector('.error-message')) {
-        updatePaginationUI(); // Still update pagination (likely to hide it)
+    if (isLoading) { // This should ideally not be hit if loadAndRenderEntries handles it.
+        resultsContainer.appendChild(createElement('p', 'loading-message', 'Loading GHDB entries...'));
+        updatePaginationUI();
         return;
     }
 
@@ -89,36 +89,42 @@ function renderGhdbUI() {
         resultsContainer.appendChild(createElement('p', 'info-message', 'No dork entries found matching your criteria.'));
     } else {
         ghdbEntries.forEach(entry => {
+            const query = typeof entry.query === 'string' ? entry.query : '';
+            const category = entry.category || 'Unknown';
+            const subcategory = entry.subcategory || '';
+            const date = entry.date || 'Unknown';
+            const source = entry.source || 'Unknown';
+            const author = entry.author || '';
             const entryDiv = createElement('div', 'ghdb-entry');
             
             // Create source badge
-            const sourceEl = createElement('span', 'source-badge', entry.source || 'Unknown');
-            if (entry.source === 'DorkHub') {
+            const sourceEl = createElement('span', 'source-badge', source);
+            if (source === 'DorkHub') {
                 sourceEl.classList.add('dorkhub-badge');
-            } else if (entry.source === 'GHDB') {
+            } else if (source === 'GHDB') {
                 sourceEl.classList.add('ghdb-badge');
             }
             entryDiv.appendChild(sourceEl);
             
-            const dorkTitle = entry.query.length > 100 ? entry.query.substring(0, 97) + "..." : entry.query;
+            const dorkTitle = query.length > 100 ? query.substring(0, 97) + "..." : query;
             const titleEl = createElement('h4', null, dorkTitle);
             entryDiv.appendChild(titleEl);
 
             // Enhanced meta information
-            let metaText = `Category: ${entry.category}`;
-            if (entry.subcategory) {
-                metaText += ` > ${entry.subcategory}`;
+            let metaText = `Category: ${category}`;
+            if (subcategory) {
+                metaText += ` > ${subcategory}`;
             }
-            metaText += ` | Date: ${entry.date}`;
-            if (entry.author) {
-                metaText += ` | Author: ${entry.author}`;
+            metaText += ` | Date: ${date}`;
+            if (author) {
+                metaText += ` | Author: ${author}`;
             }
             
             const metaEl = createElement('p', 'ghdb-meta', metaText);
             entryDiv.appendChild(metaEl);
 
             // Display the full dork string
-            const dorkEl = createElement('code', 'ghdb-dork', entry.query);
+            const dorkEl = createElement('code', 'ghdb-dork', query);
             entryDiv.appendChild(dorkEl);
             
             // Links section
@@ -145,15 +151,15 @@ function renderGhdbUI() {
             }
 
             const importButton = createElement('button', 'import-ghdb-btn', 'Import');
-            importButton.title = `Import dork: ${entry.query}`;
+            importButton.title = `Import dork: ${query}`;
             importButton.addEventListener('click', () => {
                 if (onImportDorkCallback) {
                     const title = entry.ghdb_id ? 
-                        `GHDB-${entry.ghdb_id}: ${entry.query.substring(0,50)}...` :
-                        `${entry.source}-${entry.category}: ${entry.query.substring(0,50)}...`;
+                        `GHDB-${entry.ghdb_id}: ${query.substring(0, 50)}...` :
+                        `${source}-${category}: ${query.substring(0, 50)}...`;
                     
                     onImportDorkCallback({ 
-                        dork: entry.query, 
+                        dork: query, 
                         title: title
                     });
                 }
@@ -168,6 +174,10 @@ function renderGhdbUI() {
 function updatePaginationUI() {
     if (!paginationContainer) return;
     paginationContainer.innerHTML = ''; 
+
+    if (ghdbErrorMessage) {
+        return;
+    }
 
     const totalPages = Math.ceil(totalFilteredRecords / RESULTS_PER_PAGE);
 
@@ -234,6 +244,7 @@ export async function initGhdbExplorer(importCallback) {
     }
 
     // Initial UI state before data load
+    ghdbErrorMessage = '';
     resultsContainer.innerHTML = `<p class="loading-message">Initializing Dork Explorer...</p>`;
     updatePaginationUI();
 

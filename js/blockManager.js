@@ -100,7 +100,7 @@ function updateBlockValue(workspaceBlockId, newValue) {
     }
 }
 
-function removeBlockFromWorkspace(workspaceBlockId) {
+export function removeBlockFromWorkspace(workspaceBlockId) {
     activeWorkspaceBlocks = activeWorkspaceBlocks.filter(b => b.id !== workspaceBlockId);
     renderWorkspace(); 
     updateQueryOutput(); // Update query output after removing a block
