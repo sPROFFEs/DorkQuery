@@ -1,7 +1,13 @@
 // js/ghdbService.js - High-Performance Hybrid Dork Data Service (GHDB + Unified + WebWorker)
-import pako from 'pako';
 
 const FAVORITES_KEY = 'dorkquery_favorites';
+
+function getPakoInstance() {
+    if (typeof window !== 'undefined' && window.pako) return window.pako;
+    if (typeof pako !== 'undefined') return pako;
+    if (typeof self !== 'undefined' && self.pako) return self.pako;
+    return null;
+}
 
 let currentDataSource = 'ghdb'; // 'ghdb' or 'unified'
 let ghdbEntries = [];
@@ -230,8 +236,12 @@ async function loadUnifiedFallback(progressCallback) {
     if (!response.ok) throw new Error('Failed to fetch unified dataset');
 
     if (progressCallback) progressCallback(50, 'Decompressing with Pako...');
+    const pakoLib = getPakoInstance();
+    if (!pakoLib) {
+        throw new Error('Pako decompression library not available. Please ensure pako.min.js is loaded.');
+    }
     const buffer = await response.arrayBuffer();
-    const decompressed = pako.ungzip(new Uint8Array(buffer), { to: 'string' });
+    const decompressed = pakoLib.ungzip(new Uint8Array(buffer), { to: 'string' });
 
     if (progressCallback) progressCallback(80, 'Parsing records...');
     const json = JSON.parse(decompressed);

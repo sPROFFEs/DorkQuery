@@ -1,11 +1,36 @@
 // js/dorkWorker.js - Background Web Worker for Heavy Dork Datasets (GHDB + DorkHub)
-import pako from 'pako';
 
 let entries = [];
 let normalizedIndex = []; // cached lowercased search strings for ultra-fast filtering
 let uniqueCategories = [];
 let uniqueSources = [];
 let isLoaded = false;
+let pakoLib = null;
+
+async function ensurePako() {
+    if (pakoLib) return pakoLib;
+    if (typeof pako !== 'undefined') {
+        pakoLib = pako;
+        return pakoLib;
+    }
+    if (typeof self !== 'undefined' && self.pako) {
+        pakoLib = self.pako;
+        return pakoLib;
+    }
+    try {
+        importScripts('https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js');
+        pakoLib = self.pako;
+        return pakoLib;
+    } catch (e) {
+        try {
+            const mod = await import('https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.esm.mjs');
+            pakoLib = mod.default || mod;
+            return pakoLib;
+        } catch (e2) {
+            throw new Error('Failed to load Pako in worker: ' + e2.message);
+        }
+    }
+}
 
 // Listen for messages from main thread
 self.onmessage = async function (e) {
@@ -41,10 +66,11 @@ async function handleLoad(payload = {}) {
         if (url.endsWith('.gz')) {
             self.postMessage({ type: 'PROGRESS', percent: 40, message: 'Decompressing records with Pako...' });
 
+            const pakoInstance = await ensurePako();
             const buffer = await response.arrayBuffer();
             self.postMessage({ type: 'PROGRESS', percent: 65, message: 'Parsing decompressed JSON...' });
 
-            const decompressed = pako.ungzip(new Uint8Array(buffer), { to: 'string' });
+            const decompressed = pakoInstance.ungzip(new Uint8Array(buffer), { to: 'string' });
             jsonData = JSON.parse(decompressed);
         } else {
             self.postMessage({ type: 'PROGRESS', percent: 60, message: 'Parsing JSON data...' });

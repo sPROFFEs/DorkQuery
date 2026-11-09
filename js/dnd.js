@@ -1,11 +1,17 @@
 // js/dnd.js - Robust Drag & Drop with SortableJS
-import Sortable from 'sortablejs';
 import { qs, qsa } from './domUtils.js';
 
 let _blockManagerModule = null;
 
 export function _setBlockManagerModule(blockManager) {
     _blockManagerModule = blockManager;
+}
+
+function getSortableClass() {
+    if (typeof window !== 'undefined' && window.Sortable) return window.Sortable;
+    if (typeof Sortable !== 'undefined') return Sortable;
+    if (typeof globalThis !== 'undefined' && globalThis.Sortable) return globalThis.Sortable;
+    return null;
 }
 
 export function initDragAndDrop() {
@@ -16,9 +22,10 @@ export function initDragAndDrop() {
         return;
     }
 
-    const SortableClass = typeof Sortable !== 'undefined' ? Sortable : window.Sortable;
+    const SortableClass = getSortableClass();
     if (!SortableClass) {
-        console.error('SortableJS is not available.');
+        console.warn('SortableJS library not yet loaded, retrying in 300ms...');
+        setTimeout(initDragAndDrop, 300);
         return;
     }
 
