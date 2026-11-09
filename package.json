@@ -1,0 +1,30 @@
+{
+  "name": "dorkquery",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Visual builder, optimizer and explorer for Google Hacking and search dorks",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node test_suite.mjs"
+  },
+  "keywords": [
+    "osint",
+    "dorking",
+    "google-hacking-database",
+    "ghdb",
+    "security",
+    "recon"
+  ],
+  "author": "pr0ff3",
+  "license": "MIT",
+  "dependencies": {
+    "pako": "^2.1.0",
+    "sortablejs": "^1.15.6"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0"
+  }
+}

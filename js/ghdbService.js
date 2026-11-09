@@ -1,209 +1,415 @@
-// js/ghdbService.js
+// js/ghdbService.js - High-Performance Hybrid Dork Data Service (GHDB + Unified + WebWorker)
+import pako from 'pako';
 
-let allDorkEntries = [];
-let uniqueCategories = [];
-let uniqueSources = [];
-let dataLoaded = false; // Flag to ensure data is loaded only once
+const FAVORITES_KEY = 'dorkquery_favorites';
+
+let currentDataSource = 'ghdb'; // 'ghdb' or 'unified'
+let ghdbEntries = [];
+let ghdbCategories = [];
+let ghdbSources = ['GHDB'];
+let ghdbLoaded = false;
+
+// Worker management
+let worker = null;
+let workerLoaded = false;
+let workerLoadProgressCallback = null;
+let pendingWorkerSearchResolvers = new Map();
+let workerSearchCounter = 0;
+
+// Local favorites cache
+let favoritesMap = new Map();
+
+function initFavorites() {
+    try {
+        const stored = localStorage.getItem(FAVORITES_KEY);
+        if (stored) {
+            const arr = JSON.parse(stored);
+            if (Array.isArray(arr)) {
+                arr.forEach(item => {
+                    if (item && item.id) {
+                        favoritesMap.set(String(item.id), item);
+                    }
+                });
+            }
+        }
+    } catch (e) {
+        console.warn('Failed to load favorites from localStorage:', e);
+    }
+}
+
+function saveFavorites() {
+    try {
+        const arr = Array.from(favoritesMap.values());
+        localStorage.setItem(FAVORITES_KEY, JSON.stringify(arr));
+    } catch (e) {
+        console.warn('Failed to save favorites to localStorage:', e);
+    }
+}
+
+initFavorites();
+
+export function isFavorite(dorkId) {
+    return favoritesMap.has(String(dorkId));
+}
+
+export function toggleFavorite(entry) {
+    if (!entry || !entry.id) return false;
+    const id = String(entry.id);
+    if (favoritesMap.has(id)) {
+        favoritesMap.delete(id);
+        saveFavorites();
+        return false;
+    } else {
+        favoritesMap.set(id, {
+            id: entry.id,
+            query: entry.query || entry.dork || '',
+            category: entry.category || 'Unknown',
+            source: entry.source || 'GHDB',
+            date: entry.date || '',
+            author: entry.author || '',
+            ghdb_id: entry.ghdb_id || null,
+            favoritedAt: new Date().toISOString()
+        });
+        saveFavorites();
+        return true;
+    }
+}
+
+export function getFavoritesList() {
+    return Array.from(favoritesMap.values());
+}
+
+export function getFavoritesCount() {
+    return favoritesMap.size;
+}
 
 /**
- * Loads all dork entries from the unified JSON file (GHDB + DorkHub) and extracts unique categories.
- * Should only be called once.
- * @returns {Promise<string[]>} A promise that resolves with an array of unique category names, or rejects on error.
+ * Initializes and returns the background Web Worker if supported
  */
-export async function loadAllLocalGhdbEntries() {
-    if (dataLoaded) {
-        return uniqueCategories; // Return cached categories if already loaded
+function getOrInitWorker() {
+    if (worker) return worker;
+
+    try {
+        const workerUrl = new URL('./dorkWorker.js', import.meta.url);
+        worker = new Worker(workerUrl, { type: 'module' });
+
+        worker.onmessage = function (e) {
+            const { type, percent, message, id, entries, totalFiltered, totalRecords, page, pageSize, categories, sources, error } = e.data || {};
+
+            if (type === 'PROGRESS') {
+                if (typeof workerLoadProgressCallback === 'function') {
+                    workerLoadProgressCallback(percent, message);
+                }
+            } else if (type === 'LOADED') {
+                workerLoaded = true;
+                if (typeof workerLoadProgressCallback === 'function') {
+                    workerLoadProgressCallback(100, 'Unified database loaded successfully!');
+                }
+            } else if (type === 'SEARCH_RESULTS') {
+                const resolver = pendingWorkerSearchResolvers.get(id);
+                if (resolver) {
+                    resolver({
+                        entries: entries || [],
+                        recordsFiltered: totalFiltered || 0,
+                        recordsTotal: totalRecords || 0,
+                        page: page || 0,
+                        pageSize: pageSize || 15
+                    });
+                    pendingWorkerSearchResolvers.delete(id);
+                }
+            } else if (type === 'LOAD_ERROR') {
+                console.error('[ghdbService] Worker load error:', error);
+                if (typeof workerLoadProgressCallback === 'function') {
+                    workerLoadProgressCallback(0, `Error: ${error}`);
+                }
+            }
+        };
+
+        worker.onerror = function (err) {
+            console.warn('[ghdbService] Web Worker error, fallback will be used:', err);
+        };
+
+        return worker;
+    } catch (err) {
+        console.warn('[ghdbService] Unable to create Web Worker:', err);
+        return null;
+    }
+}
+
+/**
+ * Load high-speed curated GHDB dataset (7,944 verified dorks)
+ * Fast, instant load (< 50ms)
+ */
+export async function loadCuratedGhdb() {
+    if (ghdbLoaded) {
+        return {
+            categories: ghdbCategories,
+            sources: ghdbSources,
+            totalEntries: ghdbEntries.length
+        };
     }
 
     try {
-        // Try unified file first, fallback to GHDB only
-        let response;
-        let dataSource = 'unified';
-        
-        try {
-            response = await fetch('data/unified_dorks.json.gz');
-            if (!response.ok) {
-                throw new Error('Unified file not found');
-            }
-        } catch (unifiedError) {
-            console.log('Unified dorks file not found, falling back to GHDB only...');
-            response = await fetch('data/ghdb_clean.json');
-            dataSource = 'ghdb';
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status} while fetching dork data.`);
-            }
-        }
-        
-        // Check if the response is gzipped based on the URL
-        let jsonData;
-        if (response.url.endsWith('.gz')) {
-            // Use pako library for gzip decompression (more compatible)
-            if (typeof pako === 'undefined') {
-                throw new Error('pako library is required for gzip decompression. Please include pako.js');
-            }
-            
-            const compressedData = await response.arrayBuffer();
-            const decompressedData = pako.ungzip(new Uint8Array(compressedData), { to: 'string' });
-            jsonData = JSON.parse(decompressedData);
-        } else {
-            jsonData = await response.json();
+        const response = await fetch('data/ghdb_clean.json');
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status} fetching data/ghdb_clean.json`);
         }
 
-        if (!jsonData || !Array.isArray(jsonData.entries)) {
-            console.error("Unexpected JSON structure from dork file:", jsonData);
-            throw new Error("Failed to parse dork data: unexpected JSON structure.");
+        const data = await response.json();
+        if (!data || !Array.isArray(data.entries)) {
+            throw new Error('Invalid structure in ghdb_clean.json');
         }
 
-        allDorkEntries = jsonData.entries;
-        
-        // Extract unique categories and sources
-        const categories = new Set();
-        const sources = new Set();
-        
-        allDorkEntries.forEach(entry => {
-            if (entry.category) {
-                categories.add(entry.category);
-            }
-            if (entry.source) {
-                sources.add(entry.source);
-            }
+        ghdbEntries = data.entries.map(e => ({
+            ...e,
+            source: e.source || 'GHDB'
+        }));
+
+        const catSet = new Set();
+        ghdbEntries.forEach(e => {
+            if (e.category) catSet.add(e.category);
         });
-        
-        uniqueCategories = [...categories].sort(); // Sort categories alphabetically
-        uniqueSources = [...sources].sort();
 
-        dataLoaded = true;
-        
-        // Log loading statistics
-        const metadata = jsonData.metadata;
-        if (metadata) {
-            console.log(`Dork data loaded successfully from ${dataSource} source:`);
-            console.log(`- Total entries: ${metadata.total_records || allDorkEntries.length}`);
-            if (metadata.dorkhub_records) {
-                console.log(`- DorkHub entries: ${metadata.dorkhub_records}`);
-            }
-            if (metadata.ghdb_records) {
-                console.log(`- GHDB entries: ${metadata.ghdb_records}`);
-            }
-            console.log(`- Categories: ${uniqueCategories.length}`);
-            console.log(`- Sources: ${uniqueSources.join(', ')}`);
-        } else {
-            console.log(`Local ${dataSource} data loaded and processed successfully.`);
-        }
-        
-        return uniqueCategories;
+        ghdbCategories = Array.from(catSet).sort();
+        ghdbSources = ['GHDB'];
+        ghdbLoaded = true;
 
-    } catch (error) {
-        console.error('Failed to load or parse dork data:', error);
-        allDorkEntries = []; // Ensure it's empty on error
-        uniqueCategories = [];
-        uniqueSources = [];
-        dataLoaded = false; // Allow retry if it was a transient issue (though unlikely for local file)
-        throw error; // Re-throw to allow UI to handle it
+        return {
+            categories: ghdbCategories,
+            sources: ghdbSources,
+            totalEntries: ghdbEntries.length
+        };
+    } catch (err) {
+        console.error('[ghdbService] Error loading GHDB clean:', err);
+        throw err;
     }
 }
 
 /**
- * Filters and paginates local dork entries (GHDB + DorkHub).
- * @param {object} options - Filtering and pagination options.
- * @param {string} [options.categoryFilter='All'] - The category to filter by. 'All' means no category filter.
- * @param {string} [options.sourceFilter='All'] - The source to filter by ('GHDB', 'DorkHub', 'All').
- * @param {string} [options.searchTerm=''] - The search term to filter by (searches in query and category).
- * @param {number} [options.page=0] - The 0-indexed page number.
- * @param {number} [options.pageSize=15] - The number of items per page.
- * @returns {{ entries: any[], recordsFiltered: number, recordsTotal: number }}
+ * Load unified dataset (GHDB + DorkHub) via Web Worker
  */
-export function getLocalGhdbDorks({ categoryFilter = 'All', sourceFilter = 'All', searchTerm = '', page = 0, pageSize = 15 }) {
-    if (!dataLoaded) {
-        console.warn('getLocalGhdbDorks called before data was loaded. Call loadAllLocalGhdbEntries first.');
-        if (allDorkEntries.length === 0) {
-             return { entries: [], recordsFiltered: 0, recordsTotal: 0 };
+export async function loadUnifiedDatabase(progressCallback) {
+    workerLoadProgressCallback = progressCallback;
+
+    const w = getOrInitWorker();
+    if (!w) {
+        // Fallback to loading via main thread if worker unsupported
+        return loadUnifiedFallback(progressCallback);
+    }
+
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+            if (!workerLoaded) {
+                console.warn('[ghdbService] Worker load timed out, falling back...');
+                loadUnifiedFallback(progressCallback).then(resolve).catch(reject);
+            }
+        }, 30000);
+
+        const checkInterval = setInterval(() => {
+            if (workerLoaded) {
+                clearInterval(checkInterval);
+                clearTimeout(timeout);
+                currentDataSource = 'unified';
+                resolve(true);
+            }
+        }, 150);
+
+        w.postMessage({
+            type: 'LOAD',
+            payload: { url: 'data/unified_dorks.json.gz' }
+        });
+    });
+}
+
+/**
+ * Main thread fallback for unified database if Web Worker is disabled
+ */
+async function loadUnifiedFallback(progressCallback) {
+    if (progressCallback) progressCallback(20, 'Downloading unified database...');
+    const response = await fetch('data/unified_dorks.json.gz');
+    if (!response.ok) throw new Error('Failed to fetch unified dataset');
+
+    if (progressCallback) progressCallback(50, 'Decompressing with Pako...');
+    const buffer = await response.arrayBuffer();
+    const decompressed = pako.ungzip(new Uint8Array(buffer), { to: 'string' });
+
+    if (progressCallback) progressCallback(80, 'Parsing records...');
+    const json = JSON.parse(decompressed);
+
+    ghdbEntries = json.entries;
+    const catSet = new Set();
+    const srcSet = new Set();
+    ghdbEntries.forEach(e => {
+        if (e.category) catSet.add(e.category);
+        if (e.source) srcSet.add(e.source);
+    });
+    ghdbCategories = Array.from(catSet).sort();
+    ghdbSources = Array.from(srcSet).sort();
+    ghdbLoaded = true;
+    currentDataSource = 'unified';
+
+    if (progressCallback) progressCallback(100, 'Database ready!');
+    return true;
+}
+
+/**
+ * Load all dork entries (backward-compatible entry point)
+ */
+export async function loadAllLocalGhdbEntries() {
+    const res = await loadCuratedGhdb();
+    return res.categories;
+}
+
+/**
+ * Get current active data source ('ghdb' or 'unified')
+ */
+export function getCurrentDataSource() {
+    return currentDataSource;
+}
+
+/**
+ * Set active data source
+ */
+export function setDataSource(source) {
+    currentDataSource = source;
+}
+
+/**
+ * Check if unified dataset is loaded
+ */
+export function isUnifiedLoaded() {
+    return workerLoaded || (currentDataSource === 'unified' && ghdbLoaded);
+}
+
+/**
+ * Retrieve dorks with filtering, searching, and pagination.
+ * If unified dataset is active and worker is available, returns a Promise.
+ * Otherwise returns synchronous result.
+ */
+export async function getDorks({
+    categoryFilter = 'All',
+    sourceFilter = 'All',
+    searchTerm = '',
+    page = 0,
+    pageSize = 15,
+    sortBy = 'default',
+    onlyFavorites = false
+}) {
+    // 1. Favorites view
+    if (onlyFavorites) {
+        let favs = getFavoritesList();
+
+        if (categoryFilter && categoryFilter !== 'All') {
+            favs = favs.filter(e => e.category === categoryFilter);
         }
+
+        if (sourceFilter && sourceFilter !== 'All') {
+            const sf = sourceFilter.toLowerCase();
+            favs = favs.filter(e => (e.source || '').toLowerCase().includes(sf));
+        }
+
+        const trimmed = searchTerm.trim().toLowerCase();
+        if (trimmed) {
+            const tokens = trimmed.split(/\s+/).filter(Boolean);
+            favs = favs.filter(e => {
+                const text = `${e.query || ''} ${e.category || ''} ${e.source || ''}`.toLowerCase();
+                return tokens.every(tok => text.includes(tok));
+            });
+        }
+
+        const totalFiltered = favs.length;
+        const start = page * pageSize;
+        return {
+            entries: favs.slice(start, start + pageSize),
+            recordsFiltered: totalFiltered,
+            recordsTotal: favs.length
+        };
     }
 
-    let filteredEntries = allDorkEntries;
+    // 2. Worker Search (Unified mode)
+    if (currentDataSource === 'unified' && workerLoaded && worker) {
+        return new Promise((resolve) => {
+            const id = ++workerSearchCounter;
+            pendingWorkerSearchResolvers.set(id, resolve);
+            worker.postMessage({
+                type: 'SEARCH',
+                payload: {
+                    id,
+                    term: searchTerm,
+                    category: categoryFilter,
+                    source: sourceFilter,
+                    page,
+                    pageSize,
+                    sortBy
+                }
+            });
+        });
+    }
 
-    // Apply category filter
+    // 3. Main thread search (Curated GHDB mode or Worker Fallback)
+    let filtered = ghdbEntries;
+
     if (categoryFilter && categoryFilter !== 'All') {
-        filteredEntries = filteredEntries.filter(entry => entry.category === categoryFilter);
+        filtered = filtered.filter(e => e.category === categoryFilter);
     }
 
-    // Apply source filter (new feature)
     if (sourceFilter && sourceFilter !== 'All') {
-        const sourceKeyword = sourceFilter.toLowerCase();
-        filteredEntries = filteredEntries.filter(entry => {
-            if (!entry.source) return false;
-            return entry.source.toLowerCase().includes(sourceKeyword);
+        const sf = sourceFilter.toLowerCase();
+        filtered = filtered.filter(e => (e.source || 'GHDB').toLowerCase().includes(sf));
+    }
+
+    const trimmed = searchTerm.trim().toLowerCase();
+    if (trimmed) {
+        const tokens = trimmed.split(/\s+/).filter(Boolean);
+        filtered = filtered.filter(entry => {
+            const q = (entry.query || '').toLowerCase();
+            const c = (entry.category || '').toLowerCase();
+            const sub = (entry.subcategory || '').toLowerCase();
+            const a = (entry.author || '').toLowerCase();
+            const full = `${q} ${c} ${sub} ${a}`;
+            return tokens.every(tok => full.includes(tok));
         });
     }
 
-    // Apply search term filter
-    const lowerSearchTerm = searchTerm.toLowerCase().trim();
-    if (lowerSearchTerm) {
-        filteredEntries = filteredEntries.filter(entry => {
-            const queryMatch = entry.query && entry.query.toLowerCase().includes(lowerSearchTerm);
-            const categoryMatch = entry.category && entry.category.toLowerCase().includes(lowerSearchTerm);
-            const subcategoryMatch = entry.subcategory && entry.subcategory.toLowerCase().includes(lowerSearchTerm);
-            const sourceMatch = entry.source && entry.source.toLowerCase().includes(lowerSearchTerm);
-            
-            return queryMatch || categoryMatch || subcategoryMatch || sourceMatch;
-        });
+    if (sortBy === 'date-desc') {
+        filtered = [...filtered].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    } else if (sortBy === 'date-asc') {
+        filtered = [...filtered].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
     }
 
-    const recordsFiltered = filteredEntries.length;
-    const recordsTotal = allDorkEntries.length;
-
-    // Apply pagination
+    const recordsFiltered = filtered.length;
     const startIndex = page * pageSize;
-    const paginatedEntries = filteredEntries.slice(startIndex, startIndex + pageSize);
+    const paginated = filtered.slice(startIndex, startIndex + pageSize);
 
     return {
-        entries: paginatedEntries,
-        recordsFiltered: recordsFiltered,
-        recordsTotal: recordsTotal
+        entries: paginated,
+        recordsFiltered,
+        recordsTotal: ghdbEntries.length
     };
 }
 
-/**
- * Gets all unique sources available in the loaded data.
- * @returns {string[]} Array of unique source names.
- */
-export function getAvailableSources() {
-    return uniqueSources;
+// Backward compatibility alias
+export function getLocalGhdbDorks(options) {
+    return getDorks(options);
 }
 
-/**
- * Gets statistics about the loaded data.
- * @returns {object} Object containing data statistics.
- */
+export function getAvailableSources() {
+    return ghdbSources;
+}
+
+export function getAvailableCategories() {
+    return ghdbCategories;
+}
+
 export function getDataStatistics() {
-    if (!dataLoaded) {
-        return { loaded: false };
-    }
-
-    const categoryStats = {};
-    const sourceStats = {};
-
-    allDorkEntries.forEach(entry => {
-        // Count by category
-        if (entry.category) {
-            categoryStats[entry.category] = (categoryStats[entry.category] || 0) + 1;
-        }
-        
-        // Count by source
-        if (entry.source) {
-            sourceStats[entry.source] = (sourceStats[entry.source] || 0) + 1;
-        }
-    });
-
     return {
-        loaded: true,
-        totalEntries: allDorkEntries.length,
-        categoriesCount: uniqueCategories.length,
-        sourcesCount: uniqueSources.length,
-        categories: uniqueCategories,
-        sources: uniqueSources,
-        categoryStats,
-        sourceStats
+        loaded: ghdbLoaded,
+        currentSource: currentDataSource,
+        totalEntries: ghdbEntries.length,
+        categoriesCount: ghdbCategories.length,
+        sourcesCount: ghdbSources.length,
+        categories: ghdbCategories,
+        sources: ghdbSources,
+        favoritesCount: favoritesMap.size
     };
 }

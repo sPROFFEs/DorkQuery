@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DorkQuery</title>
+    <title>DorkQuery - Advanced OSINT & Google Hacking Query Studio</title>
+    <meta name="description" content="Visual builder, optimizer and explorer for search dorks. Includes 7,900+ curated Exploit-DB GHDB dorks, OSINT security presets, and unified deep database search.">
+    <meta name="theme-color" content="#0a0d14">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sproffes.github.io/DorkQuery/">
+    <meta property="og:title" content="DorkQuery - Advanced OSINT & Google Hacking Query Studio">
+    <meta property="og:description" content="Visual drag-and-drop workspace to construct, explore, test and optimize Google Hacking and OSINT search dorks with 7,900+ verified Exploit-DB entries.">
+    <meta property="og:image" content="https://sproffes.github.io/DorkQuery/assets/android-chrome-512x512.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DorkQuery - OSINT & Dork Query Studio">
+    <meta name="twitter:description" content="Visual workspace to construct, explore and optimize search dorks with 7,900+ Exploit-DB records.">
+    
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
@@ -13,207 +26,408 @@
 </head>
 
 <body>
-    <!-- Welcome overlay - initially hidden -->
-    <div id="welcome-overlay" class="overlay hidden">
-        <div class="overlay-content">
-            <div class="overlay-header">
-                <h2>🔍 Welcome to DorkQuery</h2>
-                <button id="close-overlay" class="close-btn">&times;</button>
-            </div>
-            <div class="overlay-body">
-                <div class="info-section">
-                    <h3>📊 Local Database</h3>
-                    <p>This application uses a local database with <strong>600MB+ of compressed dork data</strong> from multiple sources:</p>
-                    <ul>
-                        <li><strong>Google Hacking Database (GHDB)</strong> - Official exploit-db collection</li>
-                        <li><strong>TrixSec DorkHub</strong> - Community-driven repository</li>
-                    </ul>
-                </div>
-                
-                <div class="warning-section">
-                    <h3>⚠️ Performance Notice</h3>
-                    <p>Due to GitHub's file size restrictions, the entire database loads into your browser's memory:</p>
-                    <ul>
-                        <li>Initial load may take <strong>10-30 seconds</strong></li>
-                        <li>Uses approximately <strong>300-600MB of RAM</strong></li>
-                        <li>Provides <strong>instant search</strong> after loading</li>
-                        <li>Works completely <strong>offline</strong> once loaded</li>
-                    </ul>
-                </div>
-
-                <div class="features-section">
-                    <h3>🚀 Features</h3>
-                    <ul>
-                        <li>Visual dork query builder with drag & drop</li>
-                        <li>Browse 100,000+ dorks from multiple sources</li>
-                        <li>Filter by category, source, and keywords</li>
-                        <li>Direct search engine integration</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="overlay-footer">
-                <button id="got-it-btn" class="primary-btn">Got it, let's start! 🚀</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading indicator for database loading -->
-    <div id="database-loading" class="database-loading">
-        <div class="loading-content">
-            <div class="loading-spinner-large"></div>
-            <h3>🔄 Loading Database</h3>
-            <p>Loading 600MB+ of compressed dork data...</p>
-            <div class="loading-progress">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
-                </div>
-                <p class="loading-details" id="loading-details">Initializing...</p>
-            </div>
-        </div>
-    </div>
-
-    <header>
-        <div class="header-content">
-            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-            <svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink">
-                <g fill="none" stroke="none" stroke-width="1">
-                    <!-- Magnifying glass circle -->
-                    <circle cx="60" cy="60" r="40" stroke="#ffffff" stroke-width="8" fill="none" />
-
-                    <!-- Magnifying glass handle -->
-                    <rect x="90" y="90" width="12" height="50" transform="rotate(-45 90 90)" fill="#ffffff" />
-
-                    <!-- Letter D inside the magnifying glass -->
-                    <text x="42" y="70" font-family="Arial, sans-serif" font-size="48" fill="#ffffff"
-                        font-weight="bold">D</text>
-
-                    <!-- DORKQUERY Text -->
-                    <text x="140" y="75" font-family="Arial, sans-serif" font-size="48" fill="#ffffff"
-                        font-weight="bold">DORK</text>
-                    <text x="140" y="115" font-family="Arial, sans-serif" font-size="48" fill="#ffffff"
-                        font-weight="bold">QUERY</text>
-                </g>
-            </svg>
-            
-            <button id="help-button" class="help-button" title="Show help and information">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="m9,9a3,3 0 1,1 6,0c0,2 -3,3 -3,3"></path>
-                    <path d="m12,17 l.01,0"></path>
+    <!-- Top Global Header -->
+    <header class="app-header">
+        <div class="header-inner">
+            <div class="header-brand">
+                <svg class="header-logo" width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="18" cy="18" r="13" stroke="url(#logo-grad)" stroke-width="3" fill="none"/>
+                    <line x1="28" y1="28" x2="37" y2="37" stroke="url(#logo-grad)" stroke-width="3.5" stroke-linecap="round"/>
+                    <circle cx="18" cy="18" r="6" fill="#38bdf8" fill-opacity="0.25"/>
+                    <path d="M15 15L21 21M21 15L15 21" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+                    <defs>
+                        <linearGradient id="logo-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#38bdf8"/>
+                            <stop offset="1" stop-color="#818cf8"/>
+                        </linearGradient>
+                    </defs>
                 </svg>
-            </button>
+                <div class="brand-text">
+                    <div class="brand-title">DORK<span class="brand-highlight">QUERY</span></div>
+                    <div class="brand-tag">OSINT & SECURITY RECON STUDIO</div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button id="btn-open-presets" class="header-btn btn-presets" title="Browse vetted Security & OSINT Templates">
+                    <span class="btn-icon">⚡</span>
+                    <span class="btn-label">Presets</span>
+                </button>
+                <button id="btn-open-import" class="header-btn" title="Paste any dork string to parse into visual blocks">
+                    <span class="btn-icon">📥</span>
+                    <span class="btn-label">Import Query</span>
+                </button>
+                <button id="help-button" class="header-btn" title="Google Dorking Cheat Sheet & Shortcuts">
+                    <span class="btn-icon">📖</span>
+                    <span class="btn-label">Cheat Sheet</span>
+                </button>
+                <div class="theme-picker-wrapper">
+                    <select id="theme-toggle-select" class="theme-select" title="Switch visual theme">
+                        <option value="dark">🌙 Dark</option>
+                        <option value="hacker">🟢 Terminal</option>
+                        <option value="light">☀️ Light</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </header>
 
+    <!-- Main Builder Container -->
     <main class="app-container">
+        <!-- Left Panel: Operator Palette -->
         <aside class="left-panel">
             <section id="palette-section" aria-labelledby="palette-title">
-                <h2 id="palette-title">Blocks Palette</h2>
-                <div id="palette-blocks" class="block-list">
-                    <!-- Predefined blocks will be rendered here by JS -->
+                <div class="section-header">
+                    <h2 id="palette-title">Operator Palette</h2>
+                    <span class="section-hint">Click + or Drag</span>
+                </div>
+                <div id="palette-blocks" class="palette-container">
+                    <!-- Populated dynamically by blockManager.js -->
                 </div>
             </section>
         </aside>
 
+        <!-- Center Column: Workspace & Query Controls -->
         <div class="main-area-beside-palette">
+            <!-- Workspace Area -->
             <section class="workspace-area" aria-labelledby="workspace-title">
-                <h2 id="workspace-title">Workspace</h2>
+                <div class="workspace-header">
+                    <div class="workspace-header-title">
+                        <h2 id="workspace-title">Visual Query Workspace</h2>
+                        <span class="workspace-hint">Combine operators to build high-precision search queries</span>
+                    </div>
+                    <div class="workspace-toolbar">
+                        <button id="btn-undo-workspace" class="tool-btn" title="Undo change (Ctrl+Z)">↶ Undo</button>
+                        <button id="btn-redo-workspace" class="tool-btn" title="Redo change (Ctrl+Y)">↷ Redo</button>
+                        <button id="btn-clear-workspace" class="tool-btn btn-danger-subtle" title="Clear all blocks">🗑 Clear All</button>
+                    </div>
+                </div>
+
                 <div id="workspace-blocks" class="block-list active-blocks-container">
-                    <!-- Active dork blocks will be rendered here by JS -->
-                    <p class="empty-workspace-message">Workspace is empty. Add blocks from the palette.</p>
+                    <!-- Workspace blocks rendered here -->
                 </div>
             </section>
 
+            <!-- Query Output & Execution -->
             <section id="query-controls-section" aria-labelledby="query-controls-title">
-                <h2 id="query-controls-title">Query & Actions</h2>
-                <div id="query-output-section">
-                    <h3>Generated Dork</h3>
-                    <textarea id="query-output" rows="5" readonly
-                        placeholder="Your dork will appear here..."></textarea>
+                <div class="query-output-header">
+                    <h3 id="query-controls-title">Generated Query Output</h3>
+                    <div class="query-badges">
+                        <span id="query-char-count" class="metric-badge">0 chars</span>
+                        <span id="query-word-count" class="metric-badge">0 words</span>
+                    </div>
                 </div>
-                <div id="search-engine-section">
-                    <h3>Search Engine</h3>
-                    <select id="search-engine-select">
-                        <option value="google" selected>Google</option>
-                        <option value="bing">Bing</option>
-                        <option value="duckduckgo">DuckDuckGo</option>
-                    </select>
+
+                <div class="query-editor-card">
+                    <textarea id="query-output" rows="3" readonly
+                        placeholder="Your search dork query will dynamically generate here as you add or tweak blocks..."></textarea>
+                    
+                    <div class="query-quick-actions">
+                        <button id="btn-copy-query" class="btn-action-primary" title="Copy query to clipboard (Ctrl+Shift+C)">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span>Copy Query</span>
+                        </button>
+                        <button id="btn-share-query" class="btn-action-secondary" title="Copy shareable link with this query">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                            <span>Share Link</span>
+                        </button>
+                        <div class="export-dropdown-wrapper">
+                            <select id="export-query-select" class="action-select" title="Export Query">
+                                <option value="" disabled selected>💾 Export As...</option>
+                                <option value="txt">Plain Text (.txt)</option>
+                                <option value="markdown">Markdown Report (.md)</option>
+                                <option value="json">JSON Structure (.json)</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <button id="execute-search-button">Execute Search</button>
-                <div id="trash-area" class="trash-zone">
-                    <p>Drag blocks here to delete</p>
+
+                <!-- Search Engine Execution -->
+                <div class="search-execution-bar">
+                    <div class="engine-selector-box">
+                        <label for="search-engine-select">Target Search Engine:</label>
+                        <select id="search-engine-select">
+                            <option value="google" selected>🔍 Google Search</option>
+                            <option value="duckduckgo">🦆 DuckDuckGo</option>
+                            <option value="bing">🟦 Microsoft Bing</option>
+                            <option value="github">🐙 GitHub Code Search</option>
+                            <option value="shodan">🌐 Shodan Search</option>
+                            <option value="yahoo">🟣 Yahoo!</option>
+                            <option value="yandex">🇷🇺 Yandex</option>
+                            <option value="urlscan">🔎 URLScan.io</option>
+                        </select>
+                    </div>
+
+                    <button id="execute-search-button" class="btn-execute-search">
+                        <span>Launch Search</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Quick Engine Shortcuts -->
+                <div class="quick-engine-shortcuts">
+                    <span class="shortcuts-label">Direct Launch:</span>
+                    <button type="button" class="engine-quick-pill" data-engine="google">Google</button>
+                    <button type="button" class="engine-quick-pill" data-engine="duckduckgo">DuckDuckGo</button>
+                    <button type="button" class="engine-quick-pill" data-engine="bing">Bing</button>
+                    <button type="button" class="engine-quick-pill" data-engine="github">GitHub</button>
+                    <button type="button" class="engine-quick-pill" data-engine="shodan">Shodan</button>
+                </div>
+
+                <!-- Drop to trash zone -->
+                <div id="trash-area" class="trash-zone" title="Drag any block here to delete it">
+                    <span class="trash-icon">🗑</span>
+                    <span>Drop blocks here to remove</span>
                 </div>
             </section>
 
-            <section id="custom-block-editor-section" aria-labelledby="custom-block-editor-title">
-                <h2 id="custom-block-editor-title">Create Custom Block</h2>
-                <form id="custom-block-form">
-                    <div>
-                        <label for="custom-op">Operator:</label>
-                        <input type="text" id="custom-op" name="operator" required placeholder="e.g., site:">
-                    </div>
-                    <div>
-                        <label for="custom-val-placeholder">Value Placeholder:</label>
-                        <input type="text" id="custom-val-placeholder" name="valuePlaceholder"
-                            placeholder="e.g., example.com">
-                    </div>
-                    <div>
-                        <label for="custom-desc">Description:</label>
-                        <input type="text" id="custom-desc" name="description" required
-                            placeholder="Description of the block">
-                    </div>
-                    <button type="submit">Save Custom Block</button>
-                </form>
+            <!-- Custom Block Creator Accordion -->
+            <section id="custom-block-editor-section" class="custom-block-section" aria-labelledby="custom-block-editor-title">
+                <details class="custom-block-details">
+                    <summary id="custom-block-editor-title">
+                        <span class="summary-title">➕ Create Custom Operator Block</span>
+                        <span class="summary-arrow">▾</span>
+                    </summary>
+                    <form id="custom-block-form" class="custom-form-grid">
+                        <div class="form-field">
+                            <label for="custom-op">Operator Prefix:</label>
+                            <input type="text" id="custom-op" name="operator" required placeholder="e.g. source: or lang:">
+                        </div>
+                        <div class="form-field">
+                            <label for="custom-val-placeholder">Value Placeholder:</label>
+                            <input type="text" id="custom-val-placeholder" name="valuePlaceholder" placeholder="e.g. php or python">
+                        </div>
+                        <div class="form-field full-width">
+                            <label for="custom-desc">Block Description:</label>
+                            <input type="text" id="custom-desc" name="description" required placeholder="Brief description of what this operator searches">
+                        </div>
+                        <div class="form-field full-width form-actions">
+                            <button type="submit" class="btn-action-primary">Save to Palette</button>
+                        </div>
+                    </form>
+                </details>
             </section>
         </div>
     </main>
 
-    <section id="ghdb-section-fullwidth" aria-labelledby="ghdb-main-title">
-        <h2 id="ghdb-main-title">Dork Explorer <span id="dork-stats" class="stats-badge"></span></h2>
-        <div id="ghdb-search-area">
-            <div class="ghdb-filter-item">
-                <label for="ghdb-category-filter">Category:</label>
-                <select id="ghdb-category-filter">
-                    <option value="All">All Categories</option>
-                    <!-- Categories will be populated by JavaScript -->
+    <!-- Bottom Full-Width Dork Explorer Section -->
+    <section id="ghdb-section-fullwidth" class="explorer-section" aria-labelledby="ghdb-main-title">
+        <div class="explorer-top-bar">
+            <div class="explorer-title-box">
+                <h2 id="ghdb-main-title">Dork Database Explorer</h2>
+                <span id="dork-stats" class="stats-badge">Loading dork database...</span>
+            </div>
+
+            <!-- Database Source Switcher -->
+            <div class="database-source-control">
+                <label for="database-source-select">Active Database:</label>
+                <select id="database-source-select" class="source-select">
+                    <option value="ghdb" selected>Exploit-DB GHDB (Curated, 7.9k dorks)</option>
+                    <option value="unified">Full Unified (GHDB + DorkHub, 900k+)</option>
                 </select>
             </div>
-            <div class="ghdb-filter-item">
-                <label for="ghdb-source-filter">Source:</label>
-                <select id="ghdb-source-filter">
-                    <option value="All">All Sources</option>
-                    <!-- Sources will be populated by JavaScript -->
+        </div>
+
+        <!-- Non-blocking background loader progress bar -->
+        <div id="explorer-db-progress" class="explorer-progress-container hidden">
+            <div class="progress-bar-bg">
+                <div id="explorer-progress-fill" class="progress-bar-fill"></div>
+            </div>
+            <span id="explorer-progress-label" class="progress-label">Downloading database...</span>
+        </div>
+
+        <!-- Explorer Filter Toolbar -->
+        <div class="explorer-tabs-bar">
+            <div class="tabs-group">
+                <button type="button" id="tab-all-dorks" class="tab-btn active">All Dorks</button>
+                <button type="button" id="tab-favorite-dorks" class="tab-btn">⭐ Favorites <span class="tab-badge">0</span></button>
+            </div>
+            <div class="view-options">
+                <label for="ghdb-page-size">Per page:</label>
+                <select id="ghdb-page-size">
+                    <option value="15" selected>15</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
                 </select>
             </div>
-            <input type="search" id="ghdb-search-input" placeholder="Search dorks...">
-            <button id="ghdb-search-button">Search</button>
         </div>
-        <div id="ghdb-results" class="block-list">
-            <!-- Dork results will be rendered here -->
+
+        <div id="ghdb-search-area" class="explorer-filter-bar">
+            <div class="search-input-wrapper">
+                <input type="search" id="ghdb-search-input" placeholder="Live search dorks (e.g. login, sql, passwords, cctv, admin)..." autocomplete="off">
+                <button type="button" id="ghdb-clear-search" class="clear-search-btn" title="Clear search" style="display:none;">✕</button>
+            </div>
+
+            <div class="filter-dropdowns-group">
+                <div class="filter-select-wrapper">
+                    <select id="ghdb-category-filter" aria-label="Category Filter">
+                        <option value="All">All Categories</option>
+                    </select>
+                </div>
+
+                <div class="filter-select-wrapper">
+                    <select id="ghdb-source-filter" aria-label="Source Filter">
+                        <option value="All">All Sources</option>
+                    </select>
+                </div>
+
+                <div class="filter-select-wrapper">
+                    <select id="ghdb-sort-by" aria-label="Sort By">
+                        <option value="default">Sort: Default</option>
+                        <option value="date-desc">Sort: Newest First</option>
+                        <option value="date-asc">Sort: Oldest First</option>
+                        <option value="query-asc">Sort: Query (A-Z)</option>
+                    </select>
+                </div>
+            </div>
         </div>
-        <div id="ghdb-pagination">
-            <!-- Pagination controls -->
+
+        <!-- Explorer Results Container -->
+        <div id="ghdb-results" class="explorer-results-grid">
+            <!-- Results rendered by ghdbExplorerUI.js -->
+        </div>
+
+        <!-- Pagination Controls -->
+        <div id="ghdb-pagination" class="explorer-pagination-box">
+            <!-- Pagination buttons rendered here -->
         </div>
     </section>
 
-    <footer>
-        <p>&copy; <span id="year"></span> DorkQuery - <a href="https://sproffes.github.io/resources/">by pr0ff3</a></p>
-        <p class="credits">
-            Dork databases powered by: 
-            <a href="https://www.exploit-db.com/google-hacking-database" target="_blank" rel="noopener">Google Hacking Database (GHDB)</a> 
-            & 
-            <a href="https://github.com/TrixSec/DorkHub" target="_blank" rel="noopener">TrixSec DorkHub</a>
-        </p>
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-inner">
+            <p>&copy; <span id="year"></span> <strong>DorkQuery</strong> &bull; Visual Search Recon & Google Hacking Studio &bull; <a href="https://sproffes.github.io/resources/" target="_blank" rel="noopener">by pr0ff3</a></p>
+            <p class="credits">
+                Databases powered by <a href="https://www.exploit-db.com/google-hacking-database" target="_blank" rel="noopener">Exploit-DB GHDB</a> and <a href="https://github.com/TrixSec/DorkHub" target="_blank" rel="noopener">TrixSec DorkHub</a>.
+            </p>
+        </div>
     </footer>
+
+    <!-- Presets Modal -->
+    <div id="presets-modal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="presets-title">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <div class="modal-title-box">
+                    <span class="modal-badge">⚡ TEMPLATES</span>
+                    <h3 id="presets-title">Security Audit & OSINT Presets</h3>
+                </div>
+                <button id="close-presets-modal" class="modal-close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="preset-target-bar">
+                    <label for="preset-target-input">🎯 Target Domain / URL (optional):</label>
+                    <input type="text" id="preset-target-input" placeholder="e.g. target.com or sub.example.org" autocomplete="off">
+                    <span class="target-hint">Automatically populates <code>{target}</code> in all templates below</span>
+                </div>
+
+                <div id="preset-category-tabs" class="preset-tabs-bar">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div id="presets-cards-list" class="preset-cards-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Raw Dork Modal -->
+    <div id="import-modal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="import-title">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title-box">
+                    <span class="modal-badge">📥 IMPORT</span>
+                    <h3 id="import-title">Import Search Dork String</h3>
+                </div>
+                <button id="close-import-modal" class="modal-close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">Paste any search dork query below. Our parser will deconstruct it into visual, editable workspace blocks.</p>
+                <textarea id="import-query-textarea" rows="4" placeholder='e.g. site:example.com inurl:admin filetype:php "internal only" -test'></textarea>
+                <div class="modal-footer-actions">
+                    <button type="button" id="btn-submit-import" class="btn-action-primary">Convert to Workspace Blocks</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cheat Sheet & Help Modal -->
+    <div id="help-modal" class="overlay-modal hidden" role="dialog" aria-modal="true" aria-labelledby="help-title">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <div class="modal-title-box">
+                    <span class="modal-badge">📖 CHEAT SHEET</span>
+                    <h3 id="help-title">Google Hacking Cheat Sheet & Shortcuts</h3>
+                </div>
+                <button id="close-help-modal" class="modal-close-btn" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="cheatsheet-grid">
+                    <div class="cheatsheet-section">
+                        <h4>Essential Operators</h4>
+                        <table class="cheatsheet-table">
+                            <tr><th>Operator</th><th>Purpose</th><th>Example</th></tr>
+                            <tr><td><code>site:</code></td><td>Limit search to a domain or TLD</td><td><code>site:github.com</code></td></tr>
+                            <tr><td><code>inurl:</code></td><td>Match keywords in the URL path</td><td><code>inurl:admin.php</code></td></tr>
+                            <tr><td><code>intitle:</code></td><td>Match keywords in page &lt;title&gt;</td><td><code>intitle:"index of /"</code></td></tr>
+                            <tr><td><code>intext:</code></td><td>Match keywords in visible page text</td><td><code>intext:"secret key"</code></td></tr>
+                            <tr><td><code>filetype:</code></td><td>Search specific file extensions</td><td><code>filetype:pdf OR filetype:env</code></td></tr>
+                            <tr><td><code>ext:</code></td><td>Synonym for filetype</td><td><code>ext:sql</code></td></tr>
+                        </table>
+                    </div>
+
+                    <div class="cheatsheet-section">
+                        <h4>Strict & Advanced Operators</h4>
+                        <table class="cheatsheet-table">
+                            <tr><th>Operator</th><th>Purpose</th><th>Example</th></tr>
+                            <tr><td><code>allinurl:</code></td><td>ALL terms must appear in URL</td><td><code>allinurl:admin login</code></td></tr>
+                            <tr><td><code>allintitle:</code></td><td>ALL terms must appear in title</td><td><code>allintitle:dashboard reports</code></td></tr>
+                            <tr><td><code>allintext:</code></td><td>ALL terms must appear in body</td><td><code>allintext:confidential payroll</code></td></tr>
+                            <tr><td><code>cache:</code></td><td>View cached Google snapshot</td><td><code>cache:example.com</code></td></tr>
+                            <tr><td><code>related:</code></td><td>Find domains similar to target</td><td><code>related:acme.org</code></td></tr>
+                        </table>
+                    </div>
+
+                    <div class="cheatsheet-section">
+                        <h4>Logical & Syntax Modifiers</h4>
+                        <table class="cheatsheet-table">
+                            <tr><th>Syntax</th><th>Function</th><th>Example</th></tr>
+                            <tr><td><code>"..."</code></td><td>Exact phrase matching</td><td><code>"BEGIN PRIVATE KEY"</code></td></tr>
+                            <tr><td><code>-</code></td><td>Exclude term / negation</td><td><code>-site:wikipedia.org</code></td></tr>
+                            <tr><td><code>OR / |</code></td><td>Match either condition</td><td><code>inurl:login OR inurl:admin</code></td></tr>
+                            <tr><td><code>( )</code></td><td>Group nested expressions</td><td><code>(ext:sql OR ext:bak)</code></td></tr>
+                            <tr><td><code>*</code></td><td>Wildcard placeholder</td><td><code>inurl:view/*/index.html</code></td></tr>
+                        </table>
+                    </div>
+
+                    <div class="cheatsheet-section">
+                        <h4>Keyboard Shortcuts</h4>
+                        <ul class="shortcuts-list">
+                            <li><kbd>Ctrl</kbd> + <kbd>Enter</kbd> : Launch default search</li>
+                            <li><kbd>Ctrl</kbd> + <kbd>K</kbd> : Focus Explorer search input</li>
+                            <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> : Copy generated query</li>
+                            <li><kbd>Esc</kbd> : Close open modal</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.getElementById("year").textContent = new Date().getFullYear();
     </script>
-    <!-- SortableJS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <!-- Pako for gzip decompression -->
-    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
     <script src="js/main.js" type="module"></script>
 </body>
 

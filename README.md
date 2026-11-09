@@ -1,64 +1,139 @@
-# DorkQuery
+# DorkQuery - Advanced OSINT & Google Hacking Query Studio
 
-DorkQuery is a static web app to build and run search dorks with a visual drag-and-drop workspace.
+**DorkQuery** is a high-performance web studio designed for cybersecurity researchers, penetration testers, bug bounty hunters, and OSINT analysts to build, test, explore, and optimize search engine dorks with precision.
 
-## What it does
+---
 
-- Build queries with predefined operators (`site:`, `inurl:`, `filetype:`, etc.)
-- Create custom reusable blocks stored in LocalStorage
-- Explore and import dorks from a local dataset (GHDB + DorkHub)
-- Filter explorer results by category, source, and keyword
-- Open generated queries directly in Google, Bing, or DuckDuckGo
+## 🚀 Key Features
 
-## Project structure
+### 🧩 Visual Query Studio & Drag-and-Drop Workspace
+- **Rich Operator Palette**: Organized by Core (`site:`, `inurl:`, `intitle:`, `intext:`, `filetype:`, `ext:`), Advanced (`allinurl:`, `allintitle:`, `allintext:`, `related:`, `cache:`), and Logic/Modifiers (`""`, `-`, `OR`, `*`, `()`, `after:`, `before:`).
+- **Dual Interaction**: Click the `+` button on any operator for instant addition, or drag-and-drop to place it at a specific position.
+- **Smart Operator Sanitization**: Avoids double prefixes (e.g. `site:site:target.com`) and formats exact phrases, negation, and logic cleanly.
+- **Autocomplete Suggestions**: Quick suggestion chips for common filetypes (`pdf`, `env`, `sql`, `log`, `bak`) and URL paths.
+- **Block Controls**: Duplicate block (⎘), reorder up/down (↑/↓), and remove (✕).
+- **Undo / Redo**: Full workspace history support (`Ctrl+Z` / `Ctrl+Y`).
+- **One-Click Workspace Actions**: Copy query, share link (`#q=...`), export, and clear workspace.
 
-- `index.html`: App layout and script includes
-- `style.css`: UI styles
-- `js/`: Frontend logic
-  - `main.js`: App bootstrap and search execution
-  - `blockManager.js`: Workspace and palette state
-  - `dnd.js`: Drag and drop behavior (SortableJS)
-  - `ghdbService.js`: Data loading/filtering/pagination
-  - `ghdbExplorerUI.js`: Explorer rendering and interactions
-  - `customBlock.js`: Custom block form handling
-- `data/`: Datasets and parser scripts
+### ⚡ Security & OSINT Templates (Presets)
+- Curated library of 27+ ready-to-use security audit presets across 9 categories:
+  - 🔑 Passwords, Leaked Keys & Secrets (`.env`, SQL dumps, RSA private keys)
+  - 🚪 Admin & Authentication Portals (cPanel, wp-admin, phpMyAdmin)
+  - ⚙️ Configuration Files & Exposed `.git` Repositories
+  - 📁 Open Directory Listings (`"Index of /"`)
+  - 💾 Database Backups & Dumps (`.sql`, `.bak`, `.dump`)
+  - ☁️ Cloud Buckets Exposure (AWS S3, Azure Blob, Google Cloud Storage, Firebase)
+  - 📜 Application Error & Debug Logs (Django debug, server stack traces)
+  - 📹 Exposed Webcams & IoT Hardware (Axis cameras, network video streams)
+  - 📄 Confidential Documents & Payroll Leaks
+- **Dynamic Target Domain Injection**: Enter your target domain once, and all presets automatically format with your scope.
 
-## Run locally
+### 📥 Intelligent Dork String Import
+- Paste any complex dork query (e.g. `site:github.com filetype:env "DB_PASSWORD" -test`) to automatically parse and deconstruct it into interactive workspace blocks.
 
-Use a local HTTP server (required for `fetch` to load `data/*`).
+### 🔍 Dork Database Explorer & Instant Search
+- **Instant Non-Blocking Startup**: High-speed loading of **7,944 verified Exploit-DB Google Hacking Database (GHDB)** dorks in milliseconds (< 50ms).
+- **Deep Search with Web Worker**: Seamlessly switch to the **Unified 900,000+ DorkHub + GHDB dataset** via a background Web Worker without freezing the browser UI.
+- **Live Debounced Search**: Multi-word token search with keyword highlighting in results.
+- **Card Actions**:
+  - `+ To Workspace`: Smartly deconstructs the dork into workspace blocks.
+  - `🚀 Search`: Launch search directly in your preferred engine.
+  - `📋 Copy`: Fast 1-click clipboard copy.
+  - `⭐ Star / Favorite`: Bookmark dorks locally with dedicated Favorites tab.
+- **Advanced Pagination**: Page numbers, jump-to-page input, and items-per-page selector (15, 30, 50, 100).
 
-```bash
-python -m http.server 8000
+### 🌐 Multi-Engine & OSINT Target Support
+- Launch queries directly into:
+  - Google Search
+  - DuckDuckGo
+  - Microsoft Bing
+  - GitHub Code Search
+  - Shodan Search
+  - Yahoo!
+  - Yandex
+  - URLScan.io
+
+### 🎨 Modern Cyber Aesthetic & Themes
+- Dark Cyber theme (default)
+- Terminal / Hacker Green theme
+- Clean Light theme
+
+---
+
+## 📁 Project Structure
+
+```
+DorkQuery/
+├── index.html               # Main application markup & modal layouts
+├── style.css                # Polished responsive cybersecurity theme
+├── test_suite.mjs           # Automated test suite (ESM Node.js)
+├── js/
+│   ├── main.js              # Application bootstrap & event coordination
+│   ├── blockManager.js      # Workspace blocks, history, palette & export
+│   ├── dorkParser.js        # Dork query parser & serializer
+│   ├── presets.js           # Vetted OSINT & security templates
+│   ├── dorkWorker.js        # Web Worker for non-blocking 900k-record search
+│   ├── ghdbService.js       # Data service (GHDB, Web Worker, favorites)
+│   ├── ghdbExplorerUI.js    # Dork explorer UI, pagination & card rendering
+│   ├── customBlock.js       # Custom block creator & LocalStorage persistence
+│   ├── dnd.js               # Drag-and-drop orchestration (SortableJS)
+│   ├── domUtils.js          # DOM utility helpers
+│   └── toast.js             # Non-intrusive notification toast system
+├── data/
+│   ├── ghdb_clean.json      # 7,944 verified Exploit-DB GHDB dorks
+│   ├── unified_dorks.json.gz# 909,715 unified dorks (GHDB + DorkHub)
+│   └── ...                  # Dataset parsers & extraction scripts
+└── assets/                  # Favicons, web manifest, and touch icons
 ```
 
-Then open:
+---
 
-- `http://localhost:8000`
+## 🛠️ Local Development & Running
 
-## Data notes
+Because the application fetches local data files (`data/*.json` and `data/*.json.gz`), an HTTP server is recommended:
 
-The app tries to load:
+```bash
+# Using Python 3
+python -m http.server 8000
 
-1. `data/unified_dorks.json.gz` (preferred)
-2. `data/ghdb_clean.json` (fallback)
+# Using Node.js (e.g. npx serve)
+npx serve .
+```
 
-If gzip is used, `pako` must be available (loaded from CDN in `index.html`).
+Then open `http://localhost:8000` in your browser.
 
-## Regenerating datasets
+---
 
-Python scripts in `data/` can refresh and merge sources:
+## 🧪 Automated Testing
 
-- `data/ghdb_extractor.py`
-- `data/dorkhub_parser.py`
+Run the automated test suite with Node.js:
 
-They generate files such as:
+```bash
+node test_suite.mjs
+```
 
-- `ghdb_clean.json`
-- `dorkhub_clean.json(.gz)`
-- `unified_dorks.json(.gz)`
+This verifies:
+1. `dorkParser.js` tokenization and bidirectional serialization.
+2. `presets.js` template structure and dynamic domain substitution.
+3. `ghdb_clean.json` dataset integrity and record count.
 
-## Known limitations
+---
 
-- No automated tests in repository yet
-- Large datasets can increase initial load time and memory usage
-- Query export/share is not implemented
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+| :--- | :--- |
+| <kbd>Ctrl</kbd> + <kbd>Enter</kbd> | Launch search in active search engine |
+| <kbd>Ctrl</kbd> + <kbd>K</kbd> | Focus Explorer search bar |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> | Copy generated query to clipboard |
+| <kbd>Ctrl</kbd> + <kbd>Z</kbd> | Undo workspace change |
+| <kbd>Ctrl</kbd> + <kbd>Y</kbd> | Redo workspace change |
+| <kbd>Esc</kbd> | Close open modal (Presets, Cheat Sheet, Import) |
+
+---
+
+## 📜 Credits & Data Sources
+
+- **Google Hacking Database (GHDB)** curated by [OffSec / Exploit-DB](https://www.exploit-db.com/google-hacking-database).
+- **DorkHub** community repository by [TrixSec](https://github.com/TrixSec/DorkHub).
+- Built with ❤️ by [pr0ff3](https://sproffes.github.io/resources/).
