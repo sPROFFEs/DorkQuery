@@ -18,6 +18,7 @@ export function qsa(selector) {
 
 /**
  * Creates an element with a given tag, class name, and text content.
+ * Robustly filters out empty strings from class names to prevent DOMTokenList errors.
  * @param {string} tagName - The HTML tag name.
  * @param {string|string[]} [className] - Optional class name or array of class names.
  * @param {string} [textContent] - Optional text content.
@@ -27,12 +28,16 @@ export function createElement(tagName, className, textContent) {
     const element = document.createElement(tagName);
     if (className) {
         if (Array.isArray(className)) {
-            element.classList.add(...className);
-        } else {
-            element.classList.add(className);
+            const validClasses = className
+                .filter(c => typeof c === 'string' && c.trim() !== '');
+            if (validClasses.length > 0) {
+                element.classList.add(...validClasses);
+            }
+        } else if (typeof className === 'string' && className.trim() !== '') {
+            element.classList.add(className.trim());
         }
     }
-    if (textContent) {
+    if (textContent !== undefined && textContent !== null) {
         element.textContent = textContent;
     }
     return element;

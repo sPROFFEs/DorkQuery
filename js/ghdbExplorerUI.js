@@ -176,7 +176,7 @@ function renderResults() {
 
         // Top right actions: Star favorite
         const topActions = createElement('div', 'entry-top-actions');
-        const starBtn = createElement('button', ['entry-star-btn', isFav ? 'active' : '']);
+        const starBtn = createElement('button', isFav ? ['entry-star-btn', 'active'] : 'entry-star-btn');
         starBtn.innerHTML = isFav ? '★' : '☆';
         starBtn.title = isFav ? 'Remove from favorites' : 'Add to favorites';
         starBtn.addEventListener('click', () => {
@@ -330,7 +330,7 @@ function updatePaginationUI() {
         }
 
         for (let p = startPage; p <= endPage; p++) {
-            const pagePill = createElement('button', ['pagination-page-pill', p === currentPage ? 'active' : ''], `${p + 1}`);
+            const pagePill = createElement('button', p === currentPage ? ['pagination-page-pill', 'active'] : 'pagination-page-pill', `${p + 1}`);
             pagePill.disabled = isLoading;
             pagePill.addEventListener('click', () => loadAndRenderEntries(p));
             controls.appendChild(pagePill);
